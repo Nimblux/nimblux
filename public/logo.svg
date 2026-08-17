@@ -1,0 +1,20 @@
+<svg viewBox="0 0 300 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- NIMBLUX Symbol Mark -->
+  <g transform="translate(10, 5) scale(0.7)">
+    <!-- Left Pillar Upper Arc -->
+    <path d="M26 42 V28 C26 21 34 16 43 25 L50 33" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Left Pillar Lower Arc -->
+    <path d="M26 58 V72 C26 79 33 84 42 84 C47 84 50 82 50 79" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Right Pillar Upper Arc -->
+    <path d="M74 42 V28 C74 21 67 16 58 16 C53 16 50 18 50 21" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Right Pillar Lower Arc -->
+    <path d="M74 58 V72 C74 79 66 84 57 75 L50 67" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Pulse Waveform Line -->
+    <path d="M12 50 H32 L40 37 L50 63 L59 41 L67 55 L70 50 H88" stroke="#38BDF8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- NIMBLUX Wordmark -->
+  <text x="85" y="48" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="900" letter-spacing="4">NIMBLUX</text>
+</svg>

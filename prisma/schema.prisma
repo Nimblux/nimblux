@@ -1,0 +1,136 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String
+  email          String         @unique
+  passwordHash   String
+  role           String         @default("USER") // "USER" | "ADMIN"
+  profileImage   String?
+  college        String?
+  degree         String?
+  skills         String?        // Comma-separated tags
+  graduationYear String?
+  location       String?
+  bio            String?
+  githubUrl      String?
+  linkedinUrl    String?
+  status         String         @default("ACTIVE") // "ACTIVE" | "SUSPENDED"
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  opportunities  Opportunity[]  @relation("CreatedOpportunities")
+  approvedOpps   Opportunity[]  @relation("ApprovedOpportunities")
+  bookmarks      Bookmark[]
+  notifications  Notification[]
+  reports        Report[]
+}
+
+model Opportunity {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  description     String
+  category        String        // "internships", "hackathons", "jobs", "events", "scholarships", "competitions", "workshops", "courses", "fellowships", "conferences", "webinars", "volunteering", "campus-opportunities", "other"
+  organization    String
+  logo            String?
+  banner          String?
+  location        String        @default("Remote")
+  mode            String        @default("REMOTE") // "REMOTE" | "HYBRID" | "ONSITE"
+  eligibility     String?
+  skills          String?       // Comma-separated skills
+  stipend         String?
+  salary          String?
+  registrationFee String?       @default("Free")
+  isPaid          Boolean       @default(false)
+  applicationUrl  String
+  deadline        DateTime
+  startDate       DateTime?
+  endDate         DateTime?
+  contactInfo     String?
+  additionalInfo  String?
+  status          String        @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED"
+  rejectionReason String?
+  featured        Boolean       @default(false)
+  verified        Boolean       @default(true)
+  clicksCount     Int           @default(0)
+  viewsCount      Int           @default(0)
+  
+  createdById     String
+  createdBy       User          @relation("CreatedOpportunities", fields: [createdById], references: [id], onDelete: Cascade)
+  approvedById    String?
+  approvedBy      User?         @relation("ApprovedOpportunities", fields: [approvedById], references: [id])
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  bookmarks       Bookmark[]
+  reports         Report[]
+}
+
+model Bookmark {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+
+  @@unique([userId, opportunityId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // "APPROVAL" | "REJECTION" | "SYSTEM" | "OPPORTUNITY"
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Report {
+  id            String       @id @default(cuid())
+  userId        String?
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  opportunityId String
+  opportunity   Opportunity  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  reason        String
+  details       String?
+  status        String       @default("PENDING") // "PENDING" | "RESOLVED" | "DISMISSED"
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Event {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  description     String
+  banner          String?
+  eventDate       DateTime
+  location        String
+  mode            String   @default("REMOTE") // "REMOTE" | "HYBRID" | "ONSITE"
+  registrationUrl String
+  organizer       String   @default("NIMBLUX")
+  isFeatured      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
+  icon         String
+  description  String
+  displayOrder Int      @default(0)
+}
