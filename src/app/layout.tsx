@@ -3,16 +3,22 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nimblux.xyz"),
+
   title: {
-    default: "NIMBLUX — Technology • Innovation • Community",
+    default: "NIMBLUX — Internships, Hackathons, Jobs & Opportunities",
     template: "%s | NIMBLUX",
   },
+
   description:
-    "Discover verified internships, global hackathons, high-growth jobs, tech events, competitions, and scholarships — all in one student-focused platform.",
+    "Discover verified internships, hackathons, jobs, scholarships, events, competitions, and career opportunities on NIMBLUX — Technology • Innovation • Community.",
+
   keywords: [
     "internships",
     "hackathons",
+    "jobs",
     "student jobs",
     "tech opportunities",
     "scholarships",
@@ -20,27 +26,32 @@ export const metadata: Metadata = {
     "software engineering",
     "NIMBLUX",
   ],
-  authors: [{ name: "NIMBLUX Team" }],
+
+  authors: [{ name: "Dev Kumar" }],
   creator: "NIMBLUX",
+
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://nimblux.com",
+    url: "https://nimblux.xyz",
     title: "NIMBLUX — Discover Opportunities. Build Your Future.",
     description:
-      "The premier student-focused technology platform for internships, hackathons, jobs, events, and scholarships.",
+      "The premier student-focused technology platform for internships, hackathons, jobs, events, competitions, and scholarships.",
     siteName: "NIMBLUX",
   },
+
   twitter: {
     card: "summary_large_image",
     title: "NIMBLUX — Technology • Innovation • Community",
     description:
-      "Discover verified internships, hackathons, jobs, and scholarships all in one place.",
+      "Discover internships, hackathons, jobs, and scholarships all in one place.",
   },
+
   robots: {
     index: true,
     follow: true,
   },
+
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
