@@ -1,60 +1,74 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
-  Compass,
-  Code,
   Github,
   Twitter,
   Linkedin,
+  Instagram,
+  Youtube,
   Send,
-  Heart,
+  CheckCircle2,
+  Sparkles,
+  ArrowRight,
   ShieldCheck,
-  Zap,
-  Globe2,
 } from "lucide-react";
-import { CATEGORIES } from "@/lib/constants";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+    }
+  };
+
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 text-sm">
-      {/* Top Banner / Newsletter */}
-      <div className="border-b border-slate-900 bg-slate-900/40 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-charcoal-950 border-t border-charcoal-cardBorder text-ivory-400 text-sm">
+      {/* Newsletter Strip */}
+      <div className="border-b border-charcoal-cardBorder bg-charcoal-900/60 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
-              <Zap className="w-4 h-4" />
-              <span>Weekly Opportunities Digest</span>
+          <div className="text-center md:text-left max-w-xl">
+            <div className="flex items-center justify-center md:justify-start space-x-2 text-bronze-400 text-xs font-mono uppercase tracking-wider mb-2 font-semibold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Weekly Opportunity Digest</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white">
-              Never miss a high-impact tech opportunity.
+            <h3 className="font-serif-heading text-xl sm:text-2xl text-ivory-100 font-medium tracking-tight">
+              Get handpicked opportunities delivered to your inbox.
             </h3>
-            <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-lg">
-              Get handpicked internships, hackathons, and scholarships delivered to your inbox every Monday morning.
+            <p className="text-ivory-500 text-xs sm:text-sm mt-1">
+              Top summer internships, verified hackathons, and exclusive fellowships every Monday.
             </p>
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Subscribed to NIMBLUX Weekly Digest!");
-            }}
-            className="flex w-full md:w-auto max-w-md items-center space-x-2"
-          >
-            <input
-              type="email"
-              placeholder="Enter your student email..."
-              required
-              className="w-full sm:w-72 px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 text-sm"
-            />
-            <button
-              type="submit"
-              className="px-5 py-2.5 rounded-xl font-semibold text-white bg-indigo-600 hover:bg-indigo-500 transition-colors shadow-md shadow-indigo-600/30 whitespace-nowrap text-sm"
-            >
-              Subscribe
-            </button>
+          <form onSubmit={handleSubscribe} className="w-full md:w-auto flex items-center gap-2 max-w-md">
+            {subscribed ? (
+              <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-forest-500/15 border border-forest-500/30 text-forest-200 text-xs">
+                <CheckCircle2 className="w-4 h-4 text-forest-400" />
+                <span>You're subscribed! Check your inbox soon.</span>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your student email..."
+                  className="w-full md:w-72 px-4 py-2.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
+                />
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 transition-colors whitespace-nowrap shadow-button"
+                >
+                  Subscribe
+                </button>
+              </>
+            )}
           </form>
         </div>
       </div>
@@ -65,15 +79,15 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="col-span-2 space-y-4">
             <NimbluxLogo size="md" showTagline={true} href="/" />
-            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              NIMBLUX is the premier student-focused technology platform empowering students, developers, and creators to discover verified internships, global hackathons, high-growth jobs, and scholarships.
+            <p className="text-ivory-500 text-xs sm:text-sm leading-relaxed max-w-sm pt-2">
+              NIMBLUX is a calm, student-focused technology platform uniting verified internships, global hackathons, high-growth jobs, and scholarships in one trusted directory.
             </p>
-            <div className="flex items-center space-x-3 pt-2">
+            <div className="flex items-center space-x-2 pt-2">
               <a
                 href="https://github.com/Nimblux"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all shadow-sm"
+                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
                 aria-label="GitHub @Nimblux"
                 title="GitHub @Nimblux"
               >
@@ -83,8 +97,8 @@ export default function Footer() {
                 href="https://x.com/joinimblux"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-cyan-500/50 hover:bg-slate-800/80 transition-all shadow-sm"
-                aria-label="X (Twitter) @joinimblux"
+                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
+                aria-label="X @joinimblux"
                 title="X @joinimblux"
               >
                 <Twitter className="w-4 h-4" />
@@ -93,118 +107,118 @@ export default function Footer() {
                 href="https://www.linkedin.com/company/nimblux"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-blue-500/50 hover:bg-slate-800/80 transition-all shadow-sm"
+                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
                 aria-label="LinkedIn @nimblux"
                 title="LinkedIn @nimblux"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
+              <a
+                href="https://www.instagram.com/joinnimblux/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
+                aria-label="Instagram @joinnimblux"
+                title="Instagram @joinnimblux"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
-          {/* Popular Categories */}
+          {/* Explore Column */}
           <div>
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider mb-4">
-              Opportunities
+            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
+              Explore
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/internships" className="hover:text-indigo-400 transition-colors">
+                <Link href="/internships" className="hover:text-ivory-100 transition-colors">
                   Internships
                 </Link>
               </li>
               <li>
-                <Link href="/hackathons" className="hover:text-indigo-400 transition-colors">
+                <Link href="/hackathons" className="hover:text-ivory-100 transition-colors">
                   Hackathons
                 </Link>
               </li>
               <li>
-                <Link href="/jobs" className="hover:text-indigo-400 transition-colors">
+                <Link href="/jobs" className="hover:text-ivory-100 transition-colors">
                   Graduate & Tech Jobs
                 </Link>
               </li>
               <li>
-                <Link href="/scholarships" className="hover:text-indigo-400 transition-colors">
+                <Link href="/events" className="hover:text-ivory-100 transition-colors">
+                  Tech Events & Summits
+                </Link>
+              </li>
+              <li>
+                <Link href="/scholarships" className="hover:text-ivory-100 transition-colors">
                   Scholarships & Grants
                 </Link>
               </li>
               <li>
-                <Link href="/competitions" className="hover:text-indigo-400 transition-colors">
-                  Competitions
-                </Link>
-              </li>
-              <li>
-                <Link href="/fellowships" className="hover:text-indigo-400 transition-colors">
+                <Link href="/fellowships" className="hover:text-ivory-100 transition-colors">
                   Fellowships
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Learning & Community */}
+          {/* For Partners Column */}
           <div>
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider mb-4">
-              Community & Events
+            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
+              For Partners
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/events" className="hover:text-indigo-400 transition-colors">
-                  Tech Events & Summits
+                <Link href="/submit-opportunity" className="text-bronze-400 hover:text-bronze-300 font-semibold transition-colors flex items-center space-x-1">
+                  <span>Post Opportunity</span>
+                  <span>→</span>
                 </Link>
               </li>
               <li>
-                <Link href="/workshops" className="hover:text-indigo-400 transition-colors">
-                  Hands-on Workshops
+                <Link href="/campus-opportunities" className="hover:text-ivory-100 transition-colors">
+                  Ambassador Program
                 </Link>
               </li>
               <li>
-                <Link href="/webinars" className="hover:text-indigo-400 transition-colors">
-                  Live Webinars & AMAs
+                <Link href="/opportunities" className="hover:text-ivory-100 transition-colors">
+                  Recruiter Directory
                 </Link>
               </li>
               <li>
-                <Link href="/campus-opportunities" className="hover:text-indigo-400 transition-colors">
-                  Campus Ambassadors
-                </Link>
-              </li>
-              <li>
-                <Link href="/volunteering" className="hover:text-indigo-400 transition-colors">
-                  Volunteering & Open Source
+                <Link href="/admin" className="hover:text-amber-300 transition-colors">
+                  Moderation Portal
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Platform & Account */}
+          {/* Resources & Company Column */}
           <div>
-            <h4 className="font-semibold text-white text-xs uppercase tracking-wider mb-4">
-              Platform
+            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
+              Platform & Legal
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/submit-opportunity" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors flex items-center space-x-1">
-                  <span>Post an Opportunity</span>
-                  <span>✨</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="hover:text-indigo-400 transition-colors">
+                <Link href="/dashboard" className="hover:text-ivory-100 transition-colors">
                   Student Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/saved" className="hover:text-indigo-400 transition-colors">
+                <Link href="/dashboard/saved" className="hover:text-ivory-100 transition-colors">
                   Saved Opportunities
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-amber-400 transition-colors">
-                  Admin Portal
+                <Link href="/register" className="hover:text-ivory-100 transition-colors">
+                  Create Account
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-indigo-400 transition-colors">
-                  Create Account
+                <Link href="/opportunities" className="hover:text-ivory-100 transition-colors">
+                  All 14 Categories
                 </Link>
               </li>
             </ul>
@@ -212,19 +226,19 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-slate-900 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="border-t border-charcoal-cardBorder mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory-500">
           <div className="flex items-center space-x-2">
             <span>© {new Date().getFullYear()} NIMBLUX. All rights reserved.</span>
             <span>•</span>
-            <span className="text-slate-400">Technology • Innovation • Community</span>
+            <span className="font-mono">https://nimblux.xyz</span>
           </div>
 
           <div className="flex items-center space-x-6">
-            <span className="inline-flex items-center text-emerald-400 text-[11px] font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1.5" />
-              All Systems Operational
+            <span className="inline-flex items-center text-forest-400 text-[11px] font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-forest-400 mr-1.5" />
+              Operational
             </span>
-            <Link href="/opportunities" className="hover:text-slate-300">
+            <Link href="/opportunities" className="hover:text-ivory-300">
               Browse Directory
             </Link>
           </div>

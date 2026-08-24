@@ -51,7 +51,7 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-bronze-400 border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -59,10 +59,10 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* User Greeting & Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-slate-800 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-charcoal-cardBorder gap-4">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-brand-500 to-cyan-400 p-[1.5px] shadow-lg shadow-indigo-500/20">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-bold text-white text-lg overflow-hidden">
+          <div className="w-14 h-14 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder p-1 shadow-card flex-shrink-0">
+            <div className="w-full h-full bg-charcoal-900 rounded-[14px] flex items-center justify-center font-bold text-bronze-300 text-lg font-mono overflow-hidden">
               {user?.profileImage ? (
                 <img
                   src={user.profileImage}
@@ -76,14 +76,14 @@ export default function DashboardLayout({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="font-display font-extrabold text-xl sm:text-2xl text-white">
+              <h1 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
                 {user?.name}
               </h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-bronze-500/10 text-bronze-300 border border-bronze-500/20 uppercase">
                 STUDENT
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-ivory-500 mt-0.5 font-mono">
               {user?.college || user?.email}
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function DashboardLayout({
         <div className="flex items-center space-x-3">
           <Link
             href="/submit-opportunity"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 shadow-md shadow-indigo-600/20 transition-all"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Post Opportunity</span>
@@ -100,7 +100,7 @@ export default function DashboardLayout({
           {user?.role === "ADMIN" && (
             <Link
               href="/admin"
-              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors font-mono"
             >
               <Shield className="w-3.5 h-3.5" />
               <span>Admin Suite</span>
@@ -110,20 +110,20 @@ export default function DashboardLayout({
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-8 border-b border-slate-800/80 scrollbar-none">
+      <div className="flex items-center space-x-2 overflow-x-auto pb-4 mb-8 border-b border-charcoal-cardBorder scrollbar-none">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
+              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                 isActive
-                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
-                  : "bg-slate-900/60 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800/80"
+                  ? "bg-bronze-500 text-charcoal-950 font-bold shadow-button"
+                  : "bg-charcoal-card text-ivory-300 hover:text-ivory-100 hover:bg-charcoal-850 border border-charcoal-cardBorder"
               }`}
             >
-              <item.icon className="w-4 h-4" />
+              <item.icon className="w-3.5 h-3.5" />
               <span>{item.label}</span>
             </Link>
           );

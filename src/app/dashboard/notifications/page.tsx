@@ -10,7 +10,6 @@ import {
   Sparkles,
   Info,
   ExternalLink,
-  Trash2,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -61,14 +60,14 @@ export default function NotificationsPage() {
   const getIcon = (type: string) => {
     switch (type) {
       case "APPROVAL":
-        return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
+        return <CheckCircle2 className="w-4.5 h-4.5 text-forest-400" />;
       case "REJECTION":
-        return <AlertTriangle className="w-5 h-5 text-rose-400" />;
+        return <AlertTriangle className="w-4.5 h-4.5 text-rose-400" />;
       case "OPPORTUNITY":
-        return <Sparkles className="w-5 h-5 text-cyan-400" />;
+        return <Sparkles className="w-4.5 h-4.5 text-bronze-400" />;
       case "SYSTEM":
       default:
-        return <Info className="w-5 h-5 text-indigo-400" />;
+        return <Info className="w-4.5 h-4.5 text-ivory-400" />;
     }
   };
 
@@ -76,10 +75,10 @@ export default function NotificationsPage() {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display font-bold text-xl sm:text-2xl text-white">
+          <h2 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
             Notifications Center
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-ivory-500 mt-0.5">
             Stay updated on submission approvals, moderator feedback, and platform alerts.
           </p>
         </div>
@@ -87,7 +86,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllRead}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-indigo-400 hover:text-indigo-300 hover:bg-slate-850 transition-colors"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder text-xs font-semibold text-bronze-400 hover:text-bronze-300 transition-colors shadow-card"
           >
             <CheckCheck className="w-3.5 h-3.5" />
             <span>Mark all as read</span>
@@ -97,17 +96,17 @@ export default function NotificationsPage() {
 
       <div className="space-y-3">
         {loading ? (
-          <div className="p-8 text-center text-slate-400 text-xs animate-pulse">
+          <div className="p-8 text-center text-ivory-500 text-xs animate-pulse">
             Loading notifications...
           </div>
         ) : notifications.length === 0 ? (
-          <div className="text-center py-16 rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 p-8 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500">
+          <div className="text-center py-16 rounded-3xl bg-charcoal-card border border-charcoal-cardBorder p-8 space-y-3 shadow-card">
+            <div className="w-12 h-12 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center mx-auto text-ivory-500">
               <Bell className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-white">No notifications yet</p>
-            <p className="text-xs text-slate-400">
-              When your submissions are approved or updated, they will show up here.
+            <p className="text-sm font-semibold text-ivory-100">No notifications yet</p>
+            <p className="text-xs text-ivory-500">
+              When your opportunity submissions are reviewed or updated, they will appear here.
             </p>
           </div>
         ) : (
@@ -117,29 +116,29 @@ export default function NotificationsPage() {
               onClick={() => !notif.isRead && handleMarkRead(notif.id)}
               className={`p-4 sm:p-5 rounded-2xl border transition-all ${
                 notif.isRead
-                  ? "bg-slate-900/40 border-slate-800/80 text-slate-400"
-                  : "bg-indigo-950/30 border-indigo-500/30 shadow-md shadow-indigo-950/20 text-slate-200"
+                  ? "bg-charcoal-card/60 border-charcoal-cardBorder text-ivory-400"
+                  : "bg-charcoal-card border-bronze-500/30 shadow-card text-ivory-200"
               }`}
             >
               <div className="flex items-start space-x-4">
-                <div className="p-2 rounded-xl bg-slate-950 border border-slate-800 flex-shrink-0">
+                <div className="p-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder flex-shrink-0">
                   {getIcon(notif.type)}
                 </div>
 
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-white flex items-center space-x-2">
+                    <h3 className="font-bold text-xs sm:text-sm text-ivory-100 flex items-center space-x-2">
                       <span>{notif.title}</span>
                       {!notif.isRead && (
-                        <span className="w-2 h-2 rounded-full bg-indigo-400" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-bronze-400" />
                       )}
                     </h3>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[10.5px] font-mono text-ivory-500">
                       {formatDate(notif.createdAt)}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-ivory-400 leading-relaxed">
                     {notif.message}
                   </p>
 
@@ -147,7 +146,7 @@ export default function NotificationsPage() {
                     <div className="pt-2">
                       <Link
                         href={notif.link}
-                        className="inline-flex items-center space-x-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300"
+                        className="inline-flex items-center space-x-1 text-xs font-semibold text-bronze-400 hover:text-bronze-300 font-mono"
                       >
                         <span>View Details</span>
                         <ExternalLink className="w-3 h-3" />

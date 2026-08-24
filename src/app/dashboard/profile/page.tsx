@@ -76,32 +76,32 @@ export default function ProfilePage() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-400 text-xs animate-pulse">Loading profile...</div>;
+    return <div className="p-8 text-center text-ivory-500 text-xs animate-pulse">Loading profile...</div>;
   }
 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h2 className="font-display font-bold text-xl sm:text-2xl text-white">
+        <h2 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
           Student Profile
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Manage your education, technical skills, and social handles.
+        <p className="text-xs text-ivory-500 mt-0.5">
+          Manage your education, technical competencies, and professional links.
         </p>
       </div>
 
-      <div className="rounded-3xl glass-panel p-6 sm:p-8 border border-slate-800 bg-slate-900/40 shadow-xl">
+      <div className="rounded-3xl bg-charcoal-card p-6 sm:p-8 border border-charcoal-cardBorder shadow-card">
         {message && (
-          <div className="mb-6 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2 animate-fade-in">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <div className="mb-6 p-3 rounded-2xl bg-forest-500/10 border border-forest-500/30 text-forest-300 text-xs flex items-center space-x-2 animate-fade-in">
+            <CheckCircle2 className="w-4 h-4 text-forest-400 flex-shrink-0" />
             <span>{message}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6 text-xs">
           {/* Avatar URL */}
-          <div className="flex items-center space-x-4 pb-6 border-b border-slate-800">
-            <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xl font-bold text-white overflow-hidden flex-shrink-0">
+          <div className="flex items-center space-x-4 pb-6 border-b border-charcoal-cardBorder">
+            <div className="w-16 h-16 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center text-lg font-bold text-bronze-300 font-mono overflow-hidden flex-shrink-0">
               {formData.profileImage ? (
                 <img
                   src={formData.profileImage}
@@ -113,7 +113,7 @@ export default function ProfilePage() {
               )}
             </div>
             <div className="flex-1">
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 Profile Photo URL
               </label>
               <input
@@ -122,7 +122,7 @@ export default function ProfilePage() {
                 value={formData.profileImage}
                 onChange={handleChange}
                 placeholder="https://images.unsplash.com/..."
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function ProfilePage() {
           {/* Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 Full Name *
               </label>
               <input
@@ -139,24 +139,24 @@ export default function ProfilePage() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
-                Email Address (Read Only)
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
+                Email Address (Account ID)
               </label>
               <input
                 type="email"
                 disabled
                 value={formData.email}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-400 cursor-not-allowed"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-950 border border-charcoal-cardBorder text-ivory-500 cursor-not-allowed font-mono"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 College / University
               </label>
               <input
@@ -165,12 +165,12 @@ export default function ProfilePage() {
                 value={formData.college}
                 onChange={handleChange}
                 placeholder="Stanford University, IIT Bombay, MIT..."
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 Degree & Major
               </label>
               <input
@@ -179,19 +179,19 @@ export default function ProfilePage() {
                 value={formData.degree}
                 onChange={handleChange}
                 placeholder="B.S. Computer Science & AI"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 Graduation Year
               </label>
               <select
                 name="graduationYear"
                 value={formData.graduationYear}
                 onChange={handleChange}
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50 cursor-pointer"
               >
                 <option value="2025">2025</option>
                 <option value="2026">2026</option>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1">
+              <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                 Location
               </label>
               <input
@@ -211,14 +211,14 @@ export default function ProfilePage() {
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="San Francisco, CA / London / Remote"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
           </div>
 
           {/* Technical Skills */}
           <div>
-            <label className="font-semibold text-slate-300 block mb-1">
+            <label className="font-semibold text-ivory-300 block mb-1 font-mono">
               Technical Skills (Comma separated)
             </label>
             <input
@@ -227,30 +227,30 @@ export default function ProfilePage() {
               value={formData.skills}
               onChange={handleChange}
               placeholder="TypeScript, Python, React, Next.js, PyTorch, GraphQL, AWS"
-              className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
             />
           </div>
 
           {/* Bio */}
           <div>
-            <label className="font-semibold text-slate-300 block mb-1">
-              Short Bio / Introduction
+            <label className="font-semibold text-ivory-300 block mb-1 font-mono">
+              Short Bio / Statement
             </label>
             <textarea
               rows={3}
               name="bio"
               value={formData.bio}
               onChange={handleChange}
-              placeholder="Brief summary of your interests, projects, and what roles you are seeking..."
-              className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
+              placeholder="Brief summary of your interests, technical projects, and career goals..."
+              className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 resize-none"
             />
           </div>
 
           {/* Social Links */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-charcoal-cardBorder">
             <div>
-              <label className="font-semibold text-slate-300 block mb-1 flex items-center space-x-1.5">
-                <Github className="w-3.5 h-3.5 text-slate-400" />
+              <label className="font-semibold text-ivory-300 block mb-1 flex items-center space-x-1.5 font-mono">
+                <Github className="w-3.5 h-3.5 text-ivory-400" />
                 <span>GitHub Profile URL</span>
               </label>
               <input
@@ -259,13 +259,13 @@ export default function ProfilePage() {
                 value={formData.githubUrl}
                 onChange={handleChange}
                 placeholder="https://github.com/username"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-slate-300 block mb-1 flex items-center space-x-1.5">
-                <Linkedin className="w-3.5 h-3.5 text-blue-400" />
+              <label className="font-semibold text-ivory-300 block mb-1 flex items-center space-x-1.5 font-mono">
+                <Linkedin className="w-3.5 h-3.5 text-ivory-400" />
                 <span>LinkedIn Profile URL</span>
               </label>
               <input
@@ -274,17 +274,17 @@ export default function ProfilePage() {
                 value={formData.linkedinUrl}
                 onChange={handleChange}
                 placeholder="https://linkedin.com/in/username"
-                className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
               />
             </div>
           </div>
 
-          {/* Submit CTA */}
-          <div className="pt-4 border-t border-slate-800 flex justify-end">
+          {/* Submit */}
+          <div className="pt-4 border-t border-charcoal-cardBorder flex justify-end">
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center space-x-1.5 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 transition-colors shadow-md shadow-indigo-600/30"
+              className="flex items-center space-x-1.5 px-6 py-2.5 rounded-xl font-bold text-xs text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button disabled:opacity-50 transition-colors"
             >
               <Save className="w-3.5 h-3.5" />
               <span>{saving ? "Saving..." : "Save Profile"}</span>

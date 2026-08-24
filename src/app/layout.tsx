@@ -3,18 +3,17 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
-
 export const metadata: Metadata = {
   metadataBase: new URL("https://nimblux.xyz"),
-
+  alternates: {
+    canonical: "https://nimblux.xyz",
+  },
   title: {
-    default: "NIMBLUX — Internships, Hackathons, Jobs & Opportunities",
+    default: "NIMBLUX — Technology • Innovation • Community",
     template: "%s | NIMBLUX",
   },
-
   description:
-    "Discover verified internships, hackathons, jobs, scholarships, events, competitions, and career opportunities on NIMBLUX — Technology • Innovation • Community.",
-
+    "NIMBLUX brings internships, hackathons, jobs, events, scholarships, competitions and career opportunities together in one trusted platform.",
   keywords: [
     "internships",
     "hackathons",
@@ -26,32 +25,27 @@ export const metadata: Metadata = {
     "software engineering",
     "NIMBLUX",
   ],
-
-  authors: [{ name: "Dev Kumar" }],
+  authors: [{ name: "NIMBLUX Team" }],
   creator: "NIMBLUX",
-
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://nimblux.xyz",
-    title: "NIMBLUX — Discover Opportunities. Build Your Future.",
+    title: "NIMBLUX — Opportunities that shape your future.",
     description:
-      "The premier student-focused technology platform for internships, hackathons, jobs, events, competitions, and scholarships.",
+      "NIMBLUX brings internships, hackathons, jobs, events, scholarships, competitions and career opportunities together in one trusted platform.",
     siteName: "NIMBLUX",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "NIMBLUX — Technology • Innovation • Community",
     description:
-      "Discover internships, hackathons, jobs, and scholarships all in one place.",
+      "NIMBLUX brings internships, hackathons, jobs, events, scholarships, competitions and career opportunities together in one trusted platform.",
   },
-
   robots: {
     index: true,
     follow: true,
   },
-
   icons: {
     icon: "/icon.svg",
     shortcut: "/icon.svg",
@@ -66,7 +60,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body className="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-600 selection:text-white">
+      <body className="bg-background text-foreground min-h-screen flex flex-col antialiased selection:bg-bronze-500/20 selection:text-ivory-50">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 interface NimbluxLogoProps {
   className?: string;
@@ -22,7 +21,7 @@ export function NimbluxIcon({
 }) {
   const sizeMap = {
     sm: "h-7 w-auto",
-    md: "h-9 w-auto",
+    md: "h-8.5 w-auto",
     lg: "h-11 w-auto",
     xl: "h-14 w-auto",
   };
@@ -31,7 +30,7 @@ export function NimbluxIcon({
     <img
       src="/nimblux-icon.png"
       alt="NIMBLUX"
-      className={`${sizeMap[size] || sizeMap.md} object-contain transition-transform group-hover:scale-105 ${className}`}
+      className={`${sizeMap[size] || sizeMap.md} object-contain transition-transform duration-200 group-hover:scale-105 ${className}`}
     />
   );
 }
@@ -45,10 +44,10 @@ export default function NimbluxLogo({
   theme = "dark",
 }: NimbluxLogoProps) {
   const heightMap = {
-    sm: "h-7",
-    md: "h-9",
-    lg: "h-11",
-    xl: "h-14",
+    sm: "h-6.5",
+    md: "h-8",
+    lg: "h-10",
+    xl: "h-13",
   };
 
   const currentHeight = heightMap[size] || heightMap.md;
@@ -63,10 +62,10 @@ export default function NimbluxLogo({
           <img
             src={logoSrc}
             alt="NIMBLUX"
-            className={`${currentHeight} w-auto object-contain transition-transform group-hover:scale-[1.02] filter drop-shadow-[0_2px_12px_rgba(56,189,248,0.15)]`}
+            className={`${currentHeight} w-auto object-contain transition-transform duration-200 group-hover:scale-[1.01] filter drop-shadow-[0_2px_10px_rgba(197,168,128,0.12)]`}
           />
           {showTagline && (
-            <span className="text-[9px] sm:text-[10px] font-semibold tracking-widest text-slate-400 uppercase mt-0.5 pl-1 font-mono">
+            <span className="text-[9px] sm:text-[9.5px] font-medium tracking-[0.18em] text-ivory-500 uppercase mt-0.5 pl-0.5 font-mono">
               Technology • Innovation • Community
             </span>
           )}

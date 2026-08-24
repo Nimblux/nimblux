@@ -45,37 +45,37 @@ export default function AdminReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center space-x-2 text-rose-400 text-xs font-bold uppercase tracking-wider mb-1">
+        <div className="flex items-center space-x-2 text-rose-400 text-xs font-mono font-bold uppercase tracking-wider mb-1">
           <Flag className="w-4 h-4" />
           <span>Integrity Moderation</span>
         </div>
-        <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white">
+        <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
           User Reports & Flags ({reports.length})
         </h1>
-        <p className="text-xs text-slate-400 mt-0.5">
+        <p className="text-xs text-ivory-500 mt-0.5">
           Investigate reported broken links, inaccurate stipends, and spam listings.
         </p>
       </div>
 
-      <div className="rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-3xl bg-charcoal-card border border-charcoal-cardBorder overflow-hidden shadow-card">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-xs animate-pulse">
+          <div className="p-12 text-center text-ivory-500 text-xs animate-pulse font-mono">
             Loading reports...
           </div>
         ) : reports.length === 0 ? (
           <div className="text-center py-16 p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500">
-              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+            <div className="w-12 h-12 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center mx-auto text-forest-400">
+              <CheckCircle2 className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-white">All reports clear!</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm font-semibold text-ivory-100">All reports clear!</p>
+            <p className="text-xs text-ivory-500">
               No unresolved user reports in the moderation queue.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/90 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[10px]">
+              <thead className="bg-charcoal-950/90 text-ivory-500 uppercase tracking-wider border-b border-charcoal-cardBorder text-[10px] font-mono">
                 <tr>
                   <th className="py-3.5 px-4 font-semibold">Reported Listing</th>
                   <th className="py-3.5 px-3 font-semibold">Reason</th>
@@ -85,39 +85,39 @@ export default function AdminReportsPage() {
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-charcoal-cardBorder/60">
                 {reports.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-900/60 transition-colors">
+                  <tr key={r.id} className="hover:bg-charcoal-900/50 transition-colors">
                     <td className="py-4 px-4">
-                      <div className="font-bold text-white max-w-xs truncate">
+                      <div className="font-bold text-ivory-100 max-w-xs truncate">
                         {r.opportunity?.title || "Deleted Opportunity"}
                       </div>
-                      <div className="text-[11px] text-slate-400">
+                      <div className="text-[11px] text-ivory-500">
                         {r.opportunity?.organization}
                       </div>
                     </td>
                     <td className="py-4 px-3 text-rose-300 font-medium max-w-xs">
                       <div>{r.reason}</div>
                       {r.details && (
-                        <div className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
+                        <div className="text-[11px] text-ivory-500 mt-0.5 line-clamp-1">
                           "{r.details}"
                         </div>
                       )}
                     </td>
-                    <td className="py-4 px-3 text-slate-400">
-                      {r.user ? r.user.name : "Anonymous User"}
+                    <td className="py-4 px-3 text-ivory-400">
+                      {r.user ? r.user.name : "Anonymous Visitor"}
                     </td>
-                    <td className="py-4 px-3 text-slate-400 whitespace-nowrap">
+                    <td className="py-4 px-3 text-ivory-500 font-mono text-[11px] whitespace-nowrap">
                       {formatDate(r.createdAt)}
                     </td>
                     <td className="py-4 px-3">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-medium ${
                           r.status === "RESOLVED"
-                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                            ? "bg-forest-500/15 text-forest-300 border border-forest-500/30"
                             : r.status === "DISMISSED"
-                            ? "bg-slate-800 text-slate-400"
-                            : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                            ? "bg-charcoal-900 text-ivory-500 border border-charcoal-cardBorder"
+                            : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                         }`}
                       >
                         {r.status}
@@ -129,7 +129,7 @@ export default function AdminReportsPage() {
                           <Link
                             href={`/opportunity/${r.opportunity.slug}`}
                             target="_blank"
-                            className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20"
+                            className="p-1.5 rounded-lg bg-charcoal-900 text-bronze-300 hover:bg-charcoal-850 border border-charcoal-cardBorder"
                             title="Inspect listing"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -140,13 +140,13 @@ export default function AdminReportsPage() {
                           <>
                             <button
                               onClick={() => handleUpdateStatus(r.id, "RESOLVED")}
-                              className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px]"
+                              className="px-2.5 py-1 rounded-lg bg-forest-600 hover:bg-forest-500 text-white font-bold text-[11px]"
                             >
                               Resolve
                             </button>
                             <button
                               onClick={() => handleUpdateStatus(r.id, "DISMISSED")}
-                              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[11px]"
+                              className="px-2.5 py-1 rounded-lg bg-charcoal-900 hover:bg-charcoal-850 text-ivory-300 border border-charcoal-cardBorder font-medium text-[11px]"
                             >
                               Dismiss
                             </button>

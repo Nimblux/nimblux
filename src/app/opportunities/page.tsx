@@ -6,7 +6,7 @@ import FilterSidebar from "@/components/filters/FilterSidebar";
 import OpportunityCard from "@/components/cards/OpportunityCard";
 import { CATEGORIES } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/auth";
-import { Compass, Sparkles, Inbox } from "lucide-react";
+import { Compass, Inbox } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -105,16 +105,16 @@ export default async function OpportunitiesPage({ searchParams }: PageProps) {
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
-          <Compass className="w-4 h-4" />
+        <div className="flex items-center space-x-2 text-bronze-400 text-xs font-mono uppercase tracking-wider mb-2 font-semibold">
+          <Compass className="w-3.5 h-3.5" />
           <span>Opportunity Directory</span>
         </div>
-        <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-white">
+        <h1 className="font-serif-heading font-medium text-3xl sm:text-4xl text-ivory-100 tracking-tight">
           {activeCategoryMeta
             ? activeCategoryMeta.name
             : "Explore All Opportunities"}
         </h1>
-        <p className="mt-2 text-sm text-slate-400 max-w-2xl">
+        <p className="mt-2 text-xs sm:text-sm text-ivory-400 max-w-2xl leading-relaxed">
           {activeCategoryMeta
             ? activeCategoryMeta.description
             : "Discover verified student tech opportunities, internships, hackathons, and grants from top organizations worldwide."}
@@ -145,33 +145,33 @@ export default async function OpportunitiesPage({ searchParams }: PageProps) {
         {/* Results Grid */}
         <div className="lg:col-span-3">
           {/* Results Summary Bar */}
-          <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-800 text-xs text-slate-400">
+          <div className="flex items-center justify-between mb-6 pb-3 border-b border-charcoal-cardBorder text-xs text-ivory-500 font-mono">
             <div>
-              Showing <span className="font-bold text-white">{opportunities.length}</span>{" "}
+              Showing <span className="font-bold text-ivory-100">{opportunities.length}</span>{" "}
               open {opportunities.length === 1 ? "opportunity" : "opportunities"}
             </div>
             {q && (
               <div>
-                Filtered by: <span className="text-indigo-300 font-medium">"{q}"</span>
+                Filtered by: <span className="text-bronze-300 font-medium">"{q}"</span>
               </div>
             )}
           </div>
 
           {/* Cards Grid */}
           {opportunities.length === 0 ? (
-            <div className="text-center py-20 rounded-2xl glass-panel border border-slate-800 p-8 space-y-4">
-              <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500">
-                <Inbox className="w-8 h-8" />
+            <div className="text-center py-20 rounded-3xl bg-charcoal-card border border-charcoal-cardBorder p-8 space-y-3">
+              <div className="w-14 h-14 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center mx-auto text-ivory-500">
+                <Inbox className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-base font-bold text-ivory-100">
                 No matching opportunities found
               </h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">
-                Try adjusting your search terms, clearing filter restrictions, or explore other opportunity categories.
+              <p className="text-xs text-ivory-500 max-w-md mx-auto leading-relaxed">
+                Try adjusting your search query, clearing filter restrictions, or explore other category tracks.
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {opportunities.map((opp) => (
                 <OpportunityCard
                   key={opp.id}

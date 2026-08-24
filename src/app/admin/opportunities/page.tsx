@@ -203,28 +203,28 @@ function AdminOpportunitiesContent() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
+        <div className="flex items-center space-x-2 text-bronze-400 text-xs font-mono font-bold uppercase tracking-wider mb-1">
           <Shield className="w-4 h-4" />
           <span>Moderation Suite</span>
         </div>
-        <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white">
+        <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
           Opportunity Moderation Queue
         </h1>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Review, approve, reject with reason, edit, or feature opportunity listings across all categories.
+        <p className="text-xs text-ivory-500 mt-0.5">
+          Review, approve, reject with feedback, edit, or feature opportunity listings across all categories.
         </p>
       </div>
 
       {/* Filter Tabs & Search Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Status Filter Tabs */}
-        <div className="flex items-center space-x-2 border-b border-slate-800 pb-2 overflow-x-auto">
+        <div className="flex items-center space-x-2 border-b border-charcoal-cardBorder pb-2 overflow-x-auto">
           <button
             onClick={() => setStatusFilter("ALL")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
               statusFilter === "ALL"
-                ? "bg-slate-800 text-white"
-                : "text-slate-400 hover:text-white"
+                ? "bg-charcoal-card text-ivory-100 border border-charcoal-cardBorder font-semibold"
+                : "text-ivory-500 hover:text-ivory-200"
             }`}
           >
             All ({opportunities.length})
@@ -232,42 +232,42 @@ function AdminOpportunitiesContent() {
 
           <button
             onClick={() => setStatusFilter("PENDING")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
               statusFilter === "PENDING"
-                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                : "text-slate-400 hover:text-amber-300"
+                ? "bg-bronze-500/15 text-bronze-300 border border-bronze-500/30"
+                : "text-ivory-500 hover:text-bronze-300"
             }`}
           >
-            <span>Pending Review</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-amber-500/30 text-[10px]">
+            <span>Under Review</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-bronze-500/20 text-[10px] font-mono">
               {pendingCount}
             </span>
           </button>
 
           <button
             onClick={() => setStatusFilter("APPROVED")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
               statusFilter === "APPROVED"
-                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                : "text-slate-400 hover:text-emerald-300"
+                ? "bg-forest-500/15 text-forest-300 border border-forest-500/30"
+                : "text-ivory-500 hover:text-forest-300"
             }`}
           >
             <span>Approved (Live)</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-[10px]">
+            <span className="px-1.5 py-0.2 rounded-full bg-forest-500/20 text-[10px] font-mono">
               {approvedCount}
             </span>
           </button>
 
           <button
             onClick={() => setStatusFilter("REJECTED")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
               statusFilter === "REJECTED"
-                ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                : "text-slate-400 hover:text-rose-300"
+                ? "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                : "text-ivory-500 hover:text-rose-300"
             }`}
           >
-            <span>Rejected</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-rose-500/30 text-[10px]">
+            <span>Needs Revision</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-rose-500/20 text-[10px] font-mono">
               {rejectedCount}
             </span>
           </button>
@@ -276,24 +276,24 @@ function AdminOpportunitiesContent() {
         {/* Search & Category Filter */}
         <div className="flex items-center space-x-2">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-ivory-500 absolute left-3 top-2.5" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Filter by title, org or user..."
-              className="pl-8 pr-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 w-48 sm:w-60"
+              className="pl-8 pr-3 py-1.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-200 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 w-48 sm:w-60 font-mono"
             />
           </div>
 
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 focus:outline-none cursor-pointer"
+            className="px-3 py-1.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-200 focus:outline-none cursor-pointer"
           >
             <option value="all">All Categories</option>
             {CATEGORIES.map((cat) => (
-              <option key={cat.slug} value={cat.slug}>
+              <option key={cat.slug} value={cat.slug} className="bg-charcoal-900">
                 {cat.name}
               </option>
             ))}
@@ -302,76 +302,76 @@ function AdminOpportunitiesContent() {
       </div>
 
       {/* Moderation Table */}
-      <div className="rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-3xl bg-charcoal-card border border-charcoal-cardBorder overflow-hidden shadow-card">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-xs animate-pulse">
+          <div className="p-12 text-center text-ivory-500 text-xs animate-pulse font-mono">
             Loading opportunities moderation queue...
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500">
+            <div className="w-12 h-12 rounded-2xl bg-charcoal-900 flex items-center justify-center mx-auto text-ivory-500">
               <CheckCircle2 className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-white">No opportunities found</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm font-semibold text-ivory-100">No opportunities found</p>
+            <p className="text-xs text-ivory-500">
               No listings match the selected status or search filter.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/90 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[10px]">
+              <thead className="bg-charcoal-950/90 text-ivory-500 uppercase tracking-wider border-b border-charcoal-cardBorder text-[10px] font-mono">
                 <tr>
                   <th className="py-3.5 px-4 font-semibold">Title & Organization</th>
                   <th className="py-3.5 px-3 font-semibold">Category</th>
                   <th className="py-3.5 px-3 font-semibold">Submitted By</th>
-                  <th className="py-3.5 px-3 font-semibold">Date & Deadline</th>
+                  <th className="py-3.5 px-3 font-semibold">Date & Due</th>
                   <th className="py-3.5 px-3 font-semibold">Status</th>
                   <th className="py-3.5 px-3 font-semibold">Featured</th>
                   <th className="py-3.5 px-4 font-semibold text-right">Moderation Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-charcoal-cardBorder/60">
                 {filtered.map((opp) => {
                   const statusBadge = getStatusBadge(opp.status);
                   const isActioning = actionLoading === opp.id;
 
                   return (
-                    <tr key={opp.id} className="hover:bg-slate-900/60 transition-colors">
+                    <tr key={opp.id} className="hover:bg-charcoal-900/50 transition-colors">
                       <td className="py-4 px-4">
-                        <div className="font-bold text-white max-w-xs truncate">
+                        <div className="font-bold text-ivory-100 max-w-xs truncate">
                           {opp.title}
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-ivory-500 mt-0.5">
                           {opp.organization} • {opp.location} ({opp.mode})
                         </div>
                       </td>
 
-                      <td className="py-4 px-3 capitalize text-slate-300 font-medium whitespace-nowrap">
+                      <td className="py-4 px-3 capitalize text-ivory-300 font-medium whitespace-nowrap">
                         {opp.category}
                       </td>
 
                       <td className="py-4 px-3">
-                        <div className="text-slate-200 font-medium truncate max-w-[120px]">
+                        <div className="text-ivory-200 font-medium truncate max-w-[120px]">
                           {opp.createdBy?.name || "System"}
                         </div>
-                        <div className="text-[10px] text-slate-500 truncate max-w-[120px]">
+                        <div className="text-[10px] text-ivory-500 font-mono truncate max-w-[120px]">
                           {opp.createdBy?.email}
                         </div>
                       </td>
 
-                      <td className="py-4 px-3 whitespace-nowrap">
-                        <div className="text-slate-300">
+                      <td className="py-4 px-3 whitespace-nowrap font-mono text-[11px]">
+                        <div className="text-ivory-300">
                           {formatDate(opp.createdAt)}
                         </div>
-                        <div className="text-[10px] text-slate-500">
+                        <div className="text-[10px] text-ivory-500">
                           Due: {formatDate(opp.deadline)}
                         </div>
                       </td>
 
                       <td className="py-4 px-3">
                         <span
-                          className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full font-semibold text-[11px] ${statusBadge.className}`}
+                          className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md font-medium text-[10.5px] border ${statusBadge.className}`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full ${statusBadge.dotColor}`}
@@ -390,8 +390,8 @@ function AdminOpportunitiesContent() {
                           onClick={() => handleToggleFeature(opp.id)}
                           className={`p-1.5 rounded-lg border transition-colors ${
                             opp.featured
-                              ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
-                              : "bg-slate-900 text-slate-500 border-slate-800 hover:text-slate-300"
+                              ? "bg-bronze-500/20 text-bronze-300 border-bronze-500/40"
+                              : "bg-charcoal-900 text-ivory-500 border-charcoal-cardBorder hover:text-ivory-300"
                           }`}
                           title={opp.featured ? "Featured on Home" : "Click to feature"}
                         >
@@ -405,7 +405,7 @@ function AdminOpportunitiesContent() {
                             <button
                               onClick={() => handleApprove(opp.id)}
                               disabled={isActioning}
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] flex items-center space-x-1 shadow-sm transition-colors"
+                              className="px-2.5 py-1.5 rounded-lg bg-forest-600 hover:bg-forest-500 text-white font-bold text-[11px] flex items-center space-x-1 shadow-sm transition-colors"
                               title="Approve & Publish Immediately"
                             >
                               <Check className="w-3.5 h-3.5" />
@@ -416,7 +416,7 @@ function AdminOpportunitiesContent() {
                           {opp.status !== "REJECTED" && (
                             <button
                               onClick={() => setRejectModalOpp(opp)}
-                              className="px-2.5 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 font-semibold text-[11px] flex items-center space-x-1 transition-colors"
+                              className="px-2.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 font-semibold text-[11px] flex items-center space-x-1 transition-colors"
                               title="Reject with custom feedback"
                             >
                               <X className="w-3.5 h-3.5" />
@@ -426,7 +426,7 @@ function AdminOpportunitiesContent() {
 
                           <button
                             onClick={() => handleOpenEdit(opp)}
-                            className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                            className="p-1.5 rounded-lg bg-charcoal-900 text-ivory-300 hover:text-white hover:bg-charcoal-850 border border-charcoal-cardBorder transition-colors"
                             title="Edit opportunity"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -436,7 +436,7 @@ function AdminOpportunitiesContent() {
                             <Link
                               href={`/opportunity/${opp.slug}`}
                               target="_blank"
-                              className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors"
+                              className="p-1.5 rounded-lg bg-charcoal-900 text-bronze-300 hover:bg-charcoal-850 border border-charcoal-cardBorder transition-colors"
                               title="View live opportunity"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -473,20 +473,20 @@ function AdminOpportunitiesContent() {
 
       {/* Edit Modal */}
       {editingOpp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl glass-dropdown border border-slate-800 p-6 sm:p-8 shadow-2xl bg-slate-950 space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-950/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-charcoal-card border border-charcoal-cardBorder p-6 sm:p-8 shadow-2xl space-y-6">
             <button
               onClick={() => setEditingOpp(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800"
+              className="absolute top-4 right-4 p-2 text-ivory-500 hover:text-ivory-100 rounded-xl hover:bg-charcoal-900"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4.5 h-4.5" />
             </button>
 
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-bold text-ivory-100">
                 Admin Edit: {editingOpp.title}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-ivory-500">
                 Modify opportunity parameters and update database record.
               </p>
             </div>
@@ -494,7 +494,7 @@ function AdminOpportunitiesContent() {
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Title *
                   </label>
                   <input
@@ -504,12 +504,12 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, title: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Organization *
                   </label>
                   <input
@@ -522,12 +522,12 @@ function AdminOpportunitiesContent() {
                         organization: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Category *
                   </label>
                   <select
@@ -535,10 +535,10 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, category: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   >
                     {CATEGORIES.map((cat) => (
-                      <option key={cat.slug} value={cat.slug}>
+                      <option key={cat.slug} value={cat.slug} className="bg-charcoal-900">
                         {cat.name}
                       </option>
                     ))}
@@ -546,7 +546,7 @@ function AdminOpportunitiesContent() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Work Mode
                   </label>
                   <select
@@ -554,16 +554,16 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, mode: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   >
-                    <option value="REMOTE">Remote</option>
-                    <option value="HYBRID">Hybrid</option>
-                    <option value="ONSITE">On-site</option>
+                    <option value="REMOTE" className="bg-charcoal-900">Remote</option>
+                    <option value="HYBRID" className="bg-charcoal-900">Hybrid</option>
+                    <option value="ONSITE" className="bg-charcoal-900">On-site</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Deadline *
                   </label>
                   <input
@@ -573,12 +573,12 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, deadline: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Application URL *
                   </label>
                   <input
@@ -591,12 +591,12 @@ function AdminOpportunitiesContent() {
                         applicationUrl: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Stipend
                   </label>
                   <input
@@ -605,12 +605,12 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, stipend: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Salary
                   </label>
                   <input
@@ -619,12 +619,12 @@ function AdminOpportunitiesContent() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, salary: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Description *
                   </label>
                   <textarea
@@ -637,23 +637,23 @@ function AdminOpportunitiesContent() {
                         description: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-amber-500 resize-y"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50 resize-y"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-charcoal-cardBorder">
                 <button
                   type="button"
                   onClick={() => setEditingOpp(null)}
-                  className="px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                  className="px-4 py-2 rounded-xl font-semibold text-ivory-400 hover:text-ivory-100 bg-charcoal-900 border border-charcoal-cardBorder"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEdit}
-                  className="flex items-center space-x-1.5 px-6 py-2 rounded-xl font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 shadow-md shadow-amber-400/20"
+                  className="flex items-center space-x-1.5 px-6 py-2 rounded-xl font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 disabled:opacity-50 shadow-button"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>{savingEdit ? "Saving..." : "Update Opportunity"}</span>
@@ -669,7 +669,7 @@ function AdminOpportunitiesContent() {
 
 export default function AdminOpportunitiesPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-slate-400 text-xs">Loading queue...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-ivory-500 text-xs font-mono">Loading queue...</div>}>
       <AdminOpportunitiesContent />
     </Suspense>
   );

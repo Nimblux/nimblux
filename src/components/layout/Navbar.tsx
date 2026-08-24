@@ -24,6 +24,7 @@ import {
   Bookmark,
   CheckCircle2,
   ExternalLink,
+  ArrowRight,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
@@ -51,6 +52,7 @@ export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<UserSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -61,6 +63,19 @@ export default function Navbar() {
   const moreRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  // Scroll detection for navbar background transition
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Fetch current session
   const checkAuth = async () => {
@@ -99,9 +114,9 @@ export default function Navbar() {
     checkAuth();
   }, [pathname]);
 
-  // Close dropdowns on outside click
+  // Close menus on outside click
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
         setMoreDropdownOpen(false);
       }
@@ -111,7 +126,8 @@ export default function Navbar() {
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setNotificationsOpen(false);
       }
-    }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -145,12 +161,12 @@ export default function Navbar() {
   };
 
   const mainNavItems = [
-    { label: "Explore", href: "/opportunities", icon: Compass },
-    { label: "Internships", href: "/internships", icon: Briefcase },
-    { label: "Hackathons", href: "/hackathons", icon: Code },
-    { label: "Jobs", href: "/jobs", icon: Building2 },
-    { label: "Events", href: "/events", icon: Calendar },
-    { label: "Scholarships", href: "/scholarships", icon: GraduationCap },
+    { label: "Explore", href: "/opportunities" },
+    { label: "Internships", href: "/internships" },
+    { label: "Hackathons", href: "/hackathons" },
+    { label: "Jobs", href: "/jobs" },
+    { label: "Events", href: "/events" },
+    { label: "Scholarships", href: "/scholarships" },
   ];
 
   const moreNavCategories = CATEGORIES.filter(
@@ -161,28 +177,34 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        scrolled
+          ? "bg-charcoal-950/90 backdrop-blur-md border-b border-charcoal-cardBorder shadow-editorial"
+          : "bg-charcoal-950/60 backdrop-blur-sm border-b border-white/[0.05]"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-18 sm:h-20">
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-6">
-            <NimbluxLogo size="md" showTagline={true} href="/" />
+          <div className="flex items-center space-x-8">
+            <NimbluxLogo size="md" showTagline={false} href="/" />
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-1">
+            <nav className="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
               {mainNavItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center space-x-1.5 ${
+                    className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
                       isActive
-                        ? "text-white bg-slate-800/80 shadow-sm border border-slate-700/50"
-                        : "text-slate-300 hover:text-white hover:bg-slate-800/40"
+                        ? "text-ivory-100 bg-white/[0.07] shadow-sm font-semibold"
+                        : "text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
                     }`}
                   >
-                    <span>{item.label}</span>
+                    {item.label}
                   </Link>
                 );
               })}
@@ -191,23 +213,24 @@ export default function Navbar() {
               <div className="relative" ref={moreRef}>
                 <button
                   onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                  className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center space-x-1 ${
+                  className={`flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-colors ${
                     moreDropdownOpen
-                      ? "text-white bg-slate-800"
-                      : "text-slate-300 hover:text-white hover:bg-slate-800/40"
+                      ? "text-ivory-100 bg-white/[0.07]"
+                      : "text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
                   }`}
+                  aria-expanded={moreDropdownOpen}
                 >
                   <span>More</span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      moreDropdownOpen ? "rotate-180" : ""
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      moreDropdownOpen ? "rotate-180 text-bronze-400" : "text-ivory-500"
                     }`}
                   />
                 </button>
 
                 {moreDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-72 rounded-2xl glass-dropdown p-2 z-50 animate-fade-in">
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-3 py-1.5">
+                  <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl editorial-dropdown p-2.5 animate-fade-in shadow-2xl z-50">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-ivory-500 px-3 py-1.5 font-semibold">
                       Specialized Categories
                     </div>
                     <div className="grid grid-cols-1 gap-1">
@@ -216,14 +239,11 @@ export default function Navbar() {
                           key={cat.slug}
                           href={`/${cat.slug}`}
                           onClick={() => setMoreDropdownOpen(false)}
-                          className="flex items-center justify-between px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors group"
+                          className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <div className="flex items-center space-x-2.5">
-                            <span className="w-2 h-2 rounded-full bg-indigo-400 group-hover:scale-125 transition-transform" />
-                            <span>{cat.name}</span>
-                          </div>
-                          <span className="text-[11px] text-slate-500 group-hover:text-indigo-400">
-                            Explore →
+                          <span className="font-medium">{cat.name}</span>
+                          <span className="text-[10px] font-mono text-ivory-500">
+                            /{cat.slug}
                           </span>
                         </Link>
                       ))}
@@ -234,286 +254,244 @@ export default function Navbar() {
             </nav>
           </div>
 
-          {/* Right Action Controls */}
+          {/* Right Action Bar */}
           <div className="flex items-center space-x-3 sm:space-x-4">
-            {/* Post Opportunity Button */}
+            {/* Post Opportunity Button (Prominent Editorial CTA) */}
             <Link
               href="/submit-opportunity"
-              className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-brand-500 hover:from-indigo-500 hover:to-brand-400 shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/30 transition-all duration-200 border border-indigo-400/30"
+              className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all duration-200"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-3.5 h-3.5 stroke-[2.2]" />
               <span>Post Opportunity</span>
             </Link>
 
-            {/* Auth / Profile Area */}
             {loading ? (
-              <div className="w-9 h-9 rounded-xl bg-slate-800 animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-charcoal-800 animate-pulse" />
             ) : user ? (
               <div className="flex items-center space-x-2 sm:space-x-3">
-                {/* Admin Quick Link */}
-                {user.role === "ADMIN" && (
-                  <Link
-                    href="/admin"
-                    className="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
-                  >
-                    <Shield className="w-3.5 h-3.5" />
-                    <span>Admin Suite</span>
-                  </Link>
-                )}
-
                 {/* Notifications Bell */}
                 <div className="relative" ref={notifRef}>
                   <button
                     onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors border border-transparent hover:border-slate-700"
-                    aria-label="Notifications"
+                    className="relative p-2 rounded-xl text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.05] transition-colors"
+                    aria-label="View notifications"
                   >
-                    <Bell className="w-5 h-5" />
+                    <Bell className="w-4 h-4" />
                     {unreadCount > 0 && (
-                      <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-slate-950 animate-pulse">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
+                      <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-bronze-400" />
                     )}
                   </button>
 
+                  {/* Notifications Popover */}
                   {notificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl glass-dropdown p-3 z-50 animate-fade-in">
-                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                        <div className="flex items-center space-x-2">
-                          <span className="font-semibold text-sm text-white">
-                            Notifications
-                          </span>
-                          {unreadCount > 0 && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                              {unreadCount} new
-                            </span>
-                          )}
-                        </div>
-                        <Link
-                          href="/dashboard/notifications"
-                          onClick={() => setNotificationsOpen(false)}
-                          className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
-                        >
-                          View all
-                        </Link>
+                    <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl editorial-dropdown p-3 shadow-2xl animate-fade-in z-50">
+                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-charcoal-cardBorder px-2">
+                        <span className="font-semibold text-xs text-ivory-100">Notifications</span>
+                        <span className="text-[10px] text-ivory-500 font-mono">
+                          {unreadCount} unread
+                        </span>
                       </div>
 
-                      <div className="max-h-72 overflow-y-auto space-y-2">
+                      <div className="max-h-72 overflow-y-auto space-y-1.5 pr-1">
                         {notifications.length === 0 ? (
-                          <div className="text-center py-6 text-slate-400 text-xs">
-                            No notifications yet.
+                          <div className="text-center py-6 text-xs text-ivory-500">
+                            No notifications yet
                           </div>
                         ) : (
-                          notifications.slice(0, 5).map((notif) => (
+                          notifications.map((notif) => (
                             <div
                               key={notif.id}
-                              onClick={() =>
-                                handleMarkAsRead(notif.id, notif.link)
-                              }
+                              onClick={() => handleMarkAsRead(notif.id, notif.link)}
                               className={`p-2.5 rounded-xl text-xs cursor-pointer transition-colors ${
                                 notif.isRead
-                                  ? "bg-slate-900/50 text-slate-400 hover:bg-slate-800/50"
-                                  : "bg-indigo-950/40 text-slate-200 border border-indigo-500/20 hover:bg-indigo-900/40"
+                                  ? "bg-transparent text-ivory-400 hover:bg-white/[0.04]"
+                                  : "bg-bronze-500/10 text-ivory-200 border border-bronze-500/20 hover:bg-bronze-500/15"
                               }`}
                             >
-                              <div className="font-semibold text-slate-100 flex items-center justify-between">
-                                <span>{notif.title}</span>
-                                {!notif.isRead && (
-                                  <span className="w-2 h-2 rounded-full bg-indigo-400" />
-                                )}
-                              </div>
-                              <p className="mt-1 line-clamp-2 text-slate-300">
+                              <div className="font-semibold text-ivory-100">{notif.title}</div>
+                              <div className="text-[11px] text-ivory-400 mt-0.5 line-clamp-2">
                                 {notif.message}
-                              </p>
+                              </div>
                             </div>
                           ))
                         )}
+                      </div>
+
+                      <div className="pt-2 mt-2 border-t border-charcoal-cardBorder text-center">
+                        <Link
+                          href="/dashboard/notifications"
+                          onClick={() => setNotificationsOpen(false)}
+                          className="text-[11px] font-medium text-bronze-400 hover:text-bronze-300"
+                        >
+                          View all notifications →
+                        </Link>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* User Menu Dropdown */}
+                {/* User Profile Dropdown */}
                 <div className="relative" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center space-x-2 p-1.5 rounded-xl hover:bg-slate-800/80 transition-colors border border-slate-800 hover:border-slate-700"
+                    className="flex items-center space-x-2 p-1.5 rounded-xl border border-charcoal-cardBorder bg-charcoal-card hover:border-bronze-500/40 transition-colors"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center font-bold text-white text-xs overflow-hidden">
-                      {user.profileImage ? (
-                        <img
-                          src={user.profileImage}
-                          alt={user.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        user.name.charAt(0).toUpperCase()
-                      )}
+                    <div className="w-6 h-6 rounded-lg bg-bronze-500/20 text-bronze-300 font-bold text-xs flex items-center justify-center font-mono">
+                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                     </div>
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                        userMenuOpen ? "rotate-180" : ""
-                      }`}
-                    />
+                    <span className="text-xs font-semibold text-ivory-200 hidden md:inline-block max-w-[100px] truncate">
+                      {user.name.split(" ")[0]}
+                    </span>
+                    <ChevronDown className="w-3 h-3 text-ivory-500" />
                   </button>
 
                   {userMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-dropdown p-2 z-50 animate-fade-in">
-                      <div className="px-3 py-2.5 border-b border-slate-800 mb-1">
-                        <div className="font-semibold text-sm text-white truncate">
+                    <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl editorial-dropdown p-2 shadow-2xl animate-fade-in z-50">
+                      <div className="px-3 py-2 border-b border-charcoal-cardBorder mb-1">
+                        <div className="font-semibold text-xs text-ivory-100 truncate">
                           {user.name}
                         </div>
-                        <div className="text-xs text-slate-400 truncate">
+                        <div className="text-[10px] text-ivory-500 truncate font-mono">
                           {user.email}
                         </div>
-                        <div className="mt-1.5 flex items-center space-x-1.5">
-                          <span
-                            className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-wider ${
-                              user.role === "ADMIN"
-                                ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                                : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                            }`}
-                          >
-                            {user.role}
-                          </span>
-                        </div>
+                        {user.role === "ADMIN" && (
+                          <div className="mt-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                            ADMIN ACCESS
+                          </div>
+                        )}
                       </div>
 
-                      <div className="space-y-1">
-                        {user.role === "ADMIN" && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-amber-300 hover:bg-amber-500/10 transition-colors"
-                          >
-                            <Shield className="w-4 h-4 text-amber-400" />
-                            <span>Admin Dashboard</span>
-                          </Link>
-                        )}
+                      <div className="space-y-0.5 text-xs">
                         <Link
                           href="/dashboard"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <Compass className="w-4 h-4 text-indigo-400" />
+                          <Compass className="w-3.5 h-3.5 text-ivory-400" />
                           <span>Student Dashboard</span>
                         </Link>
                         <Link
                           href="/dashboard/submissions"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <Briefcase className="w-4 h-4 text-cyan-400" />
+                          <PlusCircle className="w-3.5 h-3.5 text-ivory-400" />
                           <span>My Submissions</span>
                         </Link>
                         <Link
                           href="/dashboard/saved"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <Bookmark className="w-4 h-4 text-amber-400" />
-                          <span>Saved Opportunities</span>
+                          <Bookmark className="w-3.5 h-3.5 text-ivory-400" />
+                          <span>Saved Bookmarks</span>
                         </Link>
                         <Link
                           href="/dashboard/profile"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <User className="w-4 h-4 text-emerald-400" />
+                          <User className="w-3.5 h-3.5 text-ivory-400" />
                           <span>Edit Profile</span>
                         </Link>
-                      </div>
 
-                      <div className="border-t border-slate-800 mt-1 pt-1">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-sm text-rose-400 hover:bg-rose-500/10 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
-                        </button>
+                        {user.role === "ADMIN" && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-amber-300 hover:bg-amber-500/10 transition-colors font-medium"
+                          >
+                            <Shield className="w-3.5 h-3.5 text-amber-400" />
+                            <span>Moderation Suite</span>
+                          </Link>
+                        )}
+
+                        <div className="pt-1 mt-1 border-t border-charcoal-cardBorder">
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors text-left"
+                          >
+                            <LogOut className="w-3.5 h-3.5" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="flex items-center space-x-2.5">
+              <div className="flex items-center space-x-2">
                 <Link
                   href="/login"
-                  className="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-medium text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.04] transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 shadow-sm transition-all"
+                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-ivory-100 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.1] transition-all"
                 >
                   Join Free
                 </Link>
               </div>
             )}
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Mobile Hamburger Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
-              aria-label="Toggle menu"
+              className="lg:hidden p-2 rounded-xl text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.05]"
+              aria-label="Toggle mobile menu"
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Slide-in Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-800 bg-slate-950 px-4 pt-3 pb-6 space-y-3 animate-fade-in">
+        <div className="lg:hidden border-t border-charcoal-cardBorder bg-charcoal-950/95 backdrop-blur-xl px-5 py-6 space-y-4 animate-fade-in shadow-2xl">
           <div className="grid grid-cols-2 gap-2">
             {mainNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-2 p-2.5 rounded-xl text-sm text-slate-300 hover:text-white hover:bg-slate-800/60 bg-slate-900/50"
+                className="px-3 py-2.5 rounded-xl text-xs font-medium text-ivory-300 bg-charcoal-card border border-charcoal-cardBorder hover:text-ivory-100 hover:border-bronze-500/30 transition-colors"
               >
-                <item.icon className="w-4 h-4 text-indigo-400" />
-                <span>{item.label}</span>
+                {item.label}
               </Link>
             ))}
+          </div>
+
+          <div className="pt-2 border-t border-charcoal-cardBorder">
+            <div className="text-[10px] font-mono uppercase tracking-wider text-ivory-500 mb-2 font-semibold">
+              More Categories
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 max-h-44 overflow-y-auto pr-1">
+              {moreNavCategories.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/${cat.slug}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-2.5 py-1.5 rounded-lg text-[11px] text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="pt-2">
             <Link
               href="/submit-opportunity"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-indigo-600 to-cyan-500 shadow-lg shadow-indigo-500/20"
+              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl font-bold text-xs text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-3.5 h-3.5" />
               <span>Post an Opportunity</span>
             </Link>
-          </div>
-
-          <div className="pt-2 border-t border-slate-800">
-            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              All Categories
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto">
-              {CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/${cat.slug}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-xs text-slate-400 hover:text-indigo-300 py-1.5 px-2 rounded-lg hover:bg-slate-900 truncate"
-                >
-                  • {cat.name}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       )}

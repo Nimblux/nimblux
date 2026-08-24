@@ -13,7 +13,7 @@ import {
   CheckCircle2,
   DollarSign,
   ArrowRight,
-  Share2,
+  ShieldCheck,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
@@ -62,8 +62,9 @@ export default function OpportunityCard({
     (c) => c.slug.toLowerCase() === opportunity.category.toLowerCase()
   ) || {
     name: opportunity.category,
-    color: "from-indigo-500 to-cyan-500",
-    bgGradient: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    color: "from-bronze-400 to-bronze-600",
+    bgGradient: "bg-bronze-500/10 text-bronze-300 border-bronze-500/20",
+    dotColor: "bg-bronze-400",
   };
 
   const daysInfo = getDaysRemaining(opportunity.deadline);
@@ -99,7 +100,6 @@ export default function OpportunityCard({
 
   const handleApplyClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Fire background click track
     fetch(`/api/opportunities/${opportunity.id}/click`, { method: "POST" }).catch(() => {});
   };
 
@@ -108,67 +108,66 @@ export default function OpportunityCard({
     : [];
 
   return (
-    <div
-      className={`group relative rounded-2xl glass-panel glass-panel-hover overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+    <article
+      className={`group relative rounded-2xl bg-charcoal-card border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
         opportunity.featured
-          ? "border-indigo-500/40 bg-gradient-to-b from-indigo-950/20 via-slate-900/60 to-slate-950/80 shadow-lg shadow-indigo-950/20"
-          : "border-slate-800/80 bg-slate-900/40 hover:border-slate-700"
+          ? "border-bronze-500/30 bg-gradient-to-b from-charcoal-850 via-charcoal-card to-charcoal-card shadow-editorial"
+          : "border-charcoal-cardBorder hover:border-bronze-500/30 hover:shadow-card-hover"
       }`}
     >
-      {/* Featured Ribbon */}
+      {/* Featured Badge */}
       {opportunity.featured && (
         <div className="absolute top-0 right-0 z-10">
-          <div className="flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-indigo-600 to-brand-500 text-white text-[10px] font-bold tracking-wider uppercase rounded-bl-xl shadow-md">
-            <Sparkles className="w-3 h-3 animate-pulse" />
+          <div className="flex items-center space-x-1 px-3 py-1 bg-bronze-500 text-charcoal-950 text-[10px] font-mono font-bold tracking-wider uppercase rounded-bl-xl shadow-sm">
+            <Sparkles className="w-2.5 h-2.5" />
             <span>Featured</span>
           </div>
         </div>
       )}
 
-      {/* Main Content */}
+      {/* Main Card Body */}
       <div className="p-5 sm:p-6">
-        {/* Header: Org Logo, Org Name, Category & Bookmark Button */}
-        <div className="flex items-start justify-between gap-4 mb-3.5">
-          <div className="flex items-center space-x-3">
+        {/* Organization Header */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center space-x-3 min-w-0">
             {/* Org Logo / Monogram */}
-            <div className="w-12 h-12 rounded-xl bg-slate-800/90 border border-slate-700/60 flex items-center justify-center p-1.5 shadow-sm overflow-hidden flex-shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center p-1.5 shadow-sm overflow-hidden flex-shrink-0">
               {opportunity.logo ? (
                 <img
                   src={opportunity.logo}
                   alt={opportunity.organization}
                   className="w-full h-full object-cover rounded-lg"
                   onError={(e) => {
-                    // Fallback to text initials if broken
                     (e.target as HTMLElement).style.display = "none";
                   }}
                 />
               ) : (
-                <div className="w-full h-full rounded-lg bg-gradient-to-br from-indigo-900/50 to-slate-800 flex items-center justify-center font-bold text-indigo-300 text-sm">
+                <div className="w-full h-full rounded-lg bg-bronze-500/15 flex items-center justify-center font-bold text-bronze-300 text-xs font-mono">
                   {opportunity.organization.slice(0, 2).toUpperCase()}
                 </div>
               )}
             </div>
 
-            {/* Org Name & Verified Badge */}
-            <div>
+            {/* Org Name & Verified Status */}
+            <div className="min-w-0">
               <div className="flex items-center space-x-1.5">
-                <span className="font-semibold text-xs text-slate-300">
+                <span className="font-semibold text-xs text-ivory-300 truncate">
                   {opportunity.organization}
                 </span>
                 {opportunity.verified && (
                   <span title="Verified by NIMBLUX">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-sage-400 flex-shrink-0" />
                   </span>
                 )}
               </div>
-              <div className="flex items-center space-x-2 mt-0.5">
+              <div className="flex items-center space-x-1.5 mt-1">
                 <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium border ${categoryMeta.bgGradient}`}
+                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium border ${categoryMeta.bgGradient}`}
                 >
                   {categoryMeta.name}
                 </span>
                 <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium ${modeBadge.className}`}
+                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium ${modeBadge.className}`}
                 >
                   {modeBadge.label}
                 </span>
@@ -176,32 +175,35 @@ export default function OpportunityCard({
             </div>
           </div>
 
-          {/* Bookmark Button */}
+          {/* Bookmark Action */}
           <button
             onClick={handleBookmark}
             disabled={saving}
-            className={`p-2 rounded-xl border transition-all ${
+            className={`p-2 rounded-xl border transition-colors ${
               saved
-                ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/40 shadow-sm"
-                : "bg-slate-900/60 text-slate-400 border-slate-800 hover:text-slate-200 hover:border-slate-700"
+                ? "bg-bronze-500/15 text-bronze-400 border-bronze-500/30"
+                : "bg-charcoal-900 text-ivory-500 border-charcoal-cardBorder hover:text-ivory-200 hover:border-charcoal-800"
             }`}
             title={saved ? "Remove from saved" : "Save opportunity"}
             aria-label="Save opportunity"
           >
-            <Bookmark className={`w-4 h-4 ${saved ? "fill-indigo-400" : ""}`} />
+            <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-bronze-400" : ""}`} />
           </button>
         </div>
 
         {/* Opportunity Title */}
-        <Link href={`/opportunity/${opportunity.slug}`} className="block group-hover:text-indigo-300 transition-colors">
-          <h3 className="font-display font-bold text-base sm:text-lg text-white line-clamp-2 leading-snug">
+        <Link
+          href={`/opportunity/${opportunity.slug}`}
+          className="block group/title focus:outline-none"
+        >
+          <h3 className="font-sans font-bold text-[15px] sm:text-base text-ivory-100 group-hover/title:text-bronze-300 transition-colors line-clamp-2 leading-snug">
             {opportunity.title}
           </h3>
         </Link>
 
         {/* Short Description */}
         {!compact && (
-          <p className="mt-2 text-xs sm:text-sm text-slate-400 line-clamp-2 leading-relaxed">
+          <p className="mt-2 text-xs text-ivory-500 line-clamp-2 leading-relaxed">
             {opportunity.description}
           </p>
         )}
@@ -212,14 +214,14 @@ export default function OpportunityCard({
             {skillsList.map((skill) => (
               <span
                 key={skill}
-                className="px-2 py-0.5 rounded-md text-[11px] bg-slate-800/80 text-slate-300 border border-slate-700/50"
+                className="px-2 py-0.5 rounded-md text-[10.5px] bg-charcoal-900 text-ivory-400 border border-charcoal-cardBorder"
               >
                 {skill}
               </span>
             ))}
             {opportunity.skills && opportunity.skills.split(",").length > 3 && (
-              <span className="px-1.5 py-0.5 rounded-md text-[10px] text-slate-400 font-medium self-center">
-                +{opportunity.skills.split(",").length - 3} more
+              <span className="px-1 py-0.5 text-[10px] text-ivory-500 font-mono self-center">
+                +{opportunity.skills.split(",").length - 3}
               </span>
             )}
           </div>
@@ -227,34 +229,33 @@ export default function OpportunityCard({
       </div>
 
       {/* Footer Info & Action Buttons */}
-      <div className="px-5 sm:px-6 py-4 bg-slate-950/60 border-t border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        {/* Highlights: Stipend / Salary / Deadline */}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
+      <div className="px-5 sm:px-6 py-3.5 bg-charcoal-950/60 border-t border-charcoal-cardBorder flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Stipend / Deadline Meta */}
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs">
           {/* Compensation */}
           {(opportunity.stipend || opportunity.salary) ? (
-            <div className="flex items-center space-x-1 text-emerald-400 font-semibold">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="truncate max-w-[140px]">
+            <div className="flex items-center space-x-1 text-forest-300 font-semibold font-mono text-[11.5px]">
+              <span className="truncate max-w-[130px]">
                 {opportunity.stipend || opportunity.salary}
               </span>
             </div>
           ) : (
-            <div className="text-slate-400 font-medium">
+            <div className="text-ivory-500 font-mono text-[11px]">
               {opportunity.registrationFee || "Free Entry"}
             </div>
           )}
 
           {/* Deadline */}
           <div
-            className={`flex items-center space-x-1 font-medium ${
+            className={`flex items-center space-x-1 font-mono text-[11px] ${
               daysInfo.isUrgent
                 ? "text-rose-400 font-semibold"
                 : daysInfo.isExpired
-                ? "text-slate-500 line-through"
-                : "text-slate-400"
+                ? "text-ivory-500 line-through"
+                : "text-ivory-400"
             }`}
           >
-            <Clock className="w-3.5 h-3.5" />
+            <Clock className="w-3 h-3" />
             <span>{daysInfo.text}</span>
           </div>
         </div>
@@ -263,22 +264,22 @@ export default function OpportunityCard({
         <div className="flex items-center space-x-2">
           <Link
             href={`/opportunity/${opportunity.slug}`}
-            className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition-colors text-center"
+            className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl text-xs font-medium text-ivory-300 hover:text-ivory-100 bg-charcoal-900 hover:bg-charcoal-850 border border-charcoal-cardBorder transition-colors text-center"
           >
-            View Details
+            Details
           </Link>
           <a
             href={opportunity.applicationUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleApplyClick}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1 px-4 py-1.5 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm shadow-indigo-600/30 transition-all"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1 px-3.5 py-1.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
           >
             <span>Apply</span>
             <ExternalLink className="w-3 h-3 ml-0.5" />
           </a>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

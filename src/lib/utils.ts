@@ -10,10 +10,10 @@ export function slugify(text: string): string {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(/&/g, "-and-") // Replace & with 'and'
-    .replace(/[^\w\-]+/g, "") // Remove all non-word chars
-    .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+    .replace(/\s+/g, "-")
+    .replace(/&/g, "-and-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-");
 }
 
 export function formatDate(date: string | Date | null | undefined): string {
@@ -42,7 +42,7 @@ export function getDaysRemaining(date: string | Date | null | undefined): {
   const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
   if (days < 0) {
-    return { days, text: "Deadline passed", isUrgent: false, isExpired: true };
+    return { days, text: "Closed", isUrgent: false, isExpired: true };
   }
   if (days === 0) {
     return { days: 0, text: "Closes today", isUrgent: true, isExpired: false };
@@ -53,7 +53,7 @@ export function getDaysRemaining(date: string | Date | null | undefined): {
   if (days <= 3) {
     return { days, text: `${days} days left`, isUrgent: true, isExpired: false };
   }
-  return { days, text: `${days} days left`, isUrgent: false, isExpired: false };
+  return { days, text: `${days}d remaining`, isUrgent: false, isExpired: false };
 }
 
 export function getWorkModeBadge(mode: string): {
@@ -64,18 +64,18 @@ export function getWorkModeBadge(mode: string): {
     case "REMOTE":
       return {
         label: "Remote",
-        className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+        className: "bg-forest-500/10 text-forest-300 border border-forest-500/20",
       };
     case "HYBRID":
       return {
         label: "Hybrid",
-        className: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
+        className: "bg-sage-500/10 text-sage-300 border border-sage-500/20",
       };
     case "ONSITE":
     default:
       return {
         label: "On-site",
-        className: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+        className: "bg-stone-500/10 text-stone-300 border border-stone-500/20",
       };
   }
 }
@@ -89,21 +89,21 @@ export function getStatusBadge(status: string): {
     case "APPROVED":
       return {
         label: "Published",
-        className: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-        dotColor: "bg-emerald-400",
+        className: "bg-forest-500/10 text-forest-300 border border-forest-500/20",
+        dotColor: "bg-forest-400",
       };
     case "REJECTED":
       return {
-        label: "Rejected / Revision",
-        className: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
+        label: "Revision Requested",
+        className: "bg-rose-500/10 text-rose-300 border border-rose-500/20",
         dotColor: "bg-rose-400",
       };
     case "PENDING":
     default:
       return {
-        label: "Pending Review",
-        className: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-        dotColor: "bg-amber-400",
+        label: "Under Review",
+        className: "bg-bronze-500/10 text-bronze-300 border border-bronze-500/20",
+        dotColor: "bg-bronze-400",
       };
   }
 }

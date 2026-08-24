@@ -18,7 +18,7 @@ import {
   Sparkles,
   ArrowLeft,
   Mail,
-  HelpCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constants";
@@ -57,8 +57,9 @@ export default function OpportunityDetailClient({
     (c) => c.slug.toLowerCase() === opportunity.category.toLowerCase()
   ) || {
     name: opportunity.category,
-    color: "from-indigo-500 to-cyan-500",
-    bgGradient: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    color: "from-bronze-400 to-bronze-600",
+    bgGradient: "bg-bronze-500/10 text-bronze-300 border-bronze-500/20",
+    dotColor: "bg-bronze-400",
   };
 
   const daysInfo = getDaysRemaining(opportunity.deadline);
@@ -87,7 +88,7 @@ export default function OpportunityDetailClient({
     fetch(`/api/opportunities/${opportunity.id}/click`, { method: "POST" }).catch(() => {});
   };
 
-  const currentUrl = typeof window !== "undefined" ? window.location.href : `https://nimblux.com/opportunity/${opportunity.slug}`;
+  const currentUrl = typeof window !== "undefined" ? window.location.href : `https://nimblux.xyz/opportunity/${opportunity.slug}`;
 
   const skillsList = opportunity.skills
     ? opportunity.skills.split(",").map((s) => s.trim()).filter(Boolean)
@@ -95,31 +96,30 @@ export default function OpportunityDetailClient({
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center space-x-2 text-xs text-slate-400 mb-6">
-        <Link href="/opportunities" className="hover:text-white transition-colors">
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs font-mono text-ivory-500 mb-6">
+        <Link href="/opportunities" className="hover:text-ivory-200 transition-colors">
           Opportunities
         </Link>
         <span>/</span>
         <Link
           href={`/${opportunity.category.toLowerCase()}`}
-          className="hover:text-white capitalize transition-colors"
+          className="hover:text-ivory-200 capitalize transition-colors"
         >
           {categoryMeta.name}
         </Link>
         <span>/</span>
-        <span className="text-slate-300 truncate max-w-xs">{opportunity.title}</span>
-      </div>
+        <span className="text-ivory-300 truncate max-w-xs">{opportunity.title}</span>
+      </nav>
 
       {/* Main Grid: Left Details + Right Sticky Action Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Left Column (2 Cols) */}
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Main Card */}
-          <div className="rounded-3xl glass-panel p-6 sm:p-8 border border-slate-800 bg-slate-900/40">
+          <div className="rounded-3xl bg-charcoal-card p-6 sm:p-8 border border-charcoal-cardBorder shadow-card">
             {/* Header: Org Logo, Verified, Category, Title */}
             <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-800 border border-slate-700/80 p-2 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-md">
+              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder p-2 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
                 {opportunity.logo ? (
                   <img
                     src={opportunity.logo}
@@ -127,7 +127,7 @@ export default function OpportunityDetailClient({
                     className="w-full h-full object-cover rounded-xl"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-xl bg-gradient-to-br from-indigo-900/50 to-slate-800 flex items-center justify-center font-bold text-indigo-300 text-xl">
+                  <div className="w-full h-full rounded-xl bg-bronze-500/15 flex items-center justify-center font-bold text-bronze-300 text-lg font-mono">
                     {opportunity.organization.slice(0, 2).toUpperCase()}
                   </div>
                 )}
@@ -135,51 +135,51 @@ export default function OpportunityDetailClient({
 
               <div className="flex-1">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="font-semibold text-sm text-slate-300">
+                  <span className="font-semibold text-xs text-ivory-300">
                     {opportunity.organization}
                   </span>
                   {opportunity.verified && (
-                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                      <CheckCircle2 className="w-3 h-3" />
+                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10.5px] font-semibold bg-sage-500/10 text-sage-300 border border-sage-500/20">
+                      <ShieldCheck className="w-3 h-3" />
                       <span>Verified</span>
                     </span>
                   )}
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${categoryMeta.bgGradient}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium border ${categoryMeta.bgGradient}`}
                   >
                     {categoryMeta.name}
                   </span>
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold ${modeBadge.className}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium ${modeBadge.className}`}
                   >
                     {modeBadge.label}
                   </span>
                 </div>
 
-                <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white leading-tight">
+                <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100 leading-tight">
                   {opportunity.title}
                 </h1>
               </div>
             </div>
 
-            {/* Key Highlights Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80 my-6">
+            {/* Key Highlights Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder my-6">
               <div>
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">
+                <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
                   Compensation
                 </div>
-                <div className="text-sm font-bold text-emerald-400 mt-0.5 truncate">
-                  {opportunity.stipend || opportunity.salary || opportunity.registrationFee || "Free"}
+                <div className="text-xs sm:text-sm font-bold text-forest-300 mt-0.5 truncate font-mono">
+                  {opportunity.stipend || opportunity.salary || opportunity.registrationFee || "Free Entry"}
                 </div>
               </div>
 
               <div>
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">
+                <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
                   Deadline
                 </div>
                 <div
-                  className={`text-sm font-bold mt-0.5 ${
-                    daysInfo.isUrgent ? "text-rose-400" : "text-white"
+                  className={`text-xs sm:text-sm font-bold mt-0.5 font-mono ${
+                    daysInfo.isUrgent ? "text-rose-400" : "text-ivory-100"
                   }`}
                 >
                   {formatDate(opportunity.deadline)}
@@ -187,21 +187,21 @@ export default function OpportunityDetailClient({
               </div>
 
               <div>
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">
+                <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
                   Location
                 </div>
-                <div className="text-sm font-bold text-white mt-0.5 truncate">
+                <div className="text-xs sm:text-sm font-bold text-ivory-200 mt-0.5 truncate">
                   {opportunity.location}
                 </div>
               </div>
 
               <div>
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">
-                  Time Remaining
+                <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
+                  Status
                 </div>
                 <div
-                  className={`text-sm font-bold mt-0.5 ${
-                    daysInfo.isUrgent ? "text-rose-400" : "text-indigo-400"
+                  className={`text-xs sm:text-sm font-bold mt-0.5 font-mono ${
+                    daysInfo.isUrgent ? "text-rose-400" : "text-bronze-300"
                   }`}
                 >
                   {daysInfo.text}
@@ -211,7 +211,7 @@ export default function OpportunityDetailClient({
 
             {/* Banner Image */}
             {opportunity.banner && (
-              <div className="rounded-2xl overflow-hidden my-6 max-h-80 border border-slate-800">
+              <div className="rounded-2xl overflow-hidden my-6 max-h-80 border border-charcoal-cardBorder">
                 <img
                   src={opportunity.banner}
                   alt={opportunity.title}
@@ -221,23 +221,23 @@ export default function OpportunityDetailClient({
             )}
 
             {/* Section: Full Description */}
-            <div className="space-y-4 pt-4 border-t border-slate-800">
-              <h2 className="font-display font-bold text-lg text-white">
+            <div className="space-y-3 pt-4 border-t border-charcoal-cardBorder">
+              <h2 className="font-sans font-bold text-base text-ivory-100">
                 About the Opportunity
               </h2>
-              <div className="text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+              <div className="text-xs sm:text-sm text-ivory-400 leading-relaxed whitespace-pre-line">
                 {opportunity.description}
               </div>
             </div>
 
             {/* Section: Eligibility */}
             {opportunity.eligibility && (
-              <div className="space-y-3 pt-6 border-t border-slate-800 mt-6">
-                <h2 className="font-display font-bold text-lg text-white flex items-center space-x-2">
-                  <GraduationCap className="w-5 h-5 text-indigo-400" />
+              <div className="space-y-3 pt-6 border-t border-charcoal-cardBorder mt-6">
+                <h2 className="font-sans font-bold text-base text-ivory-100 flex items-center space-x-2">
+                  <GraduationCap className="w-4.5 h-4.5 text-bronze-400" />
                   <span>Eligibility & Criteria</span>
                 </h2>
-                <p className="text-sm text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-ivory-400 leading-relaxed">
                   {opportunity.eligibility}
                 </p>
               </div>
@@ -245,15 +245,15 @@ export default function OpportunityDetailClient({
 
             {/* Section: Skills */}
             {skillsList.length > 0 && (
-              <div className="space-y-3 pt-6 border-t border-slate-800 mt-6">
-                <h2 className="font-display font-bold text-lg text-white">
+              <div className="space-y-3 pt-6 border-t border-charcoal-cardBorder mt-6">
+                <h2 className="font-sans font-bold text-base text-ivory-100">
                   Skills & Technologies Required
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {skillsList.map((skill) => (
                     <span
                       key={skill}
-                      className="px-3 py-1 rounded-xl text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                      className="px-2.5 py-1 rounded-lg text-xs font-medium bg-charcoal-900 text-ivory-300 border border-charcoal-cardBorder"
                     >
                       {skill}
                     </span>
@@ -263,22 +263,22 @@ export default function OpportunityDetailClient({
             )}
 
             {/* Section: Important Dates */}
-            <div className="space-y-3 pt-6 border-t border-slate-800 mt-6">
-              <h2 className="font-display font-bold text-lg text-white flex items-center space-x-2">
-                <Calendar className="w-5 h-5 text-cyan-400" />
+            <div className="space-y-3 pt-6 border-t border-charcoal-cardBorder mt-6">
+              <h2 className="font-sans font-bold text-base text-ivory-100 flex items-center space-x-2">
+                <Calendar className="w-4.5 h-4.5 text-forest-400" />
                 <span>Important Timeline</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <span className="text-slate-400 block">Application Closes:</span>
-                  <span className="text-sm font-semibold text-white mt-0.5 block">
+                <div className="p-3 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder">
+                  <span className="text-ivory-500 block font-mono text-[11px]">Application Closes:</span>
+                  <span className="text-xs sm:text-sm font-semibold text-ivory-100 mt-0.5 block font-mono">
                     {formatDate(opportunity.deadline)}
                   </span>
                 </div>
                 {opportunity.startDate && (
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-                    <span className="text-slate-400 block">Program Start Date:</span>
-                    <span className="text-sm font-semibold text-white mt-0.5 block">
+                  <div className="p-3 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder">
+                    <span className="text-ivory-500 block font-mono text-[11px]">Program Start Date:</span>
+                    <span className="text-xs sm:text-sm font-semibold text-ivory-100 mt-0.5 block font-mono">
                       {formatDate(opportunity.startDate)}
                     </span>
                   </div>
@@ -288,18 +288,18 @@ export default function OpportunityDetailClient({
 
             {/* Section: Additional & Contact */}
             {(opportunity.additionalInfo || opportunity.contactInfo) && (
-              <div className="space-y-3 pt-6 border-t border-slate-800 mt-6">
-                <h2 className="font-display font-bold text-lg text-white">
+              <div className="space-y-3 pt-6 border-t border-charcoal-cardBorder mt-6">
+                <h2 className="font-sans font-bold text-base text-ivory-100">
                   Additional Information
                 </h2>
                 {opportunity.additionalInfo && (
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-ivory-400 leading-relaxed">
                     {opportunity.additionalInfo}
                   </p>
                 )}
                 {opportunity.contactInfo && (
-                  <div className="flex items-center space-x-2 text-xs text-indigo-300 pt-1">
-                    <Mail className="w-4 h-4" />
+                  <div className="flex items-center space-x-2 text-xs text-bronze-300 pt-1 font-mono">
+                    <Mail className="w-3.5 h-3.5" />
                     <span>Contact: {opportunity.contactInfo}</span>
                   </div>
                 )}
@@ -308,16 +308,15 @@ export default function OpportunityDetailClient({
           </div>
         </div>
 
-        {/* Right Sticky Sidebar (1 Col) */}
-        <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-24">
-          {/* Action Box */}
-          <div className="rounded-3xl glass-panel p-6 border border-slate-800 bg-slate-900/60 space-y-4 shadow-xl">
+        {/* Right Sticky Sidebar */}
+        <div className="lg:col-span-1 space-y-5 lg:sticky lg:top-24">
+          <div className="rounded-3xl bg-charcoal-card p-6 border border-charcoal-cardBorder space-y-4 shadow-card">
             <a
               href={opportunity.applicationUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleApplyClick}
-              className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-indigo-600 via-brand-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 shadow-xl shadow-indigo-600/30 glow-button transition-all text-center"
+              className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all text-center"
             >
               <span>Apply on Official Website</span>
               <ExternalLink className="w-4 h-4" />
@@ -327,55 +326,54 @@ export default function OpportunityDetailClient({
               <button
                 onClick={handleBookmark}
                 disabled={saving}
-                className={`flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-semibold border transition-all ${
+                className={`flex items-center justify-center space-x-2 py-2 px-4 rounded-xl text-xs font-semibold border transition-all ${
                   saved
-                    ? "bg-indigo-600/20 text-indigo-300 border-indigo-500/40"
-                    : "bg-slate-950/80 text-slate-300 border-slate-800 hover:text-white hover:border-slate-700"
+                    ? "bg-bronze-500/15 text-bronze-300 border-bronze-500/30"
+                    : "bg-charcoal-900 text-ivory-300 border-charcoal-cardBorder hover:text-white hover:border-charcoal-800"
                 }`}
               >
-                <Bookmark className={`w-4 h-4 ${saved ? "fill-indigo-400" : ""}`} />
+                <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-bronze-400" : ""}`} />
                 <span>{saved ? "Saved" : "Save"}</span>
               </button>
 
               <button
                 onClick={() => setShareOpen(true)}
-                className="flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-950/80 text-slate-300 border border-slate-800 hover:text-white hover:border-slate-700 transition-colors"
+                className="flex items-center justify-center space-x-2 py-2 px-4 rounded-xl text-xs font-semibold bg-charcoal-900 text-ivory-300 border border-charcoal-cardBorder hover:text-white hover:border-charcoal-800 transition-colors"
               >
-                <Share2 className="w-4 h-4 text-sky-400" />
+                <Share2 className="w-3.5 h-3.5" />
                 <span>Share</span>
               </button>
             </div>
 
-            {/* Report Button */}
-            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <div className="pt-3 border-t border-charcoal-cardBorder flex items-center justify-between text-xs">
               <button
                 onClick={() => setReportOpen(true)}
-                className="flex items-center space-x-1.5 text-slate-400 hover:text-rose-400 transition-colors"
+                className="flex items-center space-x-1.5 text-ivory-500 hover:text-rose-400 transition-colors text-[11px]"
               >
-                <Flag className="w-3.5 h-3.5" />
-                <span>Report incorrect listing</span>
+                <Flag className="w-3 h-3" />
+                <span>Report listing issue</span>
               </button>
             </div>
           </div>
 
-          {/* Submitter & Verification Badge */}
-          <div className="rounded-3xl glass-panel p-5 border border-slate-800 bg-slate-900/40 space-y-3">
-            <div className="flex items-center space-x-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+          {/* Verification Box */}
+          <div className="rounded-3xl bg-charcoal-card p-5 border border-charcoal-cardBorder space-y-2.5 shadow-card">
+            <div className="flex items-center space-x-2 text-xs font-mono font-bold text-ivory-300 uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-sage-400" />
               <span>Verified Listing</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              This listing has been verified by the NIMBLUX review team. Applications are processed directly on the organizer's platform.
+            <p className="text-xs text-ivory-500 leading-relaxed">
+              This listing has been verified by the NIMBLUX review team. Applications are submitted directly on the official host website.
             </p>
             {opportunity.createdBy && (
-              <div className="pt-3 border-t border-slate-800/80 flex items-center space-x-2.5 text-xs text-slate-400">
-                <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-[10px]">
+              <div className="pt-3 border-t border-charcoal-cardBorder flex items-center space-x-2.5 text-xs text-ivory-400">
+                <div className="w-6 h-6 rounded-full bg-bronze-500/20 text-bronze-300 flex items-center justify-center font-bold text-[10px] font-mono">
                   {opportunity.createdBy.name.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-slate-300 font-medium">{opportunity.createdBy.name}</div>
+                  <div className="text-ivory-200 font-medium">{opportunity.createdBy.name}</div>
                   {opportunity.createdBy.college && (
-                    <div className="text-[10px] text-slate-400">{opportunity.createdBy.college}</div>
+                    <div className="text-[10px] text-ivory-500">{opportunity.createdBy.college}</div>
                   )}
                 </div>
               </div>
@@ -386,26 +384,26 @@ export default function OpportunityDetailClient({
 
       {/* Related Opportunities */}
       {related.length > 0 && (
-        <div className="mt-16 pt-12 border-t border-slate-800">
+        <div className="mt-16 pt-12 border-t border-charcoal-cardBorder">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
-                <Sparkles className="w-4 h-4" />
+              <div className="flex items-center space-x-2 text-bronze-400 text-xs font-mono uppercase tracking-wider mb-1 font-semibold">
+                <Sparkles className="w-3.5 h-3.5" />
                 <span>Similar Opportunities</span>
               </div>
-              <h2 className="font-display font-bold text-2xl text-white">
+              <h2 className="font-serif-heading font-medium text-2xl text-ivory-100">
                 More in {categoryMeta.name}
               </h2>
             </div>
             <Link
               href={`/${opportunity.category.toLowerCase()}`}
-              className="text-xs sm:text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="text-xs font-semibold text-bronze-400 hover:text-bronze-300 transition-colors"
             >
               View all →
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {related.map((rel) => (
               <OpportunityCard key={rel.id} opportunity={rel} compact />
             ))}
@@ -413,7 +411,7 @@ export default function OpportunityDetailClient({
         </div>
       )}
 
-      {/* Share Modal */}
+      {/* Modals */}
       <ShareModal
         isOpen={shareOpen}
         title={opportunity.title}
@@ -421,7 +419,6 @@ export default function OpportunityDetailClient({
         onClose={() => setShareOpen(false)}
       />
 
-      {/* Report Modal */}
       <ReportModal
         isOpen={reportOpen}
         opportunityId={opportunity.id}

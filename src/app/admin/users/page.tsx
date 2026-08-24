@@ -100,43 +100,43 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="flex items-center space-x-2 text-bronze-400 text-xs font-mono font-bold uppercase tracking-wider mb-1">
             <Users className="w-4 h-4" />
             <span>User Directory</span>
           </div>
-          <h1 className="font-display font-extrabold text-2xl sm:text-3xl text-white">
+          <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
             Registered Users ({users.length})
           </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-ivory-500 mt-0.5">
             Manage permissions, student profiles, and moderation status.
           </p>
         </div>
 
         <div className="relative">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+          <Search className="w-3.5 h-3.5 text-ivory-500 absolute left-3 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, email, college..."
-            className="pl-8 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-64"
+            className="pl-8 pr-4 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 w-64 font-mono"
           />
         </div>
       </div>
 
-      <div className="rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-3xl bg-charcoal-card border border-charcoal-cardBorder overflow-hidden shadow-card">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-xs animate-pulse">
+          <div className="p-12 text-center text-ivory-500 text-xs animate-pulse font-mono">
             Loading users...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 p-6 text-slate-400 text-xs">
+          <div className="text-center py-16 p-6 text-ivory-500 text-xs">
             No users matched your query.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/90 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[10px]">
+              <thead className="bg-charcoal-950/90 text-ivory-500 uppercase tracking-wider border-b border-charcoal-cardBorder text-[10px] font-mono">
                 <tr>
                   <th className="py-3.5 px-4 font-semibold">User</th>
                   <th className="py-3.5 px-3 font-semibold">Education</th>
@@ -147,28 +147,28 @@ export default function AdminUsersPage() {
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-charcoal-cardBorder/60">
                 {filtered.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-900/60 transition-colors">
+                  <tr key={u.id} className="hover:bg-charcoal-900/50 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-white">{u.name}</div>
-                      <div className="text-[11px] text-slate-400">{u.email}</div>
+                      <div className="font-bold text-ivory-100">{u.name}</div>
+                      <div className="text-[11px] text-ivory-500 font-mono">{u.email}</div>
                     </td>
                     <td className="py-3.5 px-3">
-                      <div className="text-slate-300 truncate max-w-[150px]">
+                      <div className="text-ivory-300 truncate max-w-[150px]">
                         {u.college || "Not specified"}
                       </div>
-                      <div className="text-[10px] text-slate-500 truncate max-w-[150px]">
+                      <div className="text-[10px] text-ivory-500 truncate max-w-[150px]">
                         {u.degree || "—"}
                       </div>
                     </td>
                     <td className="py-3.5 px-3">
                       <button
                         onClick={() => handleToggleRole(u.id, u.role)}
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border transition-colors ${
                           u.role === "ADMIN"
-                            ? "bg-amber-500/20 text-amber-300 border-amber-500/30"
-                            : "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700"
+                            ? "bg-bronze-500/20 text-bronze-300 border-bronze-500/30"
+                            : "bg-charcoal-900 text-ivory-300 border-charcoal-cardBorder hover:bg-charcoal-850"
                         }`}
                         title="Click to toggle role"
                       >
@@ -177,37 +177,37 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="py-3.5 px-3">
                       <span
-                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-semibold ${
+                        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-medium ${
                           u.status === "ACTIVE"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            ? "bg-forest-500/10 text-forest-300 border border-forest-500/20"
                             : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                         }`}
                       >
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
-                            u.status === "ACTIVE" ? "bg-emerald-400" : "bg-rose-400"
+                            u.status === "ACTIVE" ? "bg-forest-400" : "bg-rose-400"
                           }`}
                         />
                         <span>{u.status}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-3 text-slate-300">
-                      <span className="font-bold text-white">
+                    <td className="py-3.5 px-3 text-ivory-300 font-mono text-[11px]">
+                      <span className="font-bold text-ivory-100">
                         {u._count?.opportunities || 0}
                       </span>{" "}
                       posted
                     </td>
-                    <td className="py-3.5 px-3 text-slate-400 whitespace-nowrap">
+                    <td className="py-3.5 px-3 text-ivory-500 font-mono text-[11px] whitespace-nowrap">
                       {formatDate(u.createdAt)}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleToggleStatus(u.id, u.status)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors ${
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
                             u.status === "ACTIVE"
                               ? "bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20"
-                              : "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
+                              : "bg-forest-500/10 text-forest-300 border-forest-500/30 hover:bg-forest-500/20"
                           }`}
                         >
                           {u.status === "ACTIVE" ? "Suspend" : "Activate"}

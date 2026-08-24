@@ -12,9 +12,7 @@ import {
   Trash2,
   PlusCircle,
   X,
-  Info,
   Save,
-  ArrowRight,
 } from "lucide-react";
 import { getStatusBadge, formatDate } from "@/lib/utils";
 
@@ -112,17 +110,17 @@ export default function MySubmissionsPage() {
       {/* Header & Filter Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="font-display font-bold text-xl sm:text-2xl text-white">
+          <h2 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
             My Opportunity Submissions
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-ivory-500 mt-0.5">
             Track, update, or remove opportunities you submitted to the platform.
           </p>
         </div>
 
         <Link
           href="/submit-opportunity"
-          className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 transition-colors shadow-sm self-start sm:self-auto"
+          className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 transition-colors shadow-button self-start sm:self-auto"
         >
           <PlusCircle className="w-4 h-4" />
           <span>New Submission</span>
@@ -130,13 +128,13 @@ export default function MySubmissionsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+      <div className="flex items-center space-x-2 border-b border-charcoal-cardBorder pb-3">
         <button
           onClick={() => setFilter("ALL")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors ${
             filter === "ALL"
-              ? "bg-slate-800 text-white"
-              : "text-slate-400 hover:text-white"
+              ? "bg-charcoal-card text-ivory-100 border border-charcoal-cardBorder font-semibold"
+              : "text-ivory-500 hover:text-ivory-200"
           }`}
         >
           All ({submissions.length})
@@ -144,60 +142,60 @@ export default function MySubmissionsPage() {
 
         <button
           onClick={() => setFilter("PENDING")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors flex items-center space-x-1.5 ${
             filter === "PENDING"
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-              : "text-slate-400 hover:text-amber-300"
+              ? "bg-bronze-500/15 text-bronze-300 border border-bronze-500/30"
+              : "text-ivory-500 hover:text-bronze-300"
           }`}
         >
-          <span>Pending Review</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-amber-500/30 text-[10px]">
+          <span>Under Review</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-bronze-500/20 text-[10px] font-mono">
             {pendingCount}
           </span>
         </button>
 
         <button
           onClick={() => setFilter("APPROVED")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors flex items-center space-x-1.5 ${
             filter === "APPROVED"
-              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-              : "text-slate-400 hover:text-emerald-300"
+              ? "bg-forest-500/15 text-forest-300 border border-forest-500/30"
+              : "text-ivory-500 hover:text-forest-300"
           }`}
         >
           <span>Published</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/30 text-[10px]">
+          <span className="px-1.5 py-0.2 rounded-full bg-forest-500/20 text-[10px] font-mono">
             {approvedCount}
           </span>
         </button>
 
         <button
           onClick={() => setFilter("REJECTED")}
-          className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors flex items-center space-x-1.5 ${
             filter === "REJECTED"
-              ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-              : "text-slate-400 hover:text-rose-300"
+              ? "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+              : "text-ivory-500 hover:text-rose-300"
           }`}
         >
           <span>Needs Revision</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-rose-500/30 text-[10px]">
+          <span className="px-1.5 py-0.2 rounded-full bg-rose-500/20 text-[10px] font-mono">
             {rejectedCount}
           </span>
         </button>
       </div>
 
       {/* Submissions Table */}
-      <div className="rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 overflow-hidden shadow-xl">
+      <div className="rounded-3xl bg-charcoal-card border border-charcoal-cardBorder overflow-hidden shadow-card">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-xs animate-pulse">
+          <div className="p-12 text-center text-ivory-500 text-xs animate-pulse">
             Loading your submissions...
           </div>
         ) : filteredSubmissions.length === 0 ? (
           <div className="text-center py-16 p-6 space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500">
+            <div className="w-12 h-12 rounded-2xl bg-charcoal-900 flex items-center justify-center mx-auto text-ivory-500">
               <Briefcase className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-white">No submissions found</p>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            <p className="text-sm font-semibold text-ivory-100">No submissions found</p>
+            <p className="text-xs text-ivory-500 max-w-sm mx-auto">
               {filter === "ALL"
                 ? "You haven't posted any opportunities yet."
                 : `You don't have any opportunities with status ${filter}.`}
@@ -206,7 +204,7 @@ export default function MySubmissionsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider border-b border-slate-800 text-[10px]">
+              <thead className="bg-charcoal-950/80 text-ivory-500 uppercase tracking-wider border-b border-charcoal-cardBorder text-[10px] font-mono">
                 <tr>
                   <th className="py-3.5 px-5 font-semibold">Opportunity</th>
                   <th className="py-3.5 px-4 font-semibold">Category</th>
@@ -216,29 +214,29 @@ export default function MySubmissionsPage() {
                   <th className="py-3.5 px-5 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-charcoal-cardBorder/60">
                 {filteredSubmissions.map((sub) => {
                   const statusBadge = getStatusBadge(sub.status);
                   return (
-                    <tr key={sub.id} className="hover:bg-slate-900/60 transition-colors">
+                    <tr key={sub.id} className="hover:bg-charcoal-900/50 transition-colors">
                       <td className="py-4 px-5">
-                        <div className="font-bold text-white max-w-xs sm:max-w-sm truncate">
+                        <div className="font-bold text-ivory-100 max-w-xs sm:max-w-sm truncate">
                           {sub.title}
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[11px] text-ivory-500 mt-0.5">
                           {sub.organization} • {sub.location}
                         </div>
                       </td>
-                      <td className="py-4 px-4 capitalize text-slate-300 font-medium">
+                      <td className="py-4 px-4 capitalize text-ivory-300 font-medium">
                         {sub.category}
                       </td>
-                      <td className="py-4 px-4 text-slate-400 whitespace-nowrap">
+                      <td className="py-4 px-4 text-ivory-500 font-mono whitespace-nowrap">
                         {formatDate(sub.createdAt)}
                       </td>
                       <td className="py-4 px-4">
                         <div className="space-y-1">
                           <span
-                            className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full font-semibold text-[11px] ${statusBadge.className}`}
+                            className={`inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md font-medium text-[10.5px] border ${statusBadge.className}`}
                           >
                             <span
                               className={`w-1.5 h-1.5 rounded-full ${statusBadge.dotColor}`}
@@ -251,20 +249,20 @@ export default function MySubmissionsPage() {
                               onClick={() => setReasonModalOpp(sub)}
                               className="block text-[11px] text-rose-400 hover:text-rose-300 underline font-medium cursor-pointer mt-1"
                             >
-                              View Rejection Reason →
+                              View Feedback →
                             </button>
                           )}
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-slate-400">
+                      <td className="py-4 px-4 text-ivory-500 font-mono text-[11px]">
                         {sub.status === "APPROVED" ? (
-                          <div className="text-[11px]">
-                            <span className="text-white font-semibold">{sub.clicksCount}</span> applications
+                          <div>
+                            <span className="text-ivory-100 font-semibold">{sub.clicksCount}</span> clicks
                             <br />
-                            <span className="text-slate-500">{sub.viewsCount} views</span>
+                            <span className="text-ivory-500">{sub.viewsCount} views</span>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-slate-500">—</span>
+                          <span>—</span>
                         )}
                       </td>
                       <td className="py-4 px-5 text-right">
@@ -272,7 +270,7 @@ export default function MySubmissionsPage() {
                           {sub.status === "APPROVED" && (
                             <Link
                               href={`/opportunity/${sub.slug}`}
-                              className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors"
+                              className="p-1.5 rounded-lg bg-charcoal-900 text-bronze-300 hover:bg-charcoal-850 transition-colors"
                               title="View live page"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -281,7 +279,7 @@ export default function MySubmissionsPage() {
 
                           <button
                             onClick={() => handleOpenEdit(sub)}
-                            className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                            className="p-1.5 rounded-lg bg-charcoal-900 text-ivory-300 hover:text-white hover:bg-charcoal-850 transition-colors"
                             title="Edit details"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -289,7 +287,7 @@ export default function MySubmissionsPage() {
 
                           <button
                             onClick={() => handleDelete(sub.id)}
-                            className="p-2 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"
+                            className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"
                             title="Delete submission"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -307,13 +305,13 @@ export default function MySubmissionsPage() {
 
       {/* Rejection Reason Modal */}
       {reasonModalOpp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl glass-dropdown border border-rose-500/40 p-6 shadow-2xl bg-slate-950 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-950/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-lg rounded-3xl bg-charcoal-card border border-rose-500/40 p-6 shadow-2xl space-y-4">
             <button
               onClick={() => setReasonModalOpp(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800"
+              className="absolute top-4 right-4 p-2 text-ivory-500 hover:text-ivory-100 rounded-xl hover:bg-charcoal-900"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4.5 h-4.5" />
             </button>
 
             <div className="flex items-center space-x-3">
@@ -321,36 +319,36 @@ export default function MySubmissionsPage() {
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-ivory-100">
                   Submission Feedback
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-ivory-500">
                   Moderator review feedback
                 </p>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
-              <span className="text-slate-500 font-medium">Opportunity:</span>{" "}
+            <div className="p-3 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-300 truncate">
+              <span className="text-ivory-500 font-mono">Opportunity:</span>{" "}
               {reasonModalOpp.title}
             </div>
 
             <div className="p-4 rounded-2xl bg-rose-950/30 border border-rose-500/30 text-xs text-rose-200 leading-relaxed">
-              <div className="font-bold text-rose-300 mb-1">
-                Moderator Reason:
+              <div className="font-bold text-rose-300 mb-1 font-mono text-[11px]">
+                Moderator Note:
               </div>
               {reasonModalOpp.rejectionReason}
             </div>
 
-            <p className="text-xs text-slate-400 leading-relaxed">
-              💡 You can update the details using the <strong>Edit</strong> button. Once saved, your opportunity will be queued back for re-review!
+            <p className="text-xs text-ivory-500 leading-relaxed">
+              💡 Update the fields using the <strong>Edit</strong> button. Once saved, your submission will be placed back into the review queue.
             </p>
 
             <div className="flex items-center justify-end space-x-3 pt-2">
               <button
                 type="button"
                 onClick={() => setReasonModalOpp(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-ivory-400 hover:text-ivory-100 bg-charcoal-900 border border-charcoal-cardBorder"
               >
                 Close
               </button>
@@ -361,7 +359,7 @@ export default function MySubmissionsPage() {
                   setReasonModalOpp(null);
                   handleOpenEdit(opp);
                 }}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/30"
+                className="px-5 py-2 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button"
               >
                 Edit & Resubmit
               </button>
@@ -370,32 +368,32 @@ export default function MySubmissionsPage() {
         </div>
       )}
 
-      {/* Edit Opportunity Modal */}
+      {/* Edit Modal */}
       {editingOpp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl glass-dropdown border border-slate-800 p-6 sm:p-8 shadow-2xl bg-slate-950 space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-950/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-charcoal-card border border-charcoal-cardBorder p-6 sm:p-8 shadow-2xl space-y-6">
             <button
               onClick={() => setEditingOpp(null)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800"
+              className="absolute top-4 right-4 p-2 text-ivory-500 hover:text-ivory-100 rounded-xl hover:bg-charcoal-900"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4.5 h-4.5" />
             </button>
 
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-base font-bold text-ivory-100">
                 Edit Opportunity Details
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-ivory-500 mt-0.5">
                 {editingOpp.status === "REJECTED"
-                  ? "Updating this submission will set its status back to Pending for re-review."
-                  : "Modify fields and update listing."}
+                  ? "Saving changes will submit this listing for re-moderation."
+                  : "Modify opportunity fields and update."}
               </p>
             </div>
 
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Title *
                   </label>
                   <input
@@ -405,12 +403,12 @@ export default function MySubmissionsPage() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, title: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Organization *
                   </label>
                   <input
@@ -420,12 +418,12 @@ export default function MySubmissionsPage() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, organization: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Deadline *
                   </label>
                   <input
@@ -435,12 +433,12 @@ export default function MySubmissionsPage() {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, deadline: e.target.value })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Application URL *
                   </label>
                   <input
@@ -453,12 +451,12 @@ export default function MySubmissionsPage() {
                         applicationUrl: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Stipend
                   </label>
                   <input
@@ -468,12 +466,12 @@ export default function MySubmissionsPage() {
                       setEditFormData({ ...editFormData, stipend: e.target.value })
                     }
                     placeholder="e.g. $8,000 / month"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Skills (Comma separated)
                   </label>
                   <input
@@ -483,12 +481,12 @@ export default function MySubmissionsPage() {
                       setEditFormData({ ...editFormData, skills: e.target.value })
                     }
                     placeholder="React, Python, AWS"
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="font-semibold text-slate-300 block mb-1">
+                  <label className="font-semibold text-ivory-300 block mb-1 font-mono">
                     Description *
                   </label>
                   <textarea
@@ -501,23 +499,23 @@ export default function MySubmissionsPage() {
                         description: e.target.value,
                       })
                     }
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-100 focus:outline-none focus:border-indigo-500 resize-y"
+                    className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50 resize-y"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end space-x-3 pt-4 border-t border-charcoal-cardBorder">
                 <button
                   type="button"
                   onClick={() => setEditingOpp(null)}
-                  className="px-4 py-2 rounded-xl font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                  className="px-4 py-2 rounded-xl font-semibold text-ivory-400 hover:text-ivory-100 bg-charcoal-900 border border-charcoal-cardBorder"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEdit}
-                  className="flex items-center space-x-1.5 px-6 py-2 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 shadow-md shadow-indigo-600/30"
+                  className="flex items-center space-x-1.5 px-5 py-2 rounded-xl font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 disabled:opacity-50 shadow-button"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>{savingEdit ? "Saving..." : "Save & Update"}</span>

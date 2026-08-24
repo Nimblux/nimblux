@@ -36,35 +36,35 @@ export default function SavedOpportunitiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-display font-bold text-xl sm:text-2xl text-white">
+        <h2 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
           Saved Opportunities
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
-          Quickly access and track deadlines for bookmarked internships and hackathons.
+        <p className="text-xs text-ivory-500 mt-0.5">
+          Quickly access and track application closing dates for bookmarked opportunities.
         </p>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-pulse">
           {[1, 2].map((i) => (
-            <div key={i} className="h-64 rounded-2xl bg-slate-900 border border-slate-800" />
+            <div key={i} className="h-64 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder" />
           ))}
         </div>
       ) : opportunities.length === 0 ? (
-        <div className="text-center py-20 rounded-3xl glass-panel border border-slate-800 bg-slate-900/40 p-8 space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-slate-500">
-            <Bookmark className="w-8 h-8" />
+        <div className="text-center py-20 rounded-3xl bg-charcoal-card border border-charcoal-cardBorder p-8 space-y-3 shadow-card">
+          <div className="w-14 h-14 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center mx-auto text-ivory-500">
+            <Bookmark className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-white">
+          <h3 className="text-base font-bold text-ivory-100">
             No saved opportunities yet
           </h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            Click the bookmark icon on any opportunity card while browsing to save it for later.
+          <p className="text-xs text-ivory-500 max-w-sm mx-auto leading-relaxed">
+            Click the bookmark icon on any opportunity card while browsing to save it to this collection.
           </p>
           <div className="pt-2">
             <Link
               href="/opportunities"
-              className="inline-flex items-center space-x-1.5 px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/30 transition-all"
+              className="inline-flex items-center space-x-1.5 px-6 py-2.5 rounded-xl font-bold text-xs text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
             >
               <span>Explore Opportunities</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -72,7 +72,7 @@ export default function SavedOpportunitiesPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {opportunities.map((opp) => (
             <OpportunityCard
               key={opp.id}
