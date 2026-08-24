@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { CATEGORIES } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://nimblux.com";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.nimblux.xyz";
 
   // Base routes
   const staticRoutes: MetadataRoute.Sitemap = [
