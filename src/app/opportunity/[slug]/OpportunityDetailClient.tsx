@@ -19,8 +19,11 @@ import {
   ArrowLeft,
   Mail,
   ShieldCheck,
+  Trophy,
+  Award,
 } from "lucide-react";
 import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
+import { formatCurrency } from "@/lib/hackathon";
 import { CATEGORIES } from "@/lib/constants";
 import ShareModal from "@/components/modals/ShareModal";
 import ReportModal from "@/components/modals/ReportModal";
@@ -32,6 +35,14 @@ interface OpportunityDetailProps {
     endDate?: string | Date | null;
     contactInfo?: string | null;
     additionalInfo?: string | null;
+    hasPrizePool?: boolean;
+    totalPrizePool?: string | null;
+    prizeCurrency?: string | null;
+    prize1st?: string | null;
+    prize2nd?: string | null;
+    prize3rd?: string | null;
+    prizeSpecial?: string | null;
+    prizeDetails?: string | null;
     createdBy?: {
       id: string;
       name: string;
@@ -166,10 +177,14 @@ export default function OpportunityDetailClient({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder my-6">
               <div>
                 <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
-                  Compensation
+                  {opportunity.hasPrizePool && opportunity.totalPrizePool ? "Prize Pool" : "Compensation"}
                 </div>
-                <div className="text-xs sm:text-sm font-bold text-forest-300 mt-0.5 truncate font-mono">
-                  {opportunity.stipend || opportunity.salary || opportunity.registrationFee || "Free Entry"}
+                <div className={`text-xs sm:text-sm font-bold mt-0.5 truncate font-mono ${
+                  opportunity.hasPrizePool && opportunity.totalPrizePool ? "text-amber-300" : "text-forest-300"
+                }`}>
+                  {opportunity.hasPrizePool && opportunity.totalPrizePool
+                    ? formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")
+                    : (opportunity.stipend || opportunity.salary || opportunity.registrationFee || "Free Entry")}
                 </div>
               </div>
 
@@ -208,6 +223,86 @@ export default function OpportunityDetailClient({
                 </div>
               </div>
             </div>
+
+            {/* Reusable Prize Pool Section (Only shown when prize data exists) */}
+            {(opportunity.hasPrizePool || opportunity.totalPrizePool || opportunity.prize1st) && (
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-charcoal-900 via-charcoal-card to-charcoal-900 border border-bronze-500/30 my-6 space-y-4 shadow-editorial">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-charcoal-cardBorder">
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="w-5 h-5 text-amber-400" />
+                    <h2 className="font-serif-heading font-medium text-lg sm:text-xl text-ivory-100">
+                      Prize Pool & Rewards
+                    </h2>
+                  </div>
+                  {opportunity.totalPrizePool && (
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs sm:text-sm">
+                      <span>Total Pool: {formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* 1st Prize */}
+                  {opportunity.prize1st && (
+                    <div className="p-4 rounded-xl bg-charcoal-950/80 border border-amber-500/30 text-center space-y-1">
+                      <div className="text-xl">🥇</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-amber-400 font-bold">1st Prize</div>
+                      <div className="text-sm sm:text-base font-bold text-ivory-100 font-mono">
+                        {opportunity.prize1st.startsWith("₹") || opportunity.prize1st.startsWith("$")
+                          ? opportunity.prize1st
+                          : formatCurrency(opportunity.prize1st, opportunity.prizeCurrency || "INR")}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 2nd Prize */}
+                  {opportunity.prize2nd && (
+                    <div className="p-4 rounded-xl bg-charcoal-950/80 border border-stone-500/30 text-center space-y-1">
+                      <div className="text-xl">🥈</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-stone-300 font-bold">2nd Prize</div>
+                      <div className="text-sm sm:text-base font-bold text-ivory-100 font-mono">
+                        {opportunity.prize2nd.startsWith("₹") || opportunity.prize2nd.startsWith("$")
+                          ? opportunity.prize2nd
+                          : formatCurrency(opportunity.prize2nd, opportunity.prizeCurrency || "INR")}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 3rd Prize */}
+                  {opportunity.prize3rd && (
+                    <div className="p-4 rounded-xl bg-charcoal-950/80 border border-bronze-500/30 text-center space-y-1">
+                      <div className="text-xl">🥉</div>
+                      <div className="text-[11px] font-mono uppercase tracking-wider text-bronze-400 font-bold">3rd Prize</div>
+                      <div className="text-sm sm:text-base font-bold text-ivory-100 font-mono">
+                        {opportunity.prize3rd.startsWith("₹") || opportunity.prize3rd.startsWith("$")
+                          ? opportunity.prize3rd
+                          : formatCurrency(opportunity.prize3rd, opportunity.prizeCurrency || "INR")}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Special Awards & Extra Perks */}
+                {(opportunity.prizeSpecial || opportunity.prizeDetails) && (
+                  <div className="pt-3 border-t border-charcoal-cardBorder space-y-2">
+                    {opportunity.prizeSpecial && (
+                      <div className="flex items-start space-x-2 text-xs">
+                        <Award className="w-4 h-4 text-forest-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <span className="font-bold text-ivory-200">Special Awards: </span>
+                          <span className="text-ivory-400">{opportunity.prizeSpecial}</span>
+                        </div>
+                      </div>
+                    )}
+                    {opportunity.prizeDetails && (
+                      <p className="text-xs text-ivory-500 leading-relaxed italic">
+                        {opportunity.prizeDetails}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Banner Image */}
             {opportunity.banner && (

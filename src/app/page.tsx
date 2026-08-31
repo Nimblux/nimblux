@@ -24,6 +24,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import SearchBar from "@/components/filters/SearchBar";
 import OpportunityCard from "@/components/cards/OpportunityCard";
+import HackathonCard from "@/components/cards/HackathonCard";
 import EventCard from "@/components/cards/EventCard";
 import CategoryCard from "@/components/cards/CategoryCard";
 import { CATEGORIES } from "@/lib/constants";
@@ -35,6 +36,7 @@ export default async function HomePage() {
   const [
     featuredOpportunities,
     latestOpportunities,
+    featuredHackathons,
     upcomingEvents,
     categoryCounts,
     totalApprovedCount,
@@ -49,6 +51,20 @@ export default async function HomePage() {
       where: { status: "APPROVED" },
       orderBy: { createdAt: "desc" },
       take: 8,
+    }),
+    prisma.hackathon.findMany({
+      where: { status: { in: ["PUBLISHED", "APPROVED"] } },
+      orderBy: { createdAt: "desc" },
+      take: 3,
+      include: {
+        _count: {
+          select: {
+            registrations: true,
+            teams: true,
+            submissions: true,
+          },
+        },
+      },
     }),
     prisma.event.findMany({
       orderBy: { eventDate: "asc" },
@@ -238,7 +254,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. FEATURED OPPORTUNITIES (4 Cards per row on desktop) */}
+      {/* 5. FEATURED HACKATHONS ARENA */}
+      {featuredHackathons.length > 0 && (
+        <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+              <div className="flex items-center space-x-2 text-amber-400 text-xs font-mono uppercase tracking-wider mb-1.5 font-semibold">
+                <Trophy className="w-3.5 h-3.5" />
+                <span>Competitions & Sprints</span>
+              </div>
+              <h2 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100 tracking-tight">
+                Live Hackathons on NIMBLUX
+              </h2>
+            </div>
+            <Link
+              href="/hackathons"
+              className="inline-flex items-center space-x-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200 transition-colors"
+            >
+              <span>Explore all hackathons</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredHackathons.map((hackathon) => (
+              <HackathonCard
+                key={hackathon.id}
+                hackathon={{
+                  ...hackathon,
+                  registrationCount: hackathon._count.registrations,
+                  teamCount: hackathon._count.teams,
+                  submissionCount: hackathon._count.submissions,
+                } as any}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 6. FEATURED OPPORTUNITIES (4 Cards per row on desktop) */}
       {featuredOpportunities.length > 0 && (
         <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">

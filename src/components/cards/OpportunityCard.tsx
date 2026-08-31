@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
+import { formatCurrency } from "@/lib/hackathon";
 
 export interface OpportunityCardData {
   id: string;
@@ -33,6 +34,13 @@ export interface OpportunityCardData {
   salary?: string | null;
   registrationFee?: string | null;
   isPaid?: boolean;
+  hasPrizePool?: boolean;
+  totalPrizePool?: string | null;
+  prizeCurrency?: string | null;
+  prize1st?: string | null;
+  prize2nd?: string | null;
+  prize3rd?: string | null;
+  prizeSpecial?: string | null;
   applicationUrl: string;
   deadline: string | Date;
   startDate?: string | Date | null;
@@ -230,10 +238,14 @@ export default function OpportunityCard({
 
       {/* Footer Info & Action Buttons */}
       <div className="px-5 sm:px-6 py-3.5 bg-charcoal-950/60 border-t border-charcoal-cardBorder flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        {/* Stipend / Deadline Meta */}
+        {/* Stipend / Prize Pool / Deadline Meta */}
         <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs">
-          {/* Compensation */}
-          {(opportunity.stipend || opportunity.salary) ? (
+          {/* Prize Pool or Compensation */}
+          {opportunity.hasPrizePool && opportunity.totalPrizePool ? (
+            <div className="flex items-center space-x-1 text-amber-300 font-bold font-mono text-[11.5px]">
+              <span>🏆 {formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")} Prize Pool</span>
+            </div>
+          ) : (opportunity.stipend || opportunity.salary) ? (
             <div className="flex items-center space-x-1 text-forest-300 font-semibold font-mono text-[11.5px]">
               <span className="truncate max-w-[130px]">
                 {opportunity.stipend || opportunity.salary}

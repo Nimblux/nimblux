@@ -25,6 +25,7 @@ import {
   CheckCircle2,
   ExternalLink,
   ArrowRight,
+  FileText,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
@@ -371,12 +372,36 @@ export default function Navbar() {
                           <span>Student Dashboard</span>
                         </Link>
                         <Link
+                          href="/dashboard/hackathons"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
+                        >
+                          <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                          <span>My Hackathons</span>
+                        </Link>
+                        <Link
+                          href="/organizer"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-bronze-400" />
+                          <span>Organizer Studio</span>
+                        </Link>
+                        <Link
+                          href="/organize-hackathon"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
+                        >
+                          <PlusCircle className="w-3.5 h-3.5 text-forest-400" />
+                          <span>Host Hackathon</span>
+                        </Link>
+                        <Link
                           href="/dashboard/submissions"
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
                         >
-                          <PlusCircle className="w-3.5 h-3.5 text-ivory-400" />
-                          <span>My Submissions</span>
+                          <FileText className="w-3.5 h-3.5 text-ivory-400" />
+                          <span>Opportunity Posts</span>
                         </Link>
                         <Link
                           href="/dashboard/saved"

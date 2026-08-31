@@ -5,7 +5,7 @@ import { CATEGORIES } from "@/lib/constants";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.nimblux.xyz";
 
-  // Base routes
+  
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
@@ -25,9 +25,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/hackathons`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/organize-hackathon`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
 
-  // Category routes
+  
   const categoryRoutes: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
     url: `${baseUrl}/${cat.slug}`,
     lastModified: new Date(),
@@ -35,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
-  // Dynamic opportunity routes
+  
   let opportunityRoutes: MetadataRoute.Sitemap = [];
   try {
     const opps = await prisma.opportunity.findMany({
@@ -51,5 +63,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   } catch {}
 
-  return [...staticRoutes, ...categoryRoutes, ...opportunityRoutes];
+  let hackathonRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const hacks = await prisma.hackathon.findMany({
+      where: { status: { in: ["PUBLISHED", "APPROVED", "COMPLETED"] } },
+      select: { slug: true, updatedAt: true },
+    });
+
+    hackathonRoutes = hacks.map((hack) => ({
+      url: `${baseUrl}/hackathon/${hack.slug}`,
+      lastModified: hack.updatedAt,
+      changeFrequency: "daily",
+      priority: 0.85,
+    }));
+  } catch {}
+
+  return [...staticRoutes, ...categoryRoutes, ...opportunityRoutes, ...hackathonRoutes];
 }

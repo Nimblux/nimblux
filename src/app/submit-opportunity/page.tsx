@@ -17,6 +17,8 @@ import {
   ArrowRight,
   ShieldAlert,
   Eye,
+  Trophy,
+  Award,
 } from "lucide-react";
 import { CATEGORIES, WORK_MODES } from "@/lib/constants";
 import OpportunityCard from "@/components/cards/OpportunityCard";
@@ -44,6 +46,14 @@ export default function SubmitOpportunityPage() {
     salary: "",
     registrationFee: "Free",
     isPaid: false,
+    hasPrizePool: false,
+    totalPrizePool: "",
+    prizeCurrency: "INR",
+    prize1st: "",
+    prize2nd: "",
+    prize3rd: "",
+    prizeSpecial: "",
+    prizeDetails: "",
     applicationUrl: "",
     deadline: "",
     startDate: "",
@@ -343,6 +353,143 @@ export default function SubmitOpportunityPage() {
                     className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
                 </div>
+              </div>
+
+              {/* Reusable Prize Pool Management Toggle */}
+              <div className="pt-4 border-t border-charcoal-cardBorder">
+                <div className="flex items-center justify-between p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                      <Trophy className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-ivory-100">Prize Pool & Rewards</div>
+                      <div className="text-[11px] text-ivory-500">Enable if this opportunity or competition offers cash prizes or awards</div>
+                    </div>
+                  </div>
+
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="hasPrizePool"
+                      checked={formData.hasPrizePool}
+                      onChange={handleChange}
+                      className="sr-only peer"
+                    />
+                    <div className="w-10 h-5 bg-charcoal-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-ivory-100 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                  </label>
+                </div>
+
+                {formData.hasPrizePool && (
+                  <div className="mt-4 p-5 rounded-2xl bg-charcoal-900/60 border border-amber-500/30 space-y-4 animate-fade-in">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold text-ivory-300 block mb-1 font-mono">
+                          Currency
+                        </label>
+                        <select
+                          name="prizeCurrency"
+                          value={formData.prizeCurrency}
+                          onChange={handleChange}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 focus:outline-none focus:border-bronze-500/50 cursor-pointer"
+                        >
+                          <option value="INR">INR (₹)</option>
+                          <option value="USD">USD ($)</option>
+                          <option value="EUR">EUR (€)</option>
+                          <option value="GBP">GBP (£)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-semibold text-ivory-300 block mb-1 font-mono">
+                          Total Prize Pool (e.g. 50000 or 1,00,000)
+                        </label>
+                        <input
+                          type="text"
+                          name="totalPrizePool"
+                          value={formData.totalPrizePool}
+                          onChange={handleChange}
+                          placeholder="e.g. 50,000"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                      <div>
+                        <label className="text-[11px] font-semibold text-amber-400 block mb-1 font-mono">
+                          🥇 1st Prize
+                        </label>
+                        <input
+                          type="text"
+                          name="prize1st"
+                          value={formData.prize1st}
+                          onChange={handleChange}
+                          placeholder="e.g. ₹25,000"
+                          className="w-full px-3 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-stone-300 block mb-1 font-mono">
+                          🥈 2nd Prize
+                        </label>
+                        <input
+                          type="text"
+                          name="prize2nd"
+                          value={formData.prize2nd}
+                          onChange={handleChange}
+                          placeholder="e.g. ₹15,000"
+                          className="w-full px-3 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-bronze-400 block mb-1 font-mono">
+                          🥉 3rd Prize
+                        </label>
+                        <input
+                          type="text"
+                          name="prize3rd"
+                          value={formData.prize3rd}
+                          onChange={handleChange}
+                          placeholder="e.g. ₹10,000"
+                          className="w-full px-3 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="text-xs font-semibold text-ivory-300 block mb-1 font-mono">
+                          🏅 Special Awards / Category Prizes (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          name="prizeSpecial"
+                          value={formData.prizeSpecial}
+                          onChange={handleChange}
+                          placeholder="e.g. Best UI/UX: ₹5,000, Best AI: ₹5,000"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-semibold text-ivory-300 block mb-1 font-mono">
+                          Additional Benefits / Goodies (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          name="prizeDetails"
+                          value={formData.prizeDetails}
+                          onChange={handleChange}
+                          placeholder="e.g. Certificates + T-shirts + Cloud Credits"
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

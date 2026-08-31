@@ -22,15 +22,26 @@ model User {
   bio            String?
   githubUrl      String?
   linkedinUrl    String?
+  portfolioUrl   String?
+  phone          String?
   status         String         @default("ACTIVE") // "ACTIVE" | "SUSPENDED"
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  opportunities  Opportunity[]  @relation("CreatedOpportunities")
-  approvedOpps   Opportunity[]  @relation("ApprovedOpportunities")
-  bookmarks      Bookmark[]
-  notifications  Notification[]
-  reports        Report[]
+  opportunities         Opportunity[]           @relation("CreatedOpportunities")
+  approvedOpps          Opportunity[]           @relation("ApprovedOpportunities")
+  bookmarks             Bookmark[]
+  notifications         Notification[]
+  reports               Report[]
+  createdHackathons     Hackathon[]             @relation("CreatedHackathons")
+  approvedHackathons    Hackathon[]             @relation("ApprovedHackathons")
+  hackathonRegistrations HackathonRegistration[]
+  hackathonTeamMembers  HackathonTeamMember[]
+  hackathonSubmissions  HackathonSubmission[]
+  hackathonScores       HackathonScore[]
+  hackathonJudges       HackathonJudge[]
+  hackathonCertificates HackathonCertificate[]
+  ledTeams              HackathonTeam[]         @relation("TeamLeader")
 }
 
 model Opportunity {
@@ -62,6 +73,16 @@ model Opportunity {
   verified        Boolean       @default(true)
   clicksCount     Int           @default(0)
   viewsCount      Int           @default(0)
+
+  // Reusable Prize Pool Architecture
+  hasPrizePool    Boolean       @default(false)
+  totalPrizePool  String?
+  prizeCurrency   String?       @default("INR")
+  prize1st        String?
+  prize2nd        String?
+  prize3rd        String?
+  prizeSpecial    String?
+  prizeDetails    String?
   
   createdById     String
   createdBy       User          @relation("CreatedOpportunities", fields: [createdById], references: [id], onDelete: Cascade)
@@ -92,7 +113,7 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   message   String
-  type      String   @default("INFO") // "APPROVAL" | "REJECTION" | "SYSTEM" | "OPPORTUNITY"
+  type      String   @default("INFO") // "APPROVAL" | "REJECTION" | "SYSTEM" | "OPPORTUNITY" | "HACKATHON"
   link      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -133,4 +154,327 @@ model Category {
   icon         String
   description  String
   displayOrder Int      @default(0)
+}
+
+// =======================================================
+// FULL HACKATHON ORGANIZING & COMPETITION PLATFORM MODELS
+// =======================================================
+
+model Hackathon {
+  id                      String                  @id @default(cuid())
+  title                   String
+  slug                    String                  @unique
+  tagline                 String?
+  shortDescription        String
+  description             String                  @db.Text
+  coverImage              String?
+  logo                    String?
+  banner                  String?
+  
+  // Organizer details
+  organizerName           String
+  organizerLogo           String?
+  organizerDescription    String?                 @db.Text
+  contactEmail            String?
+  contactPhone            String?
+  websiteUrl              String?
+  discordUrl              String?
+
+  // Participation & Mode
+  mode                    String                  @default("ONLINE") // "ONLINE" | "OFFLINE" | "HYBRID"
+  location                String                  @default("Online / Remote")
+  eligibility             String?                 @db.Text
+  collegeRestrictions     String?
+  countryRestrictions     String?
+  experienceLevel         String                  @default("ALL") // "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "ALL"
+  allowIndividual         Boolean                 @default(true)
+  allowTeam               Boolean                 @default(true)
+  minTeamSize             Int                     @default(1)
+  maxTeamSize             Int                     @default(4)
+
+  // Registration Mode
+  isExternalRegistration  Boolean                 @default(false)
+  externalRegistrationUrl String?
+  isRegistrationOpen      Boolean                 @default(true)
+  registrationFee         String?                 @default("Free")
+  isPaid                  Boolean                 @default(false)
+
+  // Schedule
+  regStartDate            DateTime                @default(now())
+  regEndDate              DateTime
+  startDate               DateTime
+  endDate                 DateTime
+  submissionDeadline      DateTime
+  judgingStartDate        DateTime?
+  judgingEndDate          DateTime?
+  winnersAnnouncedDate    DateTime?
+
+  // Content & Rules
+  rules                   String?                 @db.Text
+  submissionRequirements  String?                 @db.Text
+  codeOfConduct           String?                 @db.Text
+  techAllowed             String?
+  techProhibited          String?
+
+  // Prize Pool Summary
+  hasPrizePool            Boolean                 @default(true)
+  totalPrizePool          String?
+  prizeCurrency           String                  @default("INR") // "INR" | "USD" | "EUR" | "GBP"
+
+  // Status & Moderation
+  status                  String                  @default("DRAFT") // "DRAFT" | "PENDING" | "APPROVED" | "REJECTED" | "PUBLISHED" | "PAUSED" | "COMPLETED"
+  rejectionReason         String?
+  featured                Boolean                 @default(false)
+  verified                Boolean                 @default(true)
+  isLeaderboardPublished  Boolean                 @default(false)
+  allowLateSubmissions    Boolean                 @default(false)
+  viewsCount              Int                     @default(0)
+
+  // Ownership & Approval
+  createdById             String
+  createdBy               User                    @relation("CreatedHackathons", fields: [createdById], references: [id], onDelete: Cascade)
+  approvedById            String?
+  approvedBy              User?                   @relation("ApprovedHackathons", fields: [approvedById], references: [id])
+
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime                @updatedAt
+
+  // Child Relations
+  tracks                  HackathonTrack[]
+  prizes                  HackathonPrize[]
+  registrations           HackathonRegistration[]
+  teams                   HackathonTeam[]
+  submissions             HackathonSubmission[]
+  criteria                HackathonJudgingCriterion[]
+  judges                  HackathonJudge[]
+  announcements           HackathonAnnouncement[]
+  sponsors                HackathonSponsor[]
+  winners                 HackathonWinner[]
+  certificates            HackathonCertificate[]
+}
+
+model HackathonTrack {
+  id               String                @id @default(cuid())
+  hackathonId      String
+  hackathon        Hackathon             @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name             String
+  description      String?               @db.Text
+  problemStatement String?               @db.Text
+  icon             String?
+  prize            String?
+  createdAt        DateTime              @default(now())
+
+  submissions      HackathonSubmission[]
+}
+
+model HackathonPrize {
+  id                  String            @id @default(cuid())
+  hackathonId         String
+  hackathon           Hackathon         @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name                String            // "1st Prize", "Best AI Project", etc.
+  type                String            @default("1ST") // "1ST" | "2ND" | "3RD" | "TRACK" | "SPECIAL" | "SPONSOR"
+  amount              String?           // e.g. "50000" or "50,000"
+  currency            String            @default("INR")
+  description         String?
+  winnerCount         Int               @default(1)
+  sponsor             String?
+  physicalReward      String?           // e.g. "MacBook Pro + Goodies"
+  certificateIncluded Boolean           @default(true)
+  additionalBenefits  String?           // e.g. "Direct interview with partner VC"
+  displayOrder        Int               @default(0)
+  createdAt           DateTime          @default(now())
+
+  winners             HackathonWinner[]
+}
+
+model HackathonRegistration {
+  id              String         @id @default(cuid())
+  hackathonId     String
+  hackathon       Hackathon      @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Participant Profile Snapshot
+  name            String
+  email           String
+  phone           String?
+  college         String?
+  degree          String?
+  graduationYear  String?
+  skills          String?
+  githubUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+
+  status          String         @default("APPROVED") // "PENDING" | "APPROVED" | "REJECTED"
+  teamId          String?
+  team            HackathonTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([hackathonId, userId])
+}
+
+model HackathonTeam {
+  id              String                  @id @default(cuid())
+  hackathonId     String
+  hackathon       Hackathon               @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name            String
+  code            String                  @unique // Unique invite code for joining
+  logo            String?
+  description     String?
+  leaderId        String
+  leader          User                    @relation("TeamLeader", fields: [leaderId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  members         HackathonTeamMember[]
+  registrations   HackathonRegistration[]
+  submission      HackathonSubmission?
+  winners         HackathonWinner[]
+}
+
+model HackathonTeamMember {
+  id        String        @id @default(cuid())
+  teamId    String
+  team      HackathonTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String        @default("MEMBER") // "LEADER" | "MEMBER"
+  joinedAt  DateTime      @default(now())
+
+  @@unique([teamId, userId])
+}
+
+model HackathonSubmission {
+  id               String               @id @default(cuid())
+  hackathonId      String
+  hackathon        Hackathon            @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  teamId           String?              @unique
+  team             HackathonTeam?       @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  userId           String               // Submitter
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId          String?
+  track            HackathonTrack?      @relation(fields: [trackId], references: [id], onDelete: SetNull)
+
+  title            String
+  tagline          String?
+  description      String               @db.Text
+  problemStatement String?              @db.Text
+  solution         String?              @db.Text
+  techStack        String?              // Comma-separated technologies
+  githubUrl        String?
+  demoUrl          String?
+  videoUrl         String?
+  presentationUrl  String?
+  screenshots      String?              @db.Text // Comma or JSON array of image URLs
+
+  status           String               @default("SUBMITTED") // "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "JUDGED" | "WINNER"
+  totalScore       Float                @default(0)
+  isLate           Boolean              @default(false)
+  submittedAt      DateTime?            @default(now())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  scores           HackathonScore[]
+  winners          HackathonWinner[]
+}
+
+model HackathonJudgingCriterion {
+  id          String           @id @default(cuid())
+  hackathonId String
+  hackathon   Hackathon        @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name        String           // "Innovation", "Technical Implementation", "UI/UX", "Impact", "Scalability", "Presentation"
+  description String?
+  maxScore    Int              @default(10)
+  weight      Float            @default(1.0)
+  createdAt   DateTime         @default(now())
+
+  scores      HackathonScore[]
+}
+
+model HackathonJudge {
+  id             String    @id @default(cuid())
+  hackathonId    String
+  hackathon      Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedTracks String?   // Comma-separated track IDs or "ALL"
+  createdAt      DateTime  @default(now())
+
+  @@unique([hackathonId, userId])
+}
+
+model HackathonScore {
+  id           String                    @id @default(cuid())
+  submissionId String
+  submission   HackathonSubmission       @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  judgeId      String                    // User ID of judge
+  judge        User                      @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+  criterionId  String
+  criterion    HackathonJudgingCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  score        Float
+  feedback     String?                   @db.Text
+  isFinal      Boolean                   @default(false)
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+
+  @@unique([submissionId, judgeId, criterionId])
+}
+
+model HackathonAnnouncement {
+  id          String    @id @default(cuid())
+  hackathonId String
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  title       String
+  content     String    @db.Text
+  type        String    @default("GENERAL") // "GENERAL" | "TIMELINE" | "SUBMISSION" | "JUDGING" | "RESULTS"
+  pinned      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+model HackathonSponsor {
+  id          String    @id @default(cuid())
+  hackathonId String
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  name        String
+  logo        String?
+  websiteUrl  String?
+  tier        String    @default("GOLD") // "TITLE" | "PLATINUM" | "GOLD" | "SILVER" | "COMMUNITY"
+  description String?
+  createdAt   DateTime  @default(now())
+}
+
+model HackathonWinner {
+  id           String               @id @default(cuid())
+  hackathonId  String
+  hackathon    Hackathon            @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  prizeId      String?
+  prize        HackathonPrize?      @relation(fields: [prizeId], references: [id], onDelete: SetNull)
+  submissionId String
+  submission   HackathonSubmission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  teamId       String?
+  team         HackathonTeam?       @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  rank         Int                  @default(1)
+  title        String               // "1st Prize", "Best AI Project"
+  prizeAmount  String?
+  currency     String               @default("INR")
+  announcedAt  DateTime             @default(now())
+}
+
+model HackathonCertificate {
+  id              String    @id @default(cuid())
+  certificateCode String    @unique // e.g. "NMB-HACK-ABC123XYZ"
+  hackathonId     String
+  hackathon       Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipientName   String
+  role            String    // "PARTICIPANT" | "WINNER" | "RUNNER_UP" | "ORGANIZER" | "JUDGE"
+  prizeTitle      String?
+  issueDate       DateTime  @default(now())
+  metadata        String?   @db.Text
+  createdAt       DateTime  @default(now())
 }

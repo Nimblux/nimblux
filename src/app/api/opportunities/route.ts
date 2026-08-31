@@ -127,6 +127,14 @@ export async function POST(req: NextRequest) {
       endDate,
       contactInfo,
       additionalInfo,
+      hasPrizePool,
+      totalPrizePool,
+      prizeCurrency,
+      prize1st,
+      prize2nd,
+      prize3rd,
+      prizeSpecial,
+      prizeDetails,
     } = body;
 
     if (!title || !category || !organization || !applicationUrl || !deadline) {
@@ -167,6 +175,14 @@ export async function POST(req: NextRequest) {
         endDate: endDate ? new Date(endDate) : null,
         contactInfo: contactInfo?.trim() || null,
         additionalInfo: additionalInfo?.trim() || null,
+        hasPrizePool: Boolean(hasPrizePool),
+        totalPrizePool: totalPrizePool?.trim() || null,
+        prizeCurrency: prizeCurrency?.trim() || "INR",
+        prize1st: prize1st?.trim() || null,
+        prize2nd: prize2nd?.trim() || null,
+        prize3rd: prize3rd?.trim() || null,
+        prizeSpecial: prizeSpecial?.trim() || null,
+        prizeDetails: prizeDetails?.trim() || null,
         status: "PENDING", // PENDING APPROVAL - NEVER DIRECTLY PUBLISHED
         featured: false,
         verified: false,

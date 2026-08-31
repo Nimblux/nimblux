@@ -15,6 +15,12 @@ export interface SessionUser {
   college?: string | null;
   degree?: string | null;
   skills?: string | null;
+  graduationYear?: string | null;
+  location?: string | null;
+  githubUrl?: string | null;
+  linkedinUrl?: string | null;
+  portfolioUrl?: string | null;
+  phone?: string | null;
   status: string;
 }
 
@@ -59,6 +65,12 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         college: true,
         degree: true,
         skills: true,
+        graduationYear: true,
+        location: true,
+        githubUrl: true,
+        linkedinUrl: true,
+        portfolioUrl: true,
+        phone: true,
         status: true,
       },
     });

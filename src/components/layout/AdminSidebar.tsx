@@ -14,6 +14,7 @@ import {
   Globe,
   LogOut,
   Sparkles,
+  Trophy,
 } from "lucide-react";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
 
@@ -46,6 +47,12 @@ export default function AdminSidebar() {
       icon: CheckSquare,
       badge: pendingCount > 0 ? pendingCount : null,
       badgeColor: "bg-bronze-500 text-charcoal-950 font-bold",
+    },
+    {
+      label: "Hackathon Moderation",
+      href: "/admin/hackathons",
+      icon: Trophy,
+      badge: null,
     },
     {
       label: "Users & Roles",

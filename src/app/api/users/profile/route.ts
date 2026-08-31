@@ -25,6 +25,8 @@ export async function GET() {
         bio: true,
         githubUrl: true,
         linkedinUrl: true,
+        portfolioUrl: true,
+        phone: true,
         createdAt: true,
       },
     });
@@ -54,6 +56,8 @@ export async function PATCH(req: NextRequest) {
       bio,
       githubUrl,
       linkedinUrl,
+      portfolioUrl,
+      phone,
     } = body;
 
     const updated = await prisma.user.update({
@@ -69,6 +73,8 @@ export async function PATCH(req: NextRequest) {
         bio: bio !== undefined ? bio?.trim() || null : undefined,
         githubUrl: githubUrl !== undefined ? githubUrl?.trim() || null : undefined,
         linkedinUrl: linkedinUrl !== undefined ? linkedinUrl?.trim() || null : undefined,
+        portfolioUrl: portfolioUrl !== undefined ? portfolioUrl?.trim() || null : undefined,
+        phone: phone !== undefined ? phone?.trim() || null : undefined,
       },
     });
 

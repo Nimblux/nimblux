@@ -151,6 +151,14 @@ function AdminOpportunitiesContent() {
       applicationUrl: opp.applicationUrl,
       eligibility: opp.eligibility || "",
       skills: opp.skills || "",
+      hasPrizePool: opp.hasPrizePool || false,
+      totalPrizePool: opp.totalPrizePool || "",
+      prizeCurrency: opp.prizeCurrency || "INR",
+      prize1st: opp.prize1st || "",
+      prize2nd: opp.prize2nd || "",
+      prize3rd: opp.prize3rd || "",
+      prizeSpecial: opp.prizeSpecial || "",
+      prizeDetails: opp.prizeDetails || "",
       description: opp.description,
       deadline: opp.deadline ? new Date(opp.deadline).toISOString().split("T")[0] : "",
     });
@@ -621,6 +629,71 @@ function AdminOpportunitiesContent() {
                     }
                     className="w-full px-3.5 py-2 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 focus:outline-none focus:border-bronze-500/50"
                   />
+                </div>
+
+                <div className="sm:col-span-2 p-3 rounded-xl bg-charcoal-950 border border-charcoal-cardBorder space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-ivory-200">Prize Pool & Awards</span>
+                    <label className="text-xs text-ivory-400 flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.hasPrizePool}
+                        onChange={(e) => setEditFormData({ ...editFormData, hasPrizePool: e.target.checked })}
+                        className="rounded"
+                      />
+                      <span>Enable Prize Pool</span>
+                    </label>
+                  </div>
+
+                  {editFormData.hasPrizePool && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <label className="text-[10.5px] text-ivory-400 block font-mono">Total Pool (e.g. 50,000)</label>
+                        <input
+                          type="text"
+                          value={editFormData.totalPrizePool}
+                          onChange={(e) => setEditFormData({ ...editFormData, totalPrizePool: e.target.value })}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10.5px] text-amber-400 block font-mono">🥇 1st Prize</label>
+                        <input
+                          type="text"
+                          value={editFormData.prize1st}
+                          onChange={(e) => setEditFormData({ ...editFormData, prize1st: e.target.value })}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10.5px] text-stone-300 block font-mono">🥈 2nd Prize</label>
+                        <input
+                          type="text"
+                          value={editFormData.prize2nd}
+                          onChange={(e) => setEditFormData({ ...editFormData, prize2nd: e.target.value })}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10.5px] text-bronze-400 block font-mono">🥉 3rd Prize</label>
+                        <input
+                          type="text"
+                          value={editFormData.prize3rd}
+                          onChange={(e) => setEditFormData({ ...editFormData, prize3rd: e.target.value })}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 font-mono"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-[10.5px] text-ivory-400 block font-mono">🏅 Special Prizes / Notes</label>
+                        <input
+                          type="text"
+                          value={editFormData.prizeSpecial}
+                          onChange={(e) => setEditFormData({ ...editFormData, prizeSpecial: e.target.value })}
+                          className="w-full px-2.5 py-1.5 rounded-lg bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="sm:col-span-2">

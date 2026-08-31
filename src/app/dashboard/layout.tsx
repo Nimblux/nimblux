@@ -12,6 +12,7 @@ import {
   PlusCircle,
   Shield,
   LogOut,
+  Trophy,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -42,6 +43,7 @@ export default function DashboardLayout({
 
   const navItems = [
     { label: "Overview", href: "/dashboard", icon: Compass },
+    { label: "My Hackathons", href: "/dashboard/hackathons", icon: Trophy },
     { label: "My Submissions", href: "/dashboard/submissions", icon: Briefcase },
     { label: "Saved Opportunities", href: "/dashboard/saved", icon: Bookmark },
     { label: "Edit Profile", href: "/dashboard/profile", icon: User },
