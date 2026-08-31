@@ -13,6 +13,9 @@ import {
   Shield,
   LogOut,
   Trophy,
+  Send,
+  Ticket,
+  Award,
 } from "lucide-react";
 
 export default function DashboardLayout({
