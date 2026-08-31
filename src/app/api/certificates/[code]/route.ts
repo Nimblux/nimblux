@@ -8,6 +8,50 @@ export async function GET(
   try {
     const code = params.code.toUpperCase();
 
+    // 1. Try universal Certificate
+    const universalCert = await prisma.certificate.findUnique({
+      where: { certificateCode: code },
+      include: {
+        opportunity: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            organization: true,
+            logo: true,
+            startDate: true,
+            endDate: true,
+            mode: true,
+            location: true,
+          },
+        },
+        user: {
+          select: { id: true, name: true, college: true },
+        },
+      },
+    });
+
+    if (universalCert) {
+      return NextResponse.json({
+        valid: true,
+        certificate: {
+          certificateCode: universalCert.certificateCode,
+          recipientName: universalCert.recipientName,
+          role: universalCert.role,
+          prizeTitle: universalCert.prizeTitle,
+          issueDate: universalCert.issueDate,
+          opportunityTitle: universalCert.opportunityTitle,
+          opportunityType: universalCert.opportunityType,
+          opportunitySlug: universalCert.opportunity?.slug,
+          organizationName: universalCert.organizationName,
+          organizationLogo: universalCert.opportunity?.logo,
+          issuer: "NIMBLUX Platform Registry",
+          verificationUrl: `https://nimblux.xyz/certificate/${universalCert.certificateCode}`,
+        },
+      });
+    }
+
+    // 2. Try legacy HackathonCertificate
     const certificate = await prisma.hackathonCertificate.findUnique({
       where: { certificateCode: code },
       include: {
@@ -45,10 +89,11 @@ export async function GET(
         role: certificate.role,
         prizeTitle: certificate.prizeTitle,
         issueDate: certificate.issueDate,
-        hackathonTitle: certificate.hackathon.title,
-        hackathonSlug: certificate.hackathon.slug,
-        organizerName: certificate.hackathon.organizerName,
-        organizerLogo: certificate.hackathon.organizerLogo,
+        opportunityTitle: certificate.hackathon.title,
+        opportunityType: "HACKATHON",
+        opportunitySlug: certificate.hackathon.slug,
+        organizationName: certificate.hackathon.organizerName,
+        organizationLogo: certificate.hackathon.organizerLogo,
         startDate: certificate.hackathon.startDate,
         endDate: certificate.hackathon.endDate,
         issuer: "NIMBLUX Official Verification Registry",

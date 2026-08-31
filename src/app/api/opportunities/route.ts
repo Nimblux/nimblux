@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q");
     const category = searchParams.get("category");
+    const type = searchParams.get("type");
     const mode = searchParams.get("mode");
     const paid = searchParams.get("paid");
     const sort = searchParams.get("sort") || "latest";
@@ -23,6 +24,10 @@ export async function GET(req: NextRequest) {
 
     if (category && category !== "all") {
       where.category = category.toLowerCase();
+    }
+
+    if (type && type !== "all") {
+      where.opportunityType = type.toUpperCase();
     }
 
     if (mode && mode !== "all") {
@@ -42,12 +47,14 @@ export async function GET(req: NextRequest) {
     if (q && q.trim()) {
       const term = q.trim().toLowerCase();
       where.OR = [
-        { title: { contains: term } },
-        { organization: { contains: term } },
-        { description: { contains: term } },
-        { skills: { contains: term } },
-        { location: { contains: term } },
-        { eligibility: { contains: term } },
+        { title: { contains: term, mode: "insensitive" } },
+        { organization: { contains: term, mode: "insensitive" } },
+        { description: { contains: term, mode: "insensitive" } },
+        { skills: { contains: term, mode: "insensitive" } },
+        { location: { contains: term, mode: "insensitive" } },
+        { eligibility: { contains: term, mode: "insensitive" } },
+        { instructor: { contains: term, mode: "insensitive" } },
+        { responsibilities: { contains: term, mode: "insensitive" } },
       ];
     }
 
@@ -69,6 +76,12 @@ export async function GET(req: NextRequest) {
         createdBy: {
           select: { id: true, name: true, profileImage: true },
         },
+        _count: {
+          select: {
+            applications: true,
+            registrations: true,
+          },
+        },
       },
     });
 
@@ -85,6 +98,8 @@ export async function GET(req: NextRequest) {
     const enriched = opportunities.map((opp) => ({
       ...opp,
       isBookmarked: bookmarkedIds.has(opp.id),
+      applicationsCount: opp._count.applications,
+      registrationsCount: opp._count.registrations,
     }));
 
     return NextResponse.json({ opportunities: enriched, count: enriched.length });
@@ -110,6 +125,7 @@ export async function POST(req: NextRequest) {
     const {
       title,
       category,
+      opportunityType,
       organization,
       logo,
       banner,
@@ -121,12 +137,31 @@ export async function POST(req: NextRequest) {
       salary,
       registrationFee,
       isPaid,
+      isExternal,
+      externalUrl,
       applicationUrl,
       deadline,
       startDate,
       endDate,
       contactInfo,
       additionalInfo,
+      department,
+      duration,
+      experienceLevel,
+      responsibilities,
+      requirements,
+      benefits,
+      instructor,
+      curriculum,
+      capacity,
+      price,
+      currency,
+      venue,
+      meetingUrl,
+      agenda,
+      faq,
+      rules,
+      customQuestions,
       hasPrizePool,
       totalPrizePool,
       prizeCurrency,
@@ -137,12 +172,18 @@ export async function POST(req: NextRequest) {
       prizeDetails,
     } = body;
 
-    if (!title || !category || !organization || !applicationUrl || !deadline) {
+    if (!title || !category || !organization || !deadline) {
       return NextResponse.json(
-        { error: "Title, category, organization, application URL, and deadline are required." },
+        { error: "Title, category, organization, and deadline are required." },
         { status: 400 }
       );
     }
+
+    // Determine resolved application URL
+    const resolvedIsExternal = Boolean(isExternal);
+    const finalAppUrl = resolvedIsExternal
+      ? (externalUrl?.trim() || applicationUrl?.trim() || "https://nimblux.xyz")
+      : (applicationUrl?.trim() || "in-platform");
 
     // Generate unique slug
     let baseSlug = slugify(`${organization}-${title}`);
@@ -152,12 +193,16 @@ export async function POST(req: NextRequest) {
       uniqueSlug = `${baseSlug}-${count++}`;
     }
 
+    // Determine opportunity type if not specified
+    const determinedType = (opportunityType || category || "OTHER").toUpperCase();
+
     const newOpportunity = await prisma.opportunity.create({
       data: {
         title: title.trim(),
         slug: uniqueSlug,
         description: body.description || "",
         category: category.toLowerCase().trim(),
+        opportunityType: determinedType,
         organization: organization.trim(),
         logo: logo?.trim() || null,
         banner: banner?.trim() || null,
@@ -168,13 +213,32 @@ export async function POST(req: NextRequest) {
         stipend: stipend?.trim() || null,
         salary: salary?.trim() || null,
         registrationFee: registrationFee?.trim() || "Free",
-        isPaid: Boolean(isPaid || stipend || salary),
-        applicationUrl: applicationUrl.trim(),
+        isPaid: Boolean(isPaid || stipend || salary || (price && price.toLowerCase() !== "free")),
+        isExternal: resolvedIsExternal,
+        externalUrl: resolvedIsExternal ? (externalUrl?.trim() || finalAppUrl) : null,
+        applicationUrl: finalAppUrl,
         deadline: new Date(deadline),
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,
         contactInfo: contactInfo?.trim() || null,
         additionalInfo: additionalInfo?.trim() || null,
+        department: department?.trim() || null,
+        duration: duration?.trim() || null,
+        experienceLevel: experienceLevel?.trim() || "ALL",
+        responsibilities: responsibilities?.trim() || null,
+        requirements: requirements?.trim() || null,
+        benefits: benefits?.trim() || null,
+        instructor: instructor?.trim() || null,
+        curriculum: curriculum?.trim() || null,
+        capacity: capacity ? parseInt(capacity) : null,
+        price: price?.trim() || null,
+        currency: currency?.trim() || prizeCurrency?.trim() || "INR",
+        venue: venue?.trim() || null,
+        meetingUrl: meetingUrl?.trim() || null,
+        agenda: agenda?.trim() || null,
+        faq: faq?.trim() || null,
+        rules: rules?.trim() || null,
+        customQuestions: customQuestions ? (typeof customQuestions === "string" ? customQuestions : JSON.stringify(customQuestions)) : null,
         hasPrizePool: Boolean(hasPrizePool),
         totalPrizePool: totalPrizePool?.trim() || null,
         prizeCurrency: prizeCurrency?.trim() || "INR",

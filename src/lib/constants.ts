@@ -150,6 +150,155 @@ export const SORT_OPTIONS = [
   { label: "Featured First", value: "featured" },
 ];
 
+export interface OpportunityTypeMeta {
+  type: string;
+  name: string;
+  categorySlug: string;
+  description: string;
+  icon: string;
+  modeLabel: "application" | "registration";
+}
+
+export const OPPORTUNITY_TYPES: OpportunityTypeMeta[] = [
+  {
+    type: "INTERNSHIP",
+    name: "Internship",
+    categorySlug: "internships",
+    description: "Paid and summer internships, co-ops, and research student positions",
+    icon: "Briefcase",
+    modeLabel: "application",
+  },
+  {
+    type: "JOB",
+    name: "Full-Time Job",
+    categorySlug: "jobs",
+    description: "New grad, junior, and early career software & tech roles",
+    icon: "Building2",
+    modeLabel: "application",
+  },
+  {
+    type: "HACKATHON",
+    name: "Hackathon",
+    categorySlug: "hackathons",
+    description: "Sprint buildathons, virtual/onsite hackathons with teams & prizes",
+    icon: "Code",
+    modeLabel: "registration",
+  },
+  {
+    type: "WORKSHOP",
+    name: "Workshop",
+    categorySlug: "workshops",
+    description: "Hands-on technical masterclasses, live coding labs, and training",
+    icon: "Sparkles",
+    modeLabel: "registration",
+  },
+  {
+    type: "COMPETITION",
+    name: "Competition",
+    categorySlug: "competitions",
+    description: "Coding contests, algorithmic battles, design sprints, & case challenges",
+    icon: "Trophy",
+    modeLabel: "registration",
+  },
+  {
+    type: "EVENT",
+    name: "Event / Meetup",
+    categorySlug: "events",
+    description: "Developer keynotes, community gatherings, tech meetups",
+    icon: "Calendar",
+    modeLabel: "registration",
+  },
+  {
+    type: "SCHOLARSHIP",
+    name: "Scholarship",
+    categorySlug: "scholarships",
+    description: "Merit and need-based education grants, sponsorships, and tuition aid",
+    icon: "GraduationCap",
+    modeLabel: "application",
+  },
+  {
+    type: "FELLOWSHIP",
+    name: "Fellowship",
+    categorySlug: "fellowships",
+    description: "Elite developer cohorts, open-source cohorts, and venture fellowships",
+    icon: "Award",
+    modeLabel: "application",
+  },
+  {
+    type: "COURSE",
+    name: "Course",
+    categorySlug: "courses",
+    description: "Structured technical learning paths, curricula, and certifications",
+    icon: "BookOpen",
+    modeLabel: "registration",
+  },
+  {
+    type: "BOOTCAMP",
+    name: "Bootcamp",
+    categorySlug: "courses",
+    description: "Intensive multi-week cohorts and career accelerator programs",
+    icon: "Layers",
+    modeLabel: "registration",
+  },
+  {
+    type: "WEBINAR",
+    name: "Webinar",
+    categorySlug: "webinars",
+    description: "Live interactive tech sessions, AMAs, and expert panel talks",
+    icon: "Video",
+    modeLabel: "registration",
+  },
+  {
+    type: "CONFERENCE",
+    name: "Conference",
+    categorySlug: "conferences",
+    description: "International engineering summits, research symposia, and tech talks",
+    icon: "Mic2",
+    modeLabel: "registration",
+  },
+  {
+    type: "CHALLENGE",
+    name: "Challenge",
+    categorySlug: "competitions",
+    description: "Open innovation challenges, bug bounties, and problem-solving contests",
+    icon: "Zap",
+    modeLabel: "registration",
+  },
+  {
+    type: "VOLUNTEERING",
+    name: "Volunteering",
+    categorySlug: "volunteering",
+    description: "Open-source maintainership, mentor programs, and community initiatives",
+    icon: "HeartHandshake",
+    modeLabel: "application",
+  },
+  {
+    type: "CAMPUS",
+    name: "Campus Opportunity",
+    categorySlug: "campus-opportunities",
+    description: "Campus ambassador, student lead initiatives, and university chapters",
+    icon: "School",
+    modeLabel: "application",
+  },
+  {
+    type: "OTHER",
+    name: "Other Opportunity",
+    categorySlug: "other",
+    description: "Startup grants, venture cohorts, accelerators, and diverse programs",
+    icon: "Compass",
+    modeLabel: "application",
+  },
+];
+
+export const APPLICATION_STAGES = [
+  { key: "SUBMITTED", label: "Applied", description: "Application received and submitted" },
+  { key: "UNDER_REVIEW", label: "Under Review", description: "Organizer is reviewing your profile" },
+  { key: "SHORTLISTED", label: "Shortlisted", description: "Shortlisted for next evaluation" },
+  { key: "INTERVIEW", label: "Interview", description: "Interview / discussion round" },
+  { key: "SELECTED", label: "Selected", description: "Offered / Selected for position" },
+  { key: "REJECTED", label: "Not Selected", description: "Application did not move forward" },
+];
+
 export const SOCIAL_LINKS = {
   github: "https://github.com/Nimblux",
   linkedin: "https://www.linkedin.com/company/nimblux",
@@ -157,4 +306,5 @@ export const SOCIAL_LINKS = {
   instagram: "https://www.instagram.com/joinnimblux/",
   whatsappGroup: "https://chat.whatsapp.com/FEmomRwaYYw2SJvbzN0uPa?s=cl&p=a&ilr=1",
 };
+
 

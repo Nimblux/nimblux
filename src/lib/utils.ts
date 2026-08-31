@@ -107,3 +107,84 @@ export function getStatusBadge(status: string): {
       };
   }
 }
+
+export function getApplicationStageBadge(stage: string): {
+  label: string;
+  className: string;
+  dotColor: string;
+} {
+  switch (stage?.toUpperCase()) {
+    case "SELECTED":
+      return {
+        label: "Selected / Offered",
+        className: "bg-forest-500/20 text-forest-300 border border-forest-500/40",
+        dotColor: "bg-forest-400",
+      };
+    case "INTERVIEW":
+      return {
+        label: "Interview",
+        className: "bg-amber-500/20 text-amber-300 border border-amber-500/40",
+        dotColor: "bg-amber-400",
+      };
+    case "SHORTLISTED":
+      return {
+        label: "Shortlisted",
+        className: "bg-sage-500/20 text-sage-300 border border-sage-500/40",
+        dotColor: "bg-sage-400",
+      };
+    case "UNDER_REVIEW":
+      return {
+        label: "Under Review",
+        className: "bg-bronze-500/20 text-bronze-300 border border-bronze-500/40",
+        dotColor: "bg-bronze-400",
+      };
+    case "REJECTED":
+      return {
+        label: "Not Selected",
+        className: "bg-rose-500/20 text-rose-300 border border-rose-500/40",
+        dotColor: "bg-rose-400",
+      };
+    case "SUBMITTED":
+    default:
+      return {
+        label: "Applied",
+        className: "bg-charcoal-800 text-ivory-300 border border-charcoal-700",
+        dotColor: "bg-ivory-400",
+      };
+  }
+}
+
+export function getRegistrationStatusBadge(status: string): {
+  label: string;
+  className: string;
+  dotColor: string;
+} {
+  switch (status?.toUpperCase()) {
+    case "ATTENDED":
+      return {
+        label: "Attended",
+        className: "bg-forest-500/20 text-forest-300 border border-forest-500/40",
+        dotColor: "bg-forest-400",
+      };
+    case "CANCELLED":
+      return {
+        label: "Cancelled",
+        className: "bg-rose-500/20 text-rose-300 border border-rose-500/40",
+        dotColor: "bg-rose-400",
+      };
+    case "WAITLIST":
+      return {
+        label: "Waitlisted",
+        className: "bg-amber-500/20 text-amber-300 border border-amber-500/40",
+        dotColor: "bg-amber-400",
+      };
+    case "REGISTERED":
+    default:
+      return {
+        label: "Confirmed",
+        className: "bg-forest-500/15 text-forest-300 border border-forest-500/30",
+        dotColor: "bg-forest-400",
+      };
+  }
+}
+

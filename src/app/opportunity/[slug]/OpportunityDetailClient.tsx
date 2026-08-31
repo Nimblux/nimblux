@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Building2,
@@ -21,20 +21,44 @@ import {
   ShieldCheck,
   Trophy,
   Award,
+  Ticket,
+  UserCheck,
+  Send,
+  Video,
 } from "lucide-react";
-import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
+import { formatDate, getDaysRemaining, getWorkModeBadge, getApplicationStageBadge, getRegistrationStatusBadge } from "@/lib/utils";
 import { formatCurrency } from "@/lib/hackathon";
-import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES, OPPORTUNITY_TYPES } from "@/lib/constants";
 import ShareModal from "@/components/modals/ShareModal";
 import ReportModal from "@/components/modals/ReportModal";
+import OpportunityApplyModal from "@/components/modals/OpportunityApplyModal";
+import OpportunityRegisterModal from "@/components/modals/OpportunityRegisterModal";
 import OpportunityCard, { OpportunityCardData } from "@/components/cards/OpportunityCard";
 
 interface OpportunityDetailProps {
   opportunity: OpportunityCardData & {
+    opportunityType?: string;
+    isExternal?: boolean;
+    externalUrl?: string | null;
     eligibility?: string | null;
     endDate?: string | Date | null;
     contactInfo?: string | null;
     additionalInfo?: string | null;
+    department?: string | null;
+    duration?: string | null;
+    experienceLevel?: string | null;
+    responsibilities?: string | null;
+    requirements?: string | null;
+    benefits?: string | null;
+    instructor?: string | null;
+    curriculum?: string | null;
+    capacity?: number | null;
+    price?: string | null;
+    currency?: string | null;
+    venue?: string | null;
+    meetingUrl?: string | null;
+    agenda?: string | null;
+    customQuestions?: string | null;
     hasPrizePool?: boolean;
     totalPrizePool?: string | null;
     prizeCurrency?: string | null;
@@ -64,6 +88,18 @@ export default function OpportunityDetailClient({
   const [shareOpen, setShareOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
+  // In-Platform Participation States
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [userApplication, setUserApplication] = useState<any>(null);
+  const [userRegistration, setUserRegistration] = useState<any>(null);
+  const [checkingStatus, setCheckingStatus] = useState(true);
+
+  const oppType = (opportunity.opportunityType || opportunity.category || "OTHER").toUpperCase();
+  const typeMeta = OPPORTUNITY_TYPES.find((t) => t.type === oppType) || OPPORTUNITY_TYPES[0];
+  const isApplicationFlow = typeMeta.modeLabel === "application";
+  const isExternal = Boolean(opportunity.isExternal);
+
   const categoryMeta = CATEGORIES.find(
     (c) => c.slug.toLowerCase() === opportunity.category.toLowerCase()
   ) || {
@@ -75,6 +111,32 @@ export default function OpportunityDetailClient({
 
   const daysInfo = getDaysRemaining(opportunity.deadline);
   const modeBadge = getWorkModeBadge(opportunity.mode);
+
+  // Check if current user has already applied / registered
+  const checkParticipationStatus = () => {
+    setCheckingStatus(true);
+    if (isApplicationFlow) {
+      fetch(`/api/opportunities/${opportunity.id}/apply`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.application) setUserApplication(data.application);
+        })
+        .catch(() => {})
+        .finally(() => setCheckingStatus(false));
+    } else {
+      fetch(`/api/opportunities/${opportunity.id}/register`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.registration) setUserRegistration(data.registration);
+        })
+        .catch(() => {})
+        .finally(() => setCheckingStatus(false));
+    }
+  };
+
+  useEffect(() => {
+    checkParticipationStatus();
+  }, [opportunity.id, isApplicationFlow]);
 
   const handleBookmark = async () => {
     setSaving(true);
@@ -95,7 +157,7 @@ export default function OpportunityDetailClient({
     }
   };
 
-  const handleApplyClick = () => {
+  const handleExternalClick = () => {
     fetch(`/api/opportunities/${opportunity.id}/click`, { method: "POST" }).catch(() => {});
   };
 
@@ -144,47 +206,43 @@ export default function OpportunityDetailClient({
                 )}
               </div>
 
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="font-semibold text-xs text-ivory-300">
+              <div className="flex-1 space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-mono font-bold text-ivory-300">
                     {opportunity.organization}
                   </span>
                   {opportunity.verified && (
-                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10.5px] font-semibold bg-sage-500/10 text-sage-300 border border-sage-500/20">
-                      <ShieldCheck className="w-3 h-3" />
+                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-forest-500/10 text-forest-300 border border-forest-500/20">
+                      <CheckCircle2 className="w-3 h-3" />
                       <span>Verified</span>
                     </span>
                   )}
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium border ${categoryMeta.bgGradient}`}
+                    className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-medium border font-mono ${categoryMeta.bgGradient}`}
                   >
-                    {categoryMeta.name}
+                    <span>{categoryMeta.name}</span>
                   </span>
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium ${modeBadge.className}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-medium ${modeBadge.className}`}
                   >
                     {modeBadge.label}
                   </span>
                 </div>
 
-                <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100 leading-tight">
+                <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100 leading-snug">
                   {opportunity.title}
                 </h1>
               </div>
             </div>
 
-            {/* Key Highlights Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder my-6">
+            {/* Quick Metadata Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-charcoal-900/70 border border-charcoal-cardBorder mb-6">
               <div>
                 <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
-                  {opportunity.hasPrizePool && opportunity.totalPrizePool ? "Prize Pool" : "Compensation"}
+                  {opportunity.stipend ? "Stipend" : opportunity.salary ? "Salary" : opportunity.price ? "Fee" : "Compensation"}
                 </div>
-                <div className={`text-xs sm:text-sm font-bold mt-0.5 truncate font-mono ${
-                  opportunity.hasPrizePool && opportunity.totalPrizePool ? "text-amber-300" : "text-forest-300"
-                }`}>
-                  {opportunity.hasPrizePool && opportunity.totalPrizePool
-                    ? formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")
-                    : (opportunity.stipend || opportunity.salary || opportunity.registrationFee || "Free Entry")}
+                <div className="text-xs sm:text-sm font-bold text-forest-300 mt-0.5 font-mono truncate">
+                  {opportunity.stipend || opportunity.salary || opportunity.price || opportunity.registrationFee || "Free"}
                 </div>
               </div>
 
@@ -192,11 +250,7 @@ export default function OpportunityDetailClient({
                 <div className="text-[10.5px] font-mono text-ivory-500 uppercase tracking-wider">
                   Deadline
                 </div>
-                <div
-                  className={`text-xs sm:text-sm font-bold mt-0.5 font-mono ${
-                    daysInfo.isUrgent ? "text-rose-400" : "text-ivory-100"
-                  }`}
-                >
+                <div className="text-xs sm:text-sm font-bold text-ivory-200 mt-0.5 font-mono truncate">
                   {formatDate(opportunity.deadline)}
                 </div>
               </div>
@@ -224,7 +278,56 @@ export default function OpportunityDetailClient({
               </div>
             </div>
 
-            {/* Reusable Prize Pool Section (Only shown when prize data exists) */}
+            {/* Active User Participation Status Alert */}
+            {userApplication && (
+              <div className="p-4 rounded-2xl bg-bronze-500/10 border border-bronze-500/30 my-6 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-bronze-500/20 text-bronze-300 flex items-center justify-center font-bold">
+                    <UserCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-ivory-100">
+                      You have applied to this position
+                    </div>
+                    <div className="text-[11px] text-ivory-400 font-mono">
+                      Current Stage: <span className="text-bronze-300 font-bold">{userApplication.status}</span>
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard/applications"
+                  className="px-3 py-1 rounded-xl text-[11px] font-bold bg-charcoal-900 text-ivory-200 border border-charcoal-cardBorder hover:text-white"
+                >
+                  Track Pipeline →
+                </Link>
+              </div>
+            )}
+
+            {userRegistration && userRegistration.status !== "CANCELLED" && (
+              <div className="p-4 rounded-2xl bg-forest-500/10 border border-forest-500/30 my-6 flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-full bg-forest-500/20 text-forest-300 flex items-center justify-center font-bold">
+                    <Ticket className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-ivory-100">
+                      You are registered for this event! 🎟️
+                    </div>
+                    <div className="text-[11px] text-ivory-400 font-mono">
+                      Status: <span className="text-forest-300 font-bold">{userRegistration.status}</span>
+                    </div>
+                  </div>
+                </div>
+                <Link
+                  href="/dashboard/registrations"
+                  className="px-3 py-1 rounded-xl text-[11px] font-bold bg-charcoal-900 text-ivory-200 border border-charcoal-cardBorder hover:text-white"
+                >
+                  View Details →
+                </Link>
+              </div>
+            )}
+
+            {/* Reusable Prize Pool Section */}
             {(opportunity.hasPrizePool || opportunity.totalPrizePool || opportunity.prize1st) && (
               <div className="p-6 rounded-2xl bg-gradient-to-br from-charcoal-900 via-charcoal-card to-charcoal-900 border border-bronze-500/30 my-6 space-y-4 shadow-editorial">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-charcoal-cardBorder">
@@ -242,7 +345,6 @@ export default function OpportunityDetailClient({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* 1st Prize */}
                   {opportunity.prize1st && (
                     <div className="p-4 rounded-xl bg-charcoal-950/80 border border-amber-500/30 text-center space-y-1">
                       <div className="text-xl">🥇</div>
@@ -255,7 +357,6 @@ export default function OpportunityDetailClient({
                     </div>
                   )}
 
-                  {/* 2nd Prize */}
                   {opportunity.prize2nd && (
                     <div className="p-4 rounded-xl bg-charcoal-950/80 border border-stone-500/30 text-center space-y-1">
                       <div className="text-xl">🥈</div>
@@ -268,7 +369,6 @@ export default function OpportunityDetailClient({
                     </div>
                   )}
 
-                  {/* 3rd Prize */}
                   {opportunity.prize3rd && (
                     <div className="p-4 rounded-xl bg-charcoal-950/80 border border-bronze-500/30 text-center space-y-1">
                       <div className="text-xl">🥉</div>
@@ -282,7 +382,6 @@ export default function OpportunityDetailClient({
                   )}
                 </div>
 
-                {/* Special Awards & Extra Perks */}
                 {(opportunity.prizeSpecial || opportunity.prizeDetails) && (
                   <div className="pt-3 border-t border-charcoal-cardBorder space-y-2">
                     {opportunity.prizeSpecial && (
@@ -312,6 +411,23 @@ export default function OpportunityDetailClient({
                   alt={opportunity.title}
                   className="w-full h-full object-cover"
                 />
+              </div>
+            )}
+
+            {/* Section: Instructor / Speaker */}
+            {opportunity.instructor && (
+              <div className="p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder my-6 flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-bronze-500/20 text-bronze-300 flex items-center justify-center font-bold font-mono">
+                  👨‍🏫
+                </div>
+                <div>
+                  <div className="text-[11px] font-mono text-ivory-500 uppercase tracking-wider">
+                    Instructor / Speaker
+                  </div>
+                  <div className="text-sm font-bold text-ivory-100">
+                    {opportunity.instructor}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -406,16 +522,37 @@ export default function OpportunityDetailClient({
         {/* Right Sticky Sidebar */}
         <div className="lg:col-span-1 space-y-5 lg:sticky lg:top-24">
           <div className="rounded-3xl bg-charcoal-card p-6 border border-charcoal-cardBorder space-y-4 shadow-card">
-            <a
-              href={opportunity.applicationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={handleApplyClick}
-              className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all text-center"
-            >
-              <span>Apply on Official Website</span>
-              <ExternalLink className="w-4 h-4" />
-            </a>
+            {/* Primary Action Button: Native vs External */}
+            {isExternal ? (
+              <a
+                href={opportunity.externalUrl || opportunity.applicationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleExternalClick}
+                className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all text-center"
+              >
+                <span>Apply on Official Website</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            ) : isApplicationFlow ? (
+              <button
+                type="button"
+                onClick={() => setApplyModalOpen(true)}
+                className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all text-center"
+              >
+                <Send className="w-4 h-4" />
+                <span>{userApplication ? "Update Application" : "Apply on NIMBLUX"}</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setRegisterModalOpen(true)}
+                className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all text-center"
+              >
+                <Ticket className="w-4 h-4" />
+                <span>{userRegistration && userRegistration.status !== "CANCELLED" ? "Registered (Manage)" : "Register for Free"}</span>
+              </button>
+            )}
 
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -455,10 +592,12 @@ export default function OpportunityDetailClient({
           <div className="rounded-3xl bg-charcoal-card p-5 border border-charcoal-cardBorder space-y-2.5 shadow-card">
             <div className="flex items-center space-x-2 text-xs font-mono font-bold text-ivory-300 uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4 text-sage-400" />
-              <span>Verified Listing</span>
+              <span>Verified Host Listing</span>
             </div>
             <p className="text-xs text-ivory-500 leading-relaxed">
-              This listing has been verified by the NIMBLUX review team. Applications are submitted directly on the official host website.
+              {isExternal
+                ? "This listing is verified by NIMBLUX. Applications are submitted on the external host website."
+                : "This listing accepts in-platform applications & registrations directly on NIMBLUX."}
             </p>
             {opportunity.createdBy && (
               <div className="pt-3 border-t border-charcoal-cardBorder flex items-center space-x-2.5 text-xs text-ivory-400">
@@ -506,7 +645,22 @@ export default function OpportunityDetailClient({
         </div>
       )}
 
-      {/* Modals */}
+      {/* In-Platform Modals */}
+      <OpportunityApplyModal
+        isOpen={applyModalOpen}
+        onClose={() => setApplyModalOpen(false)}
+        opportunity={opportunity}
+        onSuccess={checkParticipationStatus}
+      />
+
+      <OpportunityRegisterModal
+        isOpen={registerModalOpen}
+        onClose={() => setRegisterModalOpen(false)}
+        opportunity={opportunity}
+        onSuccess={checkParticipationStatus}
+      />
+
+      {/* Share & Report Modals */}
       <ShareModal
         isOpen={shareOpen}
         title={opportunity.title}

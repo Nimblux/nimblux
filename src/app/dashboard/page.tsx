@@ -13,6 +13,10 @@ import {
   Sparkles,
   ExternalLink,
   ChevronRight,
+  Send,
+  Ticket,
+  Award,
+  Trophy,
 } from "lucide-react";
 import { getStatusBadge, formatDate } from "@/lib/utils";
 
@@ -24,18 +28,27 @@ export default function DashboardOverviewPage() {
     rejected: 0,
   });
   const [savedCount, setSavedCount] = useState(0);
+  const [applicationsCount, setApplicationsCount] = useState(0);
+  const [registrationsCount, setRegistrationsCount] = useState(0);
+  const [certificatesCount, setCertificatesCount] = useState(0);
   const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/users/submissions").then((res) => res.json()),
-      fetch("/api/bookmarks").then((res) => res.json()),
+      fetch("/api/users/submissions").then((res) => res.json()).catch(() => ({})),
+      fetch("/api/bookmarks").then((res) => res.json()).catch(() => ({})),
+      fetch("/api/users/applications").then((res) => res.json()).catch(() => ({})),
+      fetch("/api/users/registrations").then((res) => res.json()).catch(() => ({})),
+      fetch("/api/users/certificates").then((res) => res.json()).catch(() => ({})),
     ])
-      .then(([subData, bookData]) => {
+      .then(([subData, bookData, appData, regData, certData]) => {
         if (subData.counts) setCounts(subData.counts);
         if (subData.submissions) setRecentSubmissions(subData.submissions.slice(0, 5));
         if (bookData.opportunities) setSavedCount(bookData.opportunities.length);
+        if (appData.applications) setApplicationsCount(appData.applications.length);
+        if (regData.registrations) setRegistrationsCount(regData.registrations.length);
+        if (certData.certificates) setCertificatesCount(certData.certificates.length);
       })
       .catch((e) => console.error(e))
       .finally(() => setLoading(false));
@@ -53,70 +66,71 @@ export default function DashboardOverviewPage() {
 
   return (
     <div className="space-y-8">
-      {/* Metrics Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder space-y-2 shadow-card">
+      {/* Activity & Participation Overview */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Link
+          href="/dashboard/applications"
+          className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder hover:border-bronze-500/40 space-y-2 shadow-card transition-all group"
+        >
           <div className="flex items-center justify-between text-xs text-ivory-400 font-mono">
-            <span className="font-semibold">Submissions</span>
-            <Briefcase className="w-4 h-4 text-bronze-400" />
+            <span className="font-semibold">My Applications</span>
+            <Send className="w-4 h-4 text-bronze-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
           <div className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
-            {counts.total}
+            {applicationsCount}
           </div>
-          <p className="text-[11px] text-ivory-500 font-mono">Opportunities posted</p>
-        </div>
+          <p className="text-[11px] text-bronze-300 font-mono">Internships & jobs applied</p>
+        </Link>
 
-        <div className="p-5 rounded-2xl bg-charcoal-card border border-forest-500/30 space-y-2 shadow-card">
+        <Link
+          href="/dashboard/registrations"
+          className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder hover:border-forest-500/40 space-y-2 shadow-card transition-all group"
+        >
           <div className="flex items-center justify-between text-xs text-forest-300 font-mono">
-            <span className="font-semibold">Approved</span>
-            <CheckCircle2 className="w-4 h-4 text-forest-400" />
+            <span className="font-semibold">Registrations</span>
+            <Ticket className="w-4 h-4 text-forest-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
           <div className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
-            {counts.approved}
+            {registrationsCount}
           </div>
-          <p className="text-[11px] text-forest-400/80 font-mono">Live in directory</p>
-        </div>
+          <p className="text-[11px] text-forest-400/80 font-mono">Workshops & meetups</p>
+        </Link>
 
-        <div className="p-5 rounded-2xl bg-charcoal-card border border-bronze-500/30 space-y-2 shadow-card">
-          <div className="flex items-center justify-between text-xs text-bronze-300 font-mono">
-            <span className="font-semibold">Under Review</span>
-            <Clock className="w-4 h-4 text-bronze-400" />
+        <Link
+          href="/dashboard/certificates"
+          className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder hover:border-amber-500/40 space-y-2 shadow-card transition-all group"
+        >
+          <div className="flex items-center justify-between text-xs text-amber-300 font-mono">
+            <span className="font-semibold">Certificates</span>
+            <Award className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
           <div className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
-            {counts.pending}
+            {certificatesCount}
           </div>
-          <p className="text-[11px] text-bronze-400/80 font-mono">Moderator queue</p>
-        </div>
+          <p className="text-[11px] text-amber-400/80 font-mono">Verifiable credentials</p>
+        </Link>
 
-        <div className="p-5 rounded-2xl bg-charcoal-card border border-rose-500/30 space-y-2 shadow-card">
-          <div className="flex items-center justify-between text-xs text-rose-300 font-mono">
-            <span className="font-semibold">Revision Needed</span>
-            <AlertTriangle className="w-4 h-4 text-rose-400" />
-          </div>
-          <div className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
-            {counts.rejected}
-          </div>
-          <p className="text-[11px] text-rose-400/80 font-mono">Feedback available</p>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder space-y-2 shadow-card col-span-2 sm:col-span-1">
+        <Link
+          href="/dashboard/saved"
+          className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder hover:border-sage-500/40 space-y-2 shadow-card transition-all group"
+        >
           <div className="flex items-center justify-between text-xs text-ivory-400 font-mono">
             <span className="font-semibold">Saved Items</span>
-            <Bookmark className="w-4 h-4 text-bronze-400" />
+            <Bookmark className="w-4 h-4 text-sage-400 group-hover:translate-x-0.5 transition-transform" />
           </div>
           <div className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100">
             {savedCount}
           </div>
-          <p className="text-[11px] text-ivory-500 font-mono">Bookmarks stored</p>
-        </div>
+          <p className="text-[11px] text-ivory-500 font-mono">Bookmarked opportunities</p>
+        </Link>
       </div>
 
-      {/* Recent Submissions Card */}
+      {/* Submissions & Moderation Metrics */}
       <div className="rounded-3xl bg-charcoal-card p-6 sm:p-8 border border-charcoal-cardBorder space-y-6 shadow-card">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-serif-heading font-medium text-lg sm:text-xl text-ivory-100">
-              Recent Submissions
+              My Opportunity Postings
             </h2>
             <p className="text-xs text-ivory-500 mt-0.5">
               Track the moderation and live status of opportunities you posted.
@@ -126,7 +140,7 @@ export default function DashboardOverviewPage() {
             href="/dashboard/submissions"
             className="text-xs font-semibold text-bronze-400 hover:text-bronze-300 flex items-center space-x-1"
           >
-            <span>View all submissions</span>
+            <span>View all ({counts.total})</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -137,7 +151,7 @@ export default function DashboardOverviewPage() {
               <Briefcase className="w-5 h-5" />
             </div>
             <p className="text-xs text-ivory-500">
-              You haven't submitted any opportunities yet.
+              You haven't posted any opportunities yet.
             </p>
             <Link
               href="/submit-opportunity"
@@ -244,15 +258,15 @@ export default function DashboardOverviewPage() {
         </Link>
 
         <Link
-          href="/dashboard/profile"
+          href="/organizer"
           className="p-5 rounded-2xl bg-charcoal-card border border-charcoal-cardBorder hover:border-bronze-500/30 flex items-center space-x-4 shadow-card transition-all"
         >
-          <div className="w-11 h-11 rounded-xl bg-sage-500/10 text-sage-300 flex items-center justify-center border border-sage-500/20">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-300 flex items-center justify-center border border-amber-500/20">
+            <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-bold text-sm text-ivory-100">Update Profile</div>
-            <div className="text-xs text-ivory-500">Skills, college & bio</div>
+            <div className="font-bold text-sm text-ivory-100">Organizer Console</div>
+            <div className="text-xs text-ivory-500">Manage candidate pipelines</div>
           </div>
         </Link>
       </div>

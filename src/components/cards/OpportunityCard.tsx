@@ -276,20 +276,11 @@ export default function OpportunityCard({
         <div className="flex items-center space-x-2">
           <Link
             href={`/opportunity/${opportunity.slug}`}
-            className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl text-xs font-medium text-ivory-300 hover:text-ivory-100 bg-charcoal-900 hover:bg-charcoal-850 border border-charcoal-cardBorder transition-colors text-center"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1 px-4 py-1.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
           >
-            Details
+            <span>View & Apply</span>
+            <ArrowRight className="w-3 h-3 ml-0.5" />
           </Link>
-          <a
-            href={opportunity.applicationUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleApplyClick}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1 px-3.5 py-1.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
-          >
-            <span>Apply</span>
-            <ExternalLink className="w-3 h-3 ml-0.5" />
-          </a>
         </div>
       </div>
     </article>

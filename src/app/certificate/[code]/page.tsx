@@ -13,37 +13,88 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const cert = await prisma.hackathonCertificate.findUnique({
-    where: { certificateCode: params.code.toUpperCase() },
-    include: { hackathon: true, user: true },
-  });
+  const code = params.code.toUpperCase();
+
+  const [universalCert, hackathonCert] = await Promise.all([
+    prisma.certificate.findUnique({
+      where: { certificateCode: code },
+      include: { opportunity: true, user: true },
+    }),
+    prisma.hackathonCertificate.findUnique({
+      where: { certificateCode: code },
+      include: { hackathon: true, user: true },
+    }),
+  ]);
+
+  const cert = universalCert || hackathonCert;
 
   if (!cert) {
     return { title: "Certificate Not Found | NIMBLUX" };
   }
 
+  const title = "opportunityTitle" in cert ? cert.opportunityTitle : cert.hackathon.title;
+
   return {
-    title: `Verified Certificate: ${cert.recipientName} — ${cert.hackathon.title} | NIMBLUX`,
-    description: `Official verifiable ${cert.role.toLowerCase()} certificate issued to ${cert.recipientName} for ${cert.hackathon.title}. Verified on the NIMBLUX platform registry.`,
+    title: `Verified Certificate: ${cert.recipientName} — ${title} | NIMBLUX`,
+    description: `Official verifiable certificate issued to ${cert.recipientName} for ${title}. Verified on the NIMBLUX platform registry.`,
   };
 }
 
 export default async function CertificateVerificationPage({ params }: PageProps) {
   const code = params.code.toUpperCase();
 
-  const cert = await prisma.hackathonCertificate.findUnique({
-    where: { certificateCode: code },
-    include: {
-      hackathon: true,
-      user: {
-        select: { id: true, name: true, profileImage: true, college: true },
+  const [universalCert, hackathonCert] = await Promise.all([
+    prisma.certificate.findUnique({
+      where: { certificateCode: code },
+      include: {
+        opportunity: true,
+        user: {
+          select: { id: true, name: true, profileImage: true, college: true },
+        },
       },
-    },
-  });
+    }),
+    prisma.hackathonCertificate.findUnique({
+      where: { certificateCode: code },
+      include: {
+        hackathon: true,
+        user: {
+          select: { id: true, name: true, profileImage: true, college: true },
+        },
+      },
+    }),
+  ]);
 
-  if (!cert) {
+  if (!universalCert && !hackathonCert) {
     notFound();
   }
+
+  const certData = universalCert
+    ? {
+        code: universalCert.certificateCode,
+        recipientName: universalCert.recipientName,
+        role: universalCert.role,
+        prizeTitle: universalCert.prizeTitle,
+        title: universalCert.opportunityTitle,
+        type: universalCert.opportunityType,
+        organization: universalCert.organizationName,
+        issueDate: universalCert.issueDate,
+        college: universalCert.user?.college,
+        slug: universalCert.opportunity?.slug,
+        linkPrefix: "/opportunity",
+      }
+    : {
+        code: hackathonCert!.certificateCode,
+        recipientName: hackathonCert!.recipientName,
+        role: hackathonCert!.role,
+        prizeTitle: hackathonCert!.prizeTitle,
+        title: hackathonCert!.hackathon.title,
+        type: "HACKATHON",
+        organization: hackathonCert!.hackathon.organizerName,
+        issueDate: hackathonCert!.issueDate,
+        college: hackathonCert!.user?.college,
+        slug: hackathonCert!.hackathon.slug,
+        linkPrefix: "/hackathons",
+      };
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
@@ -60,7 +111,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         </div>
 
         <div className="font-mono text-[11px] text-forest-300 bg-forest-500/15 px-3 py-1 rounded-lg self-start sm:self-center border border-forest-500/25">
-          ID: {cert.certificateCode}
+          ID: {certData.code}
         </div>
       </div>
 
@@ -78,7 +129,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
             <Sparkles className="w-4 h-4" />
           </div>
           <h1 className="font-serif-heading font-normal text-2xl sm:text-4xl text-ivory-100 tracking-wide">
-            Certificate of {cert.role === "WINNER" ? "Excellence & Victory" : "Participation"}
+            Certificate of {certData.role === "WINNER" ? "Excellence & Victory" : certData.role === "COMPLETION" ? "Completion" : "Participation"}
           </h1>
           <p className="text-xs font-mono text-ivory-500 uppercase tracking-wider">
             This is proudly presented to
@@ -88,25 +139,25 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         {/* Recipient Name */}
         <div className="py-2">
           <div className="font-serif-heading font-medium text-3xl sm:text-5xl text-amber-300 underline decoration-bronze-500/40 decoration-1 underline-offset-8">
-            {cert.recipientName}
+            {certData.recipientName}
           </div>
-          {cert.user?.college && (
-            <p className="text-xs text-ivory-400 font-mono mt-2">{cert.user.college}</p>
+          {certData.college && (
+            <p className="text-xs text-ivory-400 font-mono mt-2">{certData.college}</p>
           )}
         </div>
 
         {/* Achievement / Description */}
         <div className="max-w-xl mx-auto space-y-2 text-xs sm:text-sm text-ivory-300 leading-relaxed">
           <p>
-            for outstanding {cert.role === "WINNER" ? "achievement and victory in" : "dedication, engineering collaboration, and project submission in"}
+            for outstanding {certData.role === "WINNER" ? "achievement and victory in" : "dedication, engineering collaboration, and participation in"}
           </p>
           <div className="font-bold text-base sm:text-lg text-ivory-100 font-serif-heading">
-            {cert.hackathon.title}
+            {certData.title}
           </div>
-          {cert.prizeTitle && (
+          {certData.prizeTitle && (
             <div className="inline-flex items-center space-x-1.5 px-4 py-1 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono font-bold text-xs mt-1">
               <Trophy className="w-3.5 h-3.5" />
-              <span>{cert.prizeTitle}</span>
+              <span>{certData.prizeTitle}</span>
             </div>
           )}
         </div>
@@ -115,9 +166,9 @@ export default async function CertificateVerificationPage({ params }: PageProps)
         <div className="pt-8 border-t border-charcoal-cardBorder/80 grid grid-cols-1 sm:grid-cols-3 gap-6 items-center">
           <div className="text-center sm:text-left space-y-1">
             <div className="font-serif-heading text-ivory-200 text-sm italic">
-              {cert.hackathon.organizerName}
+              {certData.organization}
             </div>
-            <div className="text-[10px] font-mono text-ivory-500 uppercase">Hackathon Organizer</div>
+            <div className="text-[10px] font-mono text-ivory-500 uppercase">Issuing Organization</div>
           </div>
 
           {/* Golden Holographic Verification Seal */}
@@ -131,7 +182,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
           </div>
 
           <div className="text-center sm:text-right space-y-1">
-            <div className="font-mono text-xs text-ivory-200">{formatDate(cert.issueDate)}</div>
+            <div className="font-mono text-xs text-ivory-200">{formatDate(certData.issueDate)}</div>
             <div className="text-[10px] font-mono text-ivory-500 uppercase">Date Issued</div>
           </div>
         </div>
@@ -139,20 +190,22 @@ export default async function CertificateVerificationPage({ params }: PageProps)
 
       {/* Action Buttons */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-        <Link
-          href={`/hackathon/${cert.hackathon.slug}`}
-          className="inline-flex items-center space-x-1 text-ivory-400 hover:text-ivory-200 font-mono"
-        >
-          <span>View Hackathon Details</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        {certData.slug && (
+          <Link
+            href={`${certData.linkPrefix}/${certData.slug}`}
+            className="inline-flex items-center space-x-1 text-ivory-400 hover:text-ivory-200 font-mono"
+          >
+            <span>View Opportunity Details</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        )}
 
         <div className="flex items-center space-x-3">
           <Link
-            href="/hackathons"
+            href="/opportunities"
             className="px-5 py-2.5 rounded-xl font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
           >
-            Explore More Hackathons
+            Explore More Opportunities
           </Link>
         </div>
       </div>

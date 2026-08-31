@@ -42,6 +42,9 @@ model User {
   hackathonJudges       HackathonJudge[]
   hackathonCertificates HackathonCertificate[]
   ledTeams              HackathonTeam[]         @relation("TeamLeader")
+  applications          OpportunityApplication[]
+  registrations         OpportunityRegistration[]
+  certificates          Certificate[]
 }
 
 model Opportunity {
@@ -74,6 +77,28 @@ model Opportunity {
   clicksCount     Int           @default(0)
   viewsCount      Int           @default(0)
 
+  // Specialized & In-Platform Fields
+  opportunityType String        @default("OTHER") // "INTERNSHIP" | "JOB" | "HACKATHON" | "WORKSHOP" | "COMPETITION" | "EVENT" | "SCHOLARSHIP" | "FELLOWSHIP" | "COURSE" | "BOOTCAMP" | "WEBINAR" | "CONFERENCES" | "CHALLENGES" | "VOLUNTEERING" | "CAMPUS" | "OTHER"
+  isExternal      Boolean       @default(false)
+  externalUrl     String?
+  department      String?
+  duration        String?
+  experienceLevel String?       @default("ALL") // "ENTRY" | "INTERMEDIATE" | "SENIOR" | "ALL"
+  responsibilities String?      @db.Text
+  requirements    String?       @db.Text
+  benefits        String?       @db.Text
+  instructor      String?
+  curriculum      String?       @db.Text
+  capacity        Int?
+  price           String?
+  currency        String?       @default("INR")
+  venue           String?
+  meetingUrl      String?
+  agenda          String?       @db.Text
+  faq             String?       @db.Text
+  rules           String?       @db.Text
+  customQuestions String?       @db.Text // JSON configuration of custom screening/registration questions
+
   // Reusable Prize Pool Architecture
   hasPrizePool    Boolean       @default(false)
   totalPrizePool  String?
@@ -94,6 +119,10 @@ model Opportunity {
 
   bookmarks       Bookmark[]
   reports         Report[]
+  applications    OpportunityApplication[]
+  registrations   OpportunityRegistration[]
+  announcements   OpportunityAnnouncement[]
+  certificates    Certificate[]
 }
 
 model Bookmark {
@@ -478,3 +507,98 @@ model HackathonCertificate {
   metadata        String?   @db.Text
   createdAt       DateTime  @default(now())
 }
+
+// =======================================================
+// UNIFIED IN-PLATFORM APPLICATION & REGISTRATION ENGINES
+// =======================================================
+
+model OpportunityApplication {
+  id              String        @id @default(cuid())
+  opportunityId   String
+  opportunity     Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Candidate Snapshot
+  name            String
+  email           String
+  phone           String?
+  college         String?
+  degree          String?
+  graduationYear  String?
+  resumeUrl       String?
+  portfolioUrl    String?
+  githubUrl       String?
+  linkedinUrl     String?
+  skills          String?
+  coverLetter     String?       @db.Text
+  answers         String?       @db.Text // JSON responses to custom organizer questions
+
+  // Pipeline Status & Evaluation
+  status          String        @default("SUBMITTED") // "SUBMITTED" | "UNDER_REVIEW" | "SHORTLISTED" | "INTERVIEW" | "SELECTED" | "REJECTED"
+  notes           String?       @db.Text // Internal organizer/recruiter notes
+  rating          Int?          @default(0) // 1-5 star rating
+  rejectionReason String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([opportunityId, userId])
+}
+
+model OpportunityRegistration {
+  id               String        @id @default(cuid())
+  opportunityId    String
+  opportunity      Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Attendee Snapshot
+  name             String
+  email            String
+  phone            String?
+  college          String?
+  answers          String?       @db.Text // JSON responses
+
+  // Status & Attendance
+  status           String        @default("REGISTERED") // "REGISTERED" | "ATTENDED" | "CANCELLED" | "WAITLIST"
+  attendanceMarked Boolean       @default(false)
+  progress         Int?          @default(0) // For workshops/courses
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([opportunityId, userId])
+}
+
+model OpportunityAnnouncement {
+  id            String        @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  title         String
+  content       String        @db.Text
+  target        String        @default("ALL") // "ALL" | "APPLICANTS" | "REGISTERED" | "SELECTED"
+  pinned        Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+}
+
+model Certificate {
+  id               String        @id @default(cuid())
+  certificateCode  String        @unique // e.g. "NMB-CERT-ABC123XYZ"
+  opportunityId    String?
+  opportunity      Opportunity?  @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  hackathonId      String?
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recipientName    String
+  opportunityTitle String
+  opportunityType  String        @default("OPPORTUNITY") // "INTERNSHIP" | "JOB" | "HACKATHON" | "WORKSHOP" | "COMPETITION" | "EVENT" | "COURSE" | "FELLOWSHIP"
+  organizationName String
+  role             String        @default("PARTICIPANT") // "PARTICIPANT" | "COMPLETION" | "WINNER" | "RUNNER_UP" | "SPEAKER" | "ORGANIZER" | "JUDGE"
+  prizeTitle       String?
+  issueDate        DateTime      @default(now())
+  metadata         String?       @db.Text // Additional verification metadata (JSON)
+  createdAt        DateTime      @default(now())
+}
+

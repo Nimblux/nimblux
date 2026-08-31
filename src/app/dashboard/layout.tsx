@@ -43,8 +43,11 @@ export default function DashboardLayout({
 
   const navItems = [
     { label: "Overview", href: "/dashboard", icon: Compass },
+    { label: "My Applications", href: "/dashboard/applications", icon: Send },
+    { label: "My Registrations", href: "/dashboard/registrations", icon: Ticket },
     { label: "My Hackathons", href: "/dashboard/hackathons", icon: Trophy },
-    { label: "My Submissions", href: "/dashboard/submissions", icon: Briefcase },
+    { label: "My Certificates", href: "/dashboard/certificates", icon: Award },
+    { label: "My Postings", href: "/dashboard/submissions", icon: Briefcase },
     { label: "Saved Opportunities", href: "/dashboard/saved", icon: Bookmark },
     { label: "Edit Profile", href: "/dashboard/profile", icon: User },
     { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
