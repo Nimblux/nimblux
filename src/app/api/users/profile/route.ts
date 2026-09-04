@@ -31,7 +31,18 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ user });
+    const latestApp = await prisma.opportunityApplication.findFirst({
+      where: { userId: sessionUser.id, resumeUrl: { not: null } },
+      orderBy: { createdAt: "desc" },
+      select: { resumeUrl: true },
+    });
+
+    return NextResponse.json({
+      user: {
+        ...user,
+        resumeUrl: latestApp?.resumeUrl || null,
+      },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

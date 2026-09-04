@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Calendar,
   Clock,
@@ -34,6 +34,7 @@ import {
 import { formatDate, getDaysRemaining } from "@/lib/utils";
 import { formatCurrency, getParticipationModeBadge, getHackathonStatusBadge } from "@/lib/hackathon";
 import ShareModal from "@/components/modals/ShareModal";
+import AuthRequiredModal from "@/components/modals/AuthRequiredModal";
 
 interface HackathonDetailProps {
   hackathon: any;
@@ -52,9 +53,14 @@ interface HackathonDetailProps {
 export default function HackathonDetailClient({
   hackathon,
   userState,
-  currentUser,
+  currentUser: initialUser,
 }: HackathonDetailProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const actionParam = searchParams?.get("action");
+
+  const [currentUser, setCurrentUser] = useState<any>(initialUser || null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [shareOpen, setShareOpen] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
@@ -64,17 +70,84 @@ export default function HackathonDetailClient({
 
   // Registration Form State prefilled from current user
   const [regForm, setRegForm] = useState({
-    name: currentUser?.name || "",
-    email: currentUser?.email || "",
-    phone: currentUser?.phone || "",
-    college: currentUser?.college || "",
-    degree: currentUser?.degree || "",
-    graduationYear: currentUser?.graduationYear || "",
-    skills: currentUser?.skills || "",
-    githubUrl: currentUser?.githubUrl || "",
-    linkedinUrl: currentUser?.linkedinUrl || "",
-    portfolioUrl: currentUser?.portfolioUrl || "",
+    name: initialUser?.name || "",
+    email: initialUser?.email || "",
+    phone: initialUser?.phone || "",
+    college: initialUser?.college || "",
+    degree: initialUser?.degree || "",
+    graduationYear: initialUser?.graduationYear || "",
+    skills: initialUser?.skills || "",
+    githubUrl: initialUser?.githubUrl || "",
+    linkedinUrl: initialUser?.linkedinUrl || "",
+    portfolioUrl: initialUser?.portfolioUrl || "",
   });
+
+  // Fetch session if not provided via SSR
+  useEffect(() => {
+    if (!currentUser) {
+      fetch("/api/auth/me")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.user) {
+            setCurrentUser(d.user);
+            setRegForm((prev) => ({
+              ...prev,
+              name: prev.name || d.user.name || "",
+              email: prev.email || d.user.email || "",
+              phone: prev.phone || d.user.phone || "",
+              college: prev.college || d.user.college || "",
+              degree: prev.degree || d.user.degree || "",
+              graduationYear: prev.graduationYear || d.user.graduationYear || "",
+              skills: prev.skills || d.user.skills || "",
+              githubUrl: prev.githubUrl || d.user.githubUrl || "",
+              linkedinUrl: prev.linkedinUrl || d.user.linkedinUrl || "",
+              portfolioUrl: prev.portfolioUrl || d.user.portfolioUrl || "",
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  // Handle ?action=register
+  useEffect(() => {
+    if (actionParam === "register" && !userState.isRegistered) {
+      if (currentUser) {
+        setRegisterModalOpen(true);
+      } else {
+        setAuthModalOpen(true);
+      }
+    }
+  }, [actionParam, currentUser, userState.isRegistered]);
+
+  const handleRegisterClick = () => {
+    if (!currentUser) {
+      setAuthModalOpen(true);
+      return;
+    }
+    setRegisterModalOpen(true);
+  };
+
+  const handleAuthenticated = (user: any) => {
+    setCurrentUser(user);
+    setRegForm((prev) => ({
+      ...prev,
+      name: user.name || prev.name,
+      email: user.email || prev.email,
+      phone: user.phone || prev.phone,
+      college: user.college || prev.college,
+      degree: user.degree || prev.degree,
+      graduationYear: user.graduationYear || prev.graduationYear,
+      skills: user.skills || prev.skills,
+      githubUrl: user.githubUrl || prev.githubUrl,
+      linkedinUrl: user.linkedinUrl || prev.linkedinUrl,
+      portfolioUrl: user.portfolioUrl || prev.portfolioUrl,
+    }));
+    setAuthModalOpen(false);
+    if (!userState.isRegistered) {
+      setRegisterModalOpen(true);
+    }
+  };
 
   const daysInfo = getDaysRemaining(hackathon.regEndDate);
   const modeBadge = getParticipationModeBadge(hackathon.mode);
@@ -307,13 +380,7 @@ export default function HackathonDetailClient({
               </div>
             ) : (
               <button
-                onClick={() => {
-                  if (!currentUser) {
-                    router.push(`/login?redirect=/hackathon/${hackathon.slug}`);
-                  } else {
-                    setRegisterModalOpen(true);
-                  }
-                }}
+                onClick={handleRegisterClick}
                 className="inline-flex items-center space-x-2 px-8 py-3.5 rounded-2xl font-bold text-xs sm:text-sm text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
               >
                 <Sparkles className="w-4 h-4" />
@@ -1064,6 +1131,17 @@ export default function HackathonDetailClient({
         url={typeof window !== "undefined" ? window.location.href : `https://nimblux.xyz/hackathon/${hackathon.slug}`}
         onClose={() => setShareOpen(false)}
       />
+
+      {/* Auth Required Modal */}
+      {authModalOpen && (
+        <AuthRequiredModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          actionName="Register for Hackathon"
+          redirectUrl={`/hackathon/${hackathon.slug}?action=register`}
+          onAuthenticated={handleAuthenticated}
+        />
+      )}
     </div>
   );
 }

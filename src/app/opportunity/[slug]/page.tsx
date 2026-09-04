@@ -104,6 +104,7 @@ export default async function OpportunityDetailPage({ params }: PageProps) {
         opportunity={opportunity as any}
         related={related as any}
         initialSaved={isBookmarked}
+        initialUser={currentUser ? JSON.parse(JSON.stringify(currentUser)) : null}
       />
     </>
   );

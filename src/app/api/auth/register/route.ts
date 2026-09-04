@@ -72,6 +72,15 @@ export async function POST(req: NextRequest) {
         role: user.role,
         profileImage: user.profileImage,
         status: user.status,
+        phone: user.phone,
+        college: user.college,
+        degree: user.degree,
+        graduationYear: user.graduationYear,
+        skills: user.skills,
+        githubUrl: user.githubUrl,
+        linkedinUrl: user.linkedinUrl,
+        portfolioUrl: user.portfolioUrl,
+        location: user.location,
       },
     });
 

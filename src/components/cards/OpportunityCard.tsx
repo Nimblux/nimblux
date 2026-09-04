@@ -285,14 +285,20 @@ export default function OpportunityCard({
         </div>
 
         {/* Primary Action Button */}
-        <Link
-          href={`/opportunity/${opportunity.slug}`}
-          onClick={handleApplyClick}
-          className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-[8px] text-[12px] font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
-        >
-          <span>{getButtonLabel()}</span>
-          <ArrowRight className="w-3 h-3 ml-0.5" />
-        </Link>
+        {(() => {
+          const isRegistrationType = ["WORKSHOP", "EVENT", "WEBINAR", "CONFERENCE"].includes(oppType);
+          const actionQuery = opportunity.isExternal ? "" : isRegistrationType ? "?action=register" : "?action=apply";
+          return (
+            <Link
+              href={`/opportunity/${opportunity.slug}${actionQuery}`}
+              onClick={handleApplyClick}
+              className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-[8px] text-[12px] font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
+            >
+              <span>{getButtonLabel()}</span>
+              <ArrowRight className="w-3 h-3 ml-0.5" />
+            </Link>
+          );
+        })()}
       </div>
     </article>
   );
