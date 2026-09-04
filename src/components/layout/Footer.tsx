@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowRight,
-  ShieldCheck,
 } from "lucide-react";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
 
@@ -28,27 +27,23 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-charcoal-950 border-t border-charcoal-cardBorder text-ivory-400 text-sm">
-      {/* Newsletter Strip */}
-      <div className="border-b border-charcoal-cardBorder bg-charcoal-900/60 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-[#090B0B] border-t border-white/[0.08] text-[#A9AAA5] text-sm">
+      {/* Newsletter Section */}
+      <div className="border-b border-white/[0.06] bg-[#0E1110]/80 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left max-w-xl">
-            <div className="flex items-center justify-center md:justify-start space-x-2 text-bronze-400 text-xs font-mono uppercase tracking-wider mb-2 font-semibold">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Weekly Opportunity Digest</span>
-            </div>
-            <h3 className="font-serif-heading text-xl sm:text-2xl text-ivory-100 font-medium tracking-tight">
-              Get handpicked opportunities delivered to your inbox.
+            <h3 className="text-xl sm:text-2xl text-[#F5F1E8] font-semibold tracking-tight">
+              Get the latest opportunities in your inbox.
             </h3>
-            <p className="text-ivory-500 text-xs sm:text-sm mt-1">
-              Top summer internships, verified hackathons, and exclusive fellowships every Monday.
+            <p className="text-[#A9AAA5] text-xs sm:text-sm mt-1.5 leading-relaxed">
+              Internships, hackathons, jobs, events and more — straight to your inbox.
             </p>
           </div>
 
           <form onSubmit={handleSubscribe} className="w-full md:w-auto flex items-center gap-2 max-w-md">
             {subscribed ? (
-              <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-forest-500/15 border border-forest-500/30 text-forest-200 text-xs">
-                <CheckCircle2 className="w-4 h-4 text-forest-400" />
+              <div className="flex items-center space-x-2 px-4 py-2.5 rounded-[9px] bg-[#8FA58E]/15 border border-[#8FA58E]/30 text-[#F5F1E8] text-xs">
+                <CheckCircle2 className="w-4 h-4 text-[#8FA58E]" />
                 <span>You're subscribed! Check your inbox soon.</span>
               </div>
             ) : (
@@ -58,14 +53,14 @@ export default function Footer() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your student email..."
-                  className="w-full md:w-72 px-4 py-2.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder text-xs text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
+                  placeholder="Enter your email address"
+                  className="w-full md:w-72 px-4 py-2.5 rounded-[9px] bg-[#111615] border border-white/[0.08] text-xs text-[#F5F1E8] placeholder-[#7E807B] focus:outline-none focus:border-[#D8B77A]/50 transition-colors"
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 transition-colors whitespace-nowrap shadow-button"
+                  className="px-5 py-2.5 rounded-[9px] text-xs font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] transition-colors whitespace-nowrap shadow-sm"
                 >
-                  Subscribe
+                  Subscribe →
                 </button>
               </>
             )}
@@ -78,147 +73,154 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Info */}
           <div className="col-span-2 space-y-4">
-            <NimbluxLogo size="md" showTagline={true} href="/" />
-            <p className="text-ivory-500 text-xs sm:text-sm leading-relaxed max-w-sm pt-2">
-              NIMBLUX is a calm, student-focused technology platform uniting verified internships, global hackathons, high-growth jobs, and scholarships in one trusted directory.
+            <NimbluxLogo size="md" showTagline={false} href="/" />
+            <div className="text-[12px] font-mono uppercase tracking-wider text-[#A9AAA5]">
+              Technology • Innovation • Community
+            </div>
+            <p className="text-[#7E807B] text-xs sm:text-[13px] leading-relaxed max-w-sm">
+              NIMBLUX is a modern career and builder platform connecting ambitious students and developers with verified opportunities, hackathons, and credentials.
             </p>
             <div className="flex items-center space-x-2 pt-2">
               <a
-                href="https://github.com/Nimblux"
+                href="https://www.linkedin.com/company/nimblux"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
-                aria-label="GitHub @Nimblux"
-                title="GitHub @Nimblux"
+                className="w-8 h-8 rounded-[8px] bg-[#111615] border border-white/[0.08] flex items-center justify-center text-[#A9AAA5] hover:text-[#F5F1E8] hover:border-white/[0.15] transition-colors"
+                aria-label="LinkedIn"
               >
-                <Github className="w-4 h-4" />
+                <Linkedin className="w-4 h-4" />
               </a>
               <a
                 href="https://x.com/joinimblux"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
-                aria-label="X @joinimblux"
-                title="X @joinimblux"
+                className="w-8 h-8 rounded-[8px] bg-[#111615] border border-white/[0.08] flex items-center justify-center text-[#A9AAA5] hover:text-[#F5F1E8] hover:border-white/[0.15] transition-colors"
+                aria-label="X"
               >
                 <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/nimblux"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
-                aria-label="LinkedIn @nimblux"
-                title="LinkedIn @nimblux"
-              >
-                <Linkedin className="w-4 h-4" />
               </a>
               <a
                 href="https://www.instagram.com/joinnimblux/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8.5 h-8.5 rounded-xl bg-charcoal-card border border-charcoal-cardBorder flex items-center justify-center text-ivory-400 hover:text-ivory-100 hover:border-bronze-500/40 transition-colors"
-                aria-label="Instagram @joinnimblux"
-                title="Instagram @joinnimblux"
+                className="w-8 h-8 rounded-[8px] bg-[#111615] border border-white/[0.08] flex items-center justify-center text-[#A9AAA5] hover:text-[#F5F1E8] hover:border-white/[0.15] transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-[8px] bg-[#111615] border border-white/[0.08] flex items-center justify-center text-[#A9AAA5] hover:text-[#F5F1E8] hover:border-white/[0.15] transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube className="w-4 h-4" />
+              </a>
+              <a
+                href="https://github.com/Nimblux"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-[8px] bg-[#111615] border border-white/[0.08] flex items-center justify-center text-[#A9AAA5] hover:text-[#F5F1E8] hover:border-white/[0.15] transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="w-4 h-4" />
               </a>
             </div>
           </div>
 
           {/* Explore Column */}
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#F5F1E8] mb-4">
               Explore
             </h4>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 text-xs text-[#A9AAA5]">
               <li>
-                <Link href="/internships" className="hover:text-ivory-100 transition-colors">
+                <Link href="/internships" className="hover:text-[#F5F1E8] transition-colors">
                   Internships
                 </Link>
               </li>
               <li>
-                <Link href="/hackathons" className="hover:text-ivory-100 transition-colors">
+                <Link href="/jobs" className="hover:text-[#F5F1E8] transition-colors">
+                  Jobs
+                </Link>
+              </li>
+              <li>
+                <Link href="/hackathons" className="hover:text-[#F5F1E8] transition-colors">
                   Hackathons
                 </Link>
               </li>
               <li>
-                <Link href="/jobs" className="hover:text-ivory-100 transition-colors">
-                  Graduate & Tech Jobs
+                <Link href="/workshops" className="hover:text-[#F5F1E8] transition-colors">
+                  Workshops
                 </Link>
               </li>
               <li>
-                <Link href="/events" className="hover:text-ivory-100 transition-colors">
-                  Tech Events & Summits
+                <Link href="/events" className="hover:text-[#F5F1E8] transition-colors">
+                  Events
                 </Link>
               </li>
               <li>
-                <Link href="/scholarships" className="hover:text-ivory-100 transition-colors">
-                  Scholarships & Grants
-                </Link>
-              </li>
-              <li>
-                <Link href="/fellowships" className="hover:text-ivory-100 transition-colors">
-                  Fellowships
+                <Link href="/scholarships" className="hover:text-[#F5F1E8] transition-colors">
+                  Scholarships
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* For Partners Column */}
+          {/* For Organizers Column */}
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
-              For Partners
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#F5F1E8] mb-4">
+              For Organizers
             </h4>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 text-xs text-[#A9AAA5]">
               <li>
-                <Link href="/submit-opportunity" className="text-bronze-400 hover:text-bronze-300 font-semibold transition-colors flex items-center space-x-1">
-                  <span>Post Opportunity</span>
-                  <span>→</span>
+                <Link href="/submit-opportunity" className="text-[#D8B77A] hover:text-[#E7D5B2] font-medium transition-colors">
+                  Post Opportunity
                 </Link>
               </li>
               <li>
-                <Link href="/campus-opportunities" className="hover:text-ivory-100 transition-colors">
-                  Ambassador Program
+                <Link href="/organize-hackathon" className="hover:text-[#F5F1E8] transition-colors">
+                  Organize Hackathon
                 </Link>
               </li>
               <li>
-                <Link href="/opportunities" className="hover:text-ivory-100 transition-colors">
-                  Recruiter Directory
+                <Link href="/organizer" className="hover:text-[#F5F1E8] transition-colors">
+                  Manage Events
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-amber-300 transition-colors">
-                  Moderation Portal
+                <Link href="/opportunities" className="hover:text-[#F5F1E8] transition-colors">
+                  Resources
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Resources & Company Column */}
+          {/* Company Column */}
           <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-ivory-300 font-semibold mb-4">
-              Platform & Legal
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[#F5F1E8] mb-4">
+              Company
             </h4>
-            <ul className="space-y-2.5 text-xs">
+            <ul className="space-y-2.5 text-xs text-[#A9AAA5]">
               <li>
-                <Link href="/dashboard" className="hover:text-ivory-100 transition-colors">
-                  Student Dashboard
+                <Link href="/opportunities" className="hover:text-[#F5F1E8] transition-colors">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard/saved" className="hover:text-ivory-100 transition-colors">
-                  Saved Opportunities
+                <Link href="/dashboard" className="hover:text-[#F5F1E8] transition-colors">
+                  Contact
                 </Link>
               </li>
               <li>
-                <Link href="/register" className="hover:text-ivory-100 transition-colors">
-                  Create Account
+                <Link href="/privacy" className="hover:text-[#F5F1E8] transition-colors">
+                  Privacy
                 </Link>
               </li>
               <li>
-                <Link href="/opportunities" className="hover:text-ivory-100 transition-colors">
-                  All 14 Categories
+                <Link href="/terms" className="hover:text-[#F5F1E8] transition-colors">
+                  Terms
                 </Link>
               </li>
             </ul>
@@ -226,20 +228,20 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-charcoal-cardBorder mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory-500">
+        <div className="border-t border-white/[0.06] mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7E807B]">
           <div className="flex items-center space-x-2">
             <span>© {new Date().getFullYear()} NIMBLUX. All rights reserved.</span>
             <span>•</span>
-            <span className="font-mono">https://nimblux.xyz</span>
+            <span className="text-[#D8B77A] italic">"Made for a brighter tomorrow."</span>
           </div>
 
           <div className="flex items-center space-x-6">
-            <span className="inline-flex items-center text-forest-400 text-[11px] font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-forest-400 mr-1.5" />
-              Operational
+            <span className="inline-flex items-center text-[#8FA58E] text-[11px] font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#8FA58E] mr-1.5" />
+              All systems operational
             </span>
-            <Link href="/opportunities" className="hover:text-ivory-300">
-              Browse Directory
+            <Link href="/opportunities" className="hover:text-[#F5F1E8] transition-colors">
+              Directory
             </Link>
           </div>
         </div>

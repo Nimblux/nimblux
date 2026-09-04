@@ -4,9 +4,9 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://nimblux.xyz"),
+  metadataBase: new URL("https://www.nimblux.xyz"),
   alternates: {
-    canonical: "https://nimblux.xyz",
+    canonical: "https://www.nimblux.xyz",
   },
   title: {
     default: "NIMBLUX — Technology • Innovation • Community",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://nimblux.xyz",
+    url: "https://www.nimblux.xyz",
     title: "NIMBLUX — Opportunities that shape your future.",
     description:
       "NIMBLUX brings internships, hackathons, jobs, events, scholarships, competitions and career opportunities together in one trusted platform.",

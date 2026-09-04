@@ -4,37 +4,37 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  Search,
+  Bell,
+  User,
+  Plus,
+  ChevronDown,
+  Menu,
+  X,
   Compass,
   Briefcase,
   Code,
   Building2,
   Calendar,
   GraduationCap,
-  PlusCircle,
-  Bell,
-  User,
-  Shield,
-  LogOut,
-  ChevronDown,
-  Menu,
-  X,
   Sparkles,
   Trophy,
   BookOpen,
   Bookmark,
-  CheckCircle2,
-  ExternalLink,
-  ArrowRight,
-  FileText,
+  LogOut,
+  Shield,
+  Layers,
+  Award,
+  Send,
+  Ticket,
 } from "lucide-react";
-import { CATEGORIES } from "@/lib/constants";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
 
 interface UserSession {
   id: string;
   name: string;
   email: string;
-  role: "USER" | "ADMIN";
+  role: "USER" | "ADMIN" | "ORGANIZER";
   profileImage?: string | null;
 }
 
@@ -68,7 +68,7 @@ export default function Navbar() {
   // Scroll detection for navbar background transition
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      if (window.scrollY > 15) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -106,59 +106,45 @@ export default function Navbar() {
         setNotifications(data.notifications || []);
         setUnreadCount(data.unreadCount || 0);
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch {}
   };
 
   useEffect(() => {
     checkAuth();
   }, [pathname]);
 
-  // Close menus on outside click
+  // Click outside handlers
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
         setMoreDropdownOpen(false);
       }
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserMenuOpen(false);
       }
-      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setNotificationsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Close mobile menu on path change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setMoreDropdownOpen(false);
+    setUserMenuOpen(false);
+    setNotificationsOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       setUser(null);
-      setUserMenuOpen(false);
       router.push("/");
       router.refresh();
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleMarkAsRead = async (id: string, link?: string | null) => {
-    try {
-      await fetch(`/api/notifications/${id}/read`, { method: "POST" });
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-      if (link) {
-        setNotificationsOpen(false);
-        router.push(link);
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch {}
   };
 
   const mainNavItems = [
@@ -170,353 +156,339 @@ export default function Navbar() {
     { label: "Scholarships", href: "/scholarships" },
   ];
 
-  const moreNavCategories = CATEGORIES.filter(
-    (c) =>
-      !["internships", "hackathons", "jobs", "events", "scholarships"].includes(
-        c.slug
-      )
-  );
+  const moreNavItems = [
+    { label: "Workshops", href: "/workshops", icon: Sparkles, desc: "Hands-on tech masterclasses" },
+    { label: "Courses", href: "/courses", icon: BookOpen, desc: "Curated learning paths" },
+    { label: "Competitions", href: "/competitions", icon: Trophy, desc: "Coding & case challenges" },
+    { label: "Fellowships", href: "/fellowships", icon: Award, desc: "Elite builder cohorts" },
+    { label: "Volunteering", href: "/volunteering", icon: Layers, desc: "Open-source & community" },
+    { label: "Campus Opportunities", href: "/campus-opportunities", icon: Building2, desc: "Student ambassador roles" },
+  ];
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-40 w-full transition-all duration-200 ${
         scrolled
-          ? "bg-charcoal-950/90 backdrop-blur-md border-b border-charcoal-cardBorder shadow-editorial"
-          : "bg-charcoal-950/60 backdrop-blur-sm border-b border-white/[0.05]"
+          ? "bg-[#090B0B]/90 backdrop-blur-md border-b border-white/[0.08] shadow-soft"
+          : "bg-[#090B0B]/80 backdrop-blur-sm border-b border-white/[0.06]"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18 sm:h-20">
-          {/* Logo & Brand */}
-          <div className="flex items-center space-x-8">
-            <NimbluxLogo size="md" showTagline={false} href="/" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[68px] flex items-center justify-between gap-4">
+        {/* Left: Official Logo */}
+        <div className="flex items-center space-x-8 flex-shrink-0">
+          <NimbluxLogo size="md" href="/" showTagline={false} />
+        </div>
 
-            {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
-              {mainNavItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
-                      isActive
-                        ? "text-ivory-100 bg-white/[0.07] shadow-sm font-semibold"
-                        : "text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+        {/* Center: Desktop Navigation Links */}
+        <nav className="hidden lg:flex items-center space-x-1">
+          {mainNavItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`px-3 py-1.5 rounded-[8px] text-[14px] font-medium transition-colors ${
+                  isActive
+                    ? "text-[#F5F1E8] bg-white/[0.06]"
+                    : "text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04]"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
 
-              {/* More Dropdown */}
-              <div className="relative" ref={moreRef}>
-                <button
-                  onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
-                  className={`flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-colors ${
-                    moreDropdownOpen
-                      ? "text-ivory-100 bg-white/[0.07]"
-                      : "text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
-                  }`}
-                  aria-expanded={moreDropdownOpen}
-                >
-                  <span>More</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      moreDropdownOpen ? "rotate-180 text-bronze-400" : "text-ivory-500"
-                    }`}
-                  />
-                </button>
-
-                {moreDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-72 rounded-2xl editorial-dropdown p-2.5 animate-fade-in shadow-2xl z-50">
-                    <div className="text-[10px] font-mono uppercase tracking-wider text-ivory-500 px-3 py-1.5 font-semibold">
-                      Specialized Categories
-                    </div>
-                    <div className="grid grid-cols-1 gap-1">
-                      {moreNavCategories.map((cat) => (
-                        <Link
-                          key={cat.slug}
-                          href={`/${cat.slug}`}
-                          onClick={() => setMoreDropdownOpen(false)}
-                          className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <span className="font-medium">{cat.name}</span>
-                          <span className="text-[10px] font-mono text-ivory-500">
-                            /{cat.slug}
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </nav>
-          </div>
-
-          {/* Right Action Bar */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            {/* Post Opportunity Button (Prominent Editorial CTA) */}
-            <Link
-              href="/submit-opportunity"
-              className="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all duration-200"
+          {/* More Dropdown */}
+          <div className="relative" ref={moreRef}>
+            <button
+              onClick={() => setMoreDropdownOpen(!moreDropdownOpen)}
+              className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-[8px] text-[14px] font-medium transition-colors ${
+                moreDropdownOpen
+                  ? "text-[#F5F1E8] bg-white/[0.06]"
+                  : "text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04]"
+              }`}
             >
-              <PlusCircle className="w-3.5 h-3.5 stroke-[2.2]" />
-              <span>Post Opportunity</span>
-            </Link>
+              <span>More</span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-150 ${
+                  moreDropdownOpen ? "rotate-180 text-[#D8B77A]" : ""
+                }`}
+              />
+            </button>
 
-            {loading ? (
-              <div className="w-8 h-8 rounded-full bg-charcoal-800 animate-pulse" />
-            ) : user ? (
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                {/* Notifications Bell */}
-                <div className="relative" ref={notifRef}>
-                  <button
-                    onClick={() => setNotificationsOpen(!notificationsOpen)}
-                    className="relative p-2 rounded-xl text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.05] transition-colors"
-                    aria-label="View notifications"
+            {moreDropdownOpen && (
+              <div className="absolute top-full left-0 mt-2 w-64 rounded-[14px] bg-[#111615] border border-white/[0.08] shadow-2xl p-2 z-50 animate-fade-in space-y-1">
+                {moreNavItems.map((sub) => (
+                  <Link
+                    key={sub.href}
+                    href={sub.href}
+                    onClick={() => setMoreDropdownOpen(false)}
+                    className="flex items-start space-x-2.5 p-2 rounded-[9px] hover:bg-white/[0.04] transition-colors group"
                   >
-                    <Bell className="w-4 h-4" />
-                    {unreadCount > 0 && (
-                      <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-bronze-400" />
-                    )}
-                  </button>
-
-                  {/* Notifications Popover */}
-                  {notificationsOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl editorial-dropdown p-3 shadow-2xl animate-fade-in z-50">
-                      <div className="flex items-center justify-between pb-2 mb-2 border-b border-charcoal-cardBorder px-2">
-                        <span className="font-semibold text-xs text-ivory-100">Notifications</span>
-                        <span className="text-[10px] text-ivory-500 font-mono">
-                          {unreadCount} unread
-                        </span>
+                    <sub.icon className="w-4 h-4 text-[#D8B77A] mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-[13px] font-medium text-[#F5F1E8] group-hover:text-[#D8B77A] transition-colors">
+                        {sub.label}
                       </div>
-
-                      <div className="max-h-72 overflow-y-auto space-y-1.5 pr-1">
-                        {notifications.length === 0 ? (
-                          <div className="text-center py-6 text-xs text-ivory-500">
-                            No notifications yet
-                          </div>
-                        ) : (
-                          notifications.map((notif) => (
-                            <div
-                              key={notif.id}
-                              onClick={() => handleMarkAsRead(notif.id, notif.link)}
-                              className={`p-2.5 rounded-xl text-xs cursor-pointer transition-colors ${
-                                notif.isRead
-                                  ? "bg-transparent text-ivory-400 hover:bg-white/[0.04]"
-                                  : "bg-bronze-500/10 text-ivory-200 border border-bronze-500/20 hover:bg-bronze-500/15"
-                              }`}
-                            >
-                              <div className="font-semibold text-ivory-100">{notif.title}</div>
-                              <div className="text-[11px] text-ivory-400 mt-0.5 line-clamp-2">
-                                {notif.message}
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-
-                      <div className="pt-2 mt-2 border-t border-charcoal-cardBorder text-center">
-                        <Link
-                          href="/dashboard/notifications"
-                          onClick={() => setNotificationsOpen(false)}
-                          className="text-[11px] font-medium text-bronze-400 hover:text-bronze-300"
-                        >
-                          View all notifications →
-                        </Link>
+                      <div className="text-[11px] text-[#A9AAA5] leading-tight">
+                        {sub.desc}
                       </div>
                     </div>
-                  )}
-                </div>
-
-                {/* User Profile Dropdown */}
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center space-x-2 p-1.5 rounded-xl border border-charcoal-cardBorder bg-charcoal-card hover:border-bronze-500/40 transition-colors"
-                  >
-                    <div className="w-6 h-6 rounded-lg bg-bronze-500/20 text-bronze-300 font-bold text-xs flex items-center justify-center font-mono">
-                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                    <span className="text-xs font-semibold text-ivory-200 hidden md:inline-block max-w-[100px] truncate">
-                      {user.name.split(" ")[0]}
-                    </span>
-                    <ChevronDown className="w-3 h-3 text-ivory-500" />
-                  </button>
-
-                  {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl editorial-dropdown p-2 shadow-2xl animate-fade-in z-50">
-                      <div className="px-3 py-2 border-b border-charcoal-cardBorder mb-1">
-                        <div className="font-semibold text-xs text-ivory-100 truncate">
-                          {user.name}
-                        </div>
-                        <div className="text-[10px] text-ivory-500 truncate font-mono">
-                          {user.email}
-                        </div>
-                        {user.role === "ADMIN" && (
-                          <div className="mt-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/25">
-                            ADMIN ACCESS
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-0.5 text-xs">
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <Compass className="w-3.5 h-3.5 text-ivory-400" />
-                          <span>Student Dashboard</span>
-                        </Link>
-                        <Link
-                          href="/dashboard/hackathons"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                          <span>My Hackathons</span>
-                        </Link>
-                        <Link
-                          href="/organizer"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <Sparkles className="w-3.5 h-3.5 text-bronze-400" />
-                          <span>Organizer Studio</span>
-                        </Link>
-                        <Link
-                          href="/organize-hackathon"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <PlusCircle className="w-3.5 h-3.5 text-forest-400" />
-                          <span>Host Hackathon</span>
-                        </Link>
-                        <Link
-                          href="/dashboard/submissions"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <FileText className="w-3.5 h-3.5 text-ivory-400" />
-                          <span>Opportunity Posts</span>
-                        </Link>
-                        <Link
-                          href="/dashboard/saved"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <Bookmark className="w-3.5 h-3.5 text-ivory-400" />
-                          <span>Saved Bookmarks</span>
-                        </Link>
-                        <Link
-                          href="/dashboard/profile"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.06] transition-colors"
-                        >
-                          <User className="w-3.5 h-3.5 text-ivory-400" />
-                          <span>Edit Profile</span>
-                        </Link>
-
-                        {user.role === "ADMIN" && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-amber-300 hover:bg-amber-500/10 transition-colors font-medium"
-                          >
-                            <Shield className="w-3.5 h-3.5 text-amber-400" />
-                            <span>Moderation Suite</span>
-                          </Link>
-                        )}
-
-                        <div className="pt-1 mt-1 border-t border-charcoal-cardBorder">
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center space-x-2 px-3 py-1.5 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors text-left"
-                          >
-                            <LogOut className="w-3.5 h-3.5" />
-                            <span>Sign Out</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Link
-                  href="/login"
-                  className="px-3.5 py-1.5 rounded-full text-xs font-medium text-ivory-300 hover:text-ivory-100 hover:bg-white/[0.04] transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-ivory-100 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.1] transition-all"
-                >
-                  Join Free
-                </Link>
+                  </Link>
+                ))}
               </div>
             )}
-
-            {/* Mobile Hamburger Menu Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.05]"
-              aria-label="Toggle mobile menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
           </div>
+        </nav>
+
+        {/* Right Side: Actions & Profile */}
+        <div className="flex items-center space-x-2.5 sm:space-x-3">
+          {/* Search Trigger Button */}
+          <Link
+            href="/opportunities"
+            className="p-2 rounded-[9px] text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+            title="Search opportunities"
+            aria-label="Search opportunities"
+          >
+            <Search className="w-4 h-4" />
+          </Link>
+
+          {/* Post Opportunity Button */}
+          <Link
+            href="/submit-opportunity"
+            className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-[9px] text-[13px] font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
+          >
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>Post Opportunity</span>
+          </Link>
+
+          {/* Notifications Trigger */}
+          {user && (
+            <div className="relative" ref={notifRef}>
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className="relative p-2 rounded-[9px] text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#D8B77A] ring-2 ring-[#090B0B]" />
+                )}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-[14px] bg-[#111615] border border-white/[0.08] shadow-2xl p-3 z-50 animate-fade-in space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                    <span className="text-[12px] font-semibold text-[#F5F1E8]">Notifications</span>
+                    <Link
+                      href="/dashboard/notifications"
+                      onClick={() => setNotificationsOpen(false)}
+                      className="text-[11px] text-[#D8B77A] hover:underline"
+                    >
+                      View all
+                    </Link>
+                  </div>
+
+                  {notifications.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-[#A9AAA5]">
+                      No new notifications
+                    </div>
+                  ) : (
+                    notifications.slice(0, 5).map((n) => (
+                      <Link
+                        key={n.id}
+                        href={n.link || "/dashboard/notifications"}
+                        onClick={() => setNotificationsOpen(false)}
+                        className="block p-2 rounded-[8px] hover:bg-white/[0.04] transition-colors"
+                      >
+                        <div className="text-[12px] font-medium text-[#F5F1E8] line-clamp-1">
+                          {n.title}
+                        </div>
+                        <div className="text-[11px] text-[#A9AAA5] line-clamp-2 mt-0.5">
+                          {n.message}
+                        </div>
+                      </Link>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* User Session / Profile Dropdown */}
+          {!loading && user ? (
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center space-x-2 p-1 pl-2 rounded-[9px] hover:bg-white/[0.04] border border-transparent hover:border-white/[0.08] transition-colors"
+              >
+                <div className="w-7 h-7 rounded-[7px] bg-[#151A18] border border-white/[0.08] flex items-center justify-center font-bold text-[#D8B77A] text-[11px] overflow-hidden">
+                  {user.profileImage ? (
+                    <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    user.name.charAt(0).toUpperCase()
+                  )}
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-[#A9AAA5]" />
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-[14px] bg-[#111615] border border-white/[0.08] shadow-2xl p-2 z-50 animate-fade-in space-y-1 text-xs">
+                  <div className="px-2.5 py-2 border-b border-white/[0.06]">
+                    <div className="font-semibold text-[#F5F1E8] truncate">{user.name}</div>
+                    <div className="text-[11px] text-[#A9AAA5] truncate font-mono mt-0.5">{user.email}</div>
+                  </div>
+
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                  >
+                    <Compass className="w-3.5 h-3.5 text-[#D8B77A]" />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard/applications"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                  >
+                    <Send className="w-3.5 h-3.5 text-[#D8B77A]" />
+                    <span>My Applications</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard/registrations"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                  >
+                    <Ticket className="w-3.5 h-3.5 text-[#8FA58E]" />
+                    <span>My Registrations</span>
+                  </Link>
+
+                  <Link
+                    href="/dashboard/certificates"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                  >
+                    <Award className="w-3.5 h-3.5 text-[#D8B77A]" />
+                    <span>My Certificates</span>
+                  </Link>
+
+                  <Link
+                    href="/organizer"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+                  >
+                    <Trophy className="w-3.5 h-3.5 text-[#D8B77A]" />
+                    <span>Organizer Console</span>
+                  </Link>
+
+                  {user.role === "ADMIN" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-[#D8B77A] hover:bg-white/[0.04] transition-colors font-semibold"
+                    >
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>Admin Suite</span>
+                    </Link>
+                  )}
+
+                  <div className="pt-1 border-t border-white/[0.06]">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-[8px] text-rose-400 hover:bg-rose-500/10 transition-colors text-left"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : !loading ? (
+            <div className="flex items-center space-x-2">
+              <Link
+                href="/login"
+                className="px-3 py-1.5 rounded-[8px] text-[13px] font-medium text-[#A9AAA5] hover:text-[#F5F1E8] transition-colors"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/register"
+                className="hidden sm:inline-flex px-3.5 py-1.5 rounded-[8px] text-[13px] font-medium text-[#F5F1E8] bg-[#151A18] border border-white/[0.08] hover:border-white/[0.15] transition-colors"
+              >
+                Sign Up
+              </Link>
+            </div>
+          ) : null}
+
+          {/* Mobile Menu Hamburger */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-[9px] text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04] lg:hidden transition-colors"
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Slide-in Drawer */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-charcoal-cardBorder bg-charcoal-950/95 backdrop-blur-xl px-5 py-6 space-y-4 animate-fade-in shadow-2xl">
+        <div className="lg:hidden border-b border-white/[0.08] bg-[#090B0B] px-4 py-5 space-y-4 animate-fade-in">
           <div className="grid grid-cols-2 gap-2">
             {mainNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2.5 rounded-xl text-xs font-medium text-ivory-300 bg-charcoal-card border border-charcoal-cardBorder hover:text-ivory-100 hover:border-bronze-500/30 transition-colors"
+                className="px-3 py-2 rounded-[8px] text-[14px] font-medium text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
               >
                 {item.label}
               </Link>
             ))}
           </div>
 
-          <div className="pt-2 border-t border-charcoal-cardBorder">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-ivory-500 mb-2 font-semibold">
-              More Categories
+          <div className="pt-3 border-t border-white/[0.06] space-y-1">
+            <div className="text-[11px] font-mono text-[#7E807B] uppercase tracking-wider px-3 pb-1">
+              Tracks
             </div>
-            <div className="grid grid-cols-2 gap-1.5 max-h-44 overflow-y-auto pr-1">
-              {moreNavCategories.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/${cat.slug}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-2.5 py-1.5 rounded-lg text-[11px] text-ivory-400 hover:text-ivory-100 hover:bg-white/[0.04]"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
+            {moreNavItems.map((sub) => (
+              <Link
+                key={sub.href}
+                href={sub.href}
+                className="flex items-center space-x-2.5 px-3 py-2 rounded-[8px] text-[13px] text-[#A9AAA5] hover:text-[#F5F1E8] hover:bg-white/[0.04] transition-colors"
+              >
+                <sub.icon className="w-3.5 h-3.5 text-[#D8B77A]" />
+                <span>{sub.label}</span>
+              </Link>
+            ))}
           </div>
 
-          <div className="pt-2">
+          <div className="pt-3 border-t border-white/[0.06] flex flex-col gap-2">
             <Link
               href="/submit-opportunity"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl font-bold text-xs text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button"
+              className="w-full text-center py-2.5 rounded-[9px] text-[13px] font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] transition-colors"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>Post an Opportunity</span>
+              Post an Opportunity
             </Link>
+            {!user && (
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/login"
+                  className="text-center py-2 rounded-[8px] text-[13px] font-medium text-[#F5F1E8] bg-[#111615] border border-white/[0.08]"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-center py-2 rounded-[8px] text-[13px] font-medium text-[#090B0B] bg-[#F5F1E8]"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}

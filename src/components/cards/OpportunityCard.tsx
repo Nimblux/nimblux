@@ -10,10 +10,10 @@ import {
   ExternalLink,
   Bookmark,
   Sparkles,
-  CheckCircle2,
-  DollarSign,
-  ArrowRight,
   ShieldCheck,
+  ArrowRight,
+  Send,
+  Ticket,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants";
 import { formatDate, getDaysRemaining, getWorkModeBadge } from "@/lib/utils";
@@ -25,6 +25,7 @@ export interface OpportunityCardData {
   slug: string;
   description: string;
   category: string;
+  opportunityType?: string;
   organization: string;
   logo?: string | null;
   banner?: string | null;
@@ -34,13 +35,13 @@ export interface OpportunityCardData {
   salary?: string | null;
   registrationFee?: string | null;
   isPaid?: boolean;
+  price?: string | null;
   hasPrizePool?: boolean;
   totalPrizePool?: string | null;
   prizeCurrency?: string | null;
   prize1st?: string | null;
-  prize2nd?: string | null;
-  prize3rd?: string | null;
-  prizeSpecial?: string | null;
+  isExternal?: boolean;
+  externalUrl?: string | null;
   applicationUrl: string;
   deadline: string | Date;
   startDate?: string | Date | null;
@@ -66,14 +67,7 @@ export default function OpportunityCard({
   const [saved, setSaved] = useState(opportunity.isBookmarked || false);
   const [saving, setSaving] = useState(false);
 
-  const categoryMeta = CATEGORIES.find(
-    (c) => c.slug.toLowerCase() === opportunity.category.toLowerCase()
-  ) || {
-    name: opportunity.category,
-    color: "from-bronze-400 to-bronze-600",
-    bgGradient: "bg-bronze-500/10 text-bronze-300 border-bronze-500/20",
-    dotColor: "bg-bronze-400",
-  };
+  const oppType = (opportunity.opportunityType || opportunity.category || "OTHER").toUpperCase();
 
   const daysInfo = getDaysRemaining(opportunity.deadline);
   const modeBadge = getWorkModeBadge(opportunity.mode);
@@ -93,7 +87,7 @@ export default function OpportunityCard({
       });
 
       if (!res.ok) {
-        setSaved(saved); // Revert on failure
+        setSaved(saved);
       } else {
         if (onBookmarkToggle) {
           onBookmarkToggle(opportunity.id, nextSaved);
@@ -115,18 +109,69 @@ export default function OpportunityCard({
     ? opportunity.skills.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3)
     : [];
 
+  // Dynamic Button Label
+  const getButtonLabel = () => {
+    if (opportunity.isExternal) {
+      return "Apply on Website";
+    }
+    if (["WORKSHOP", "EVENT", "WEBINAR", "CONFERENCE"].includes(oppType)) {
+      return "Register Now";
+    }
+    if (["COURSE", "BOOTCAMP"].includes(oppType)) {
+      return "Enroll Now";
+    }
+    return "Apply Now";
+  };
+
+  // Dynamic Compensation Display
+  const renderCompensation = () => {
+    if (opportunity.hasPrizePool && opportunity.totalPrizePool) {
+      return (
+        <span className="text-[#D8B77A] font-medium font-mono text-[12px]">
+          🏆 {formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")}
+        </span>
+      );
+    }
+    if (opportunity.stipend) {
+      return (
+        <span className="text-[#8FA58E] font-medium font-mono text-[12px] truncate max-w-[130px]">
+          {opportunity.stipend}
+        </span>
+      );
+    }
+    if (opportunity.salary) {
+      return (
+        <span className="text-[#8FA58E] font-medium font-mono text-[12px] truncate max-w-[130px]">
+          {opportunity.salary}
+        </span>
+      );
+    }
+    if (opportunity.price) {
+      return (
+        <span className="text-[#D8B77A] font-medium font-mono text-[12px]">
+          {opportunity.price}
+        </span>
+      );
+    }
+    return (
+      <span className="text-[#A9AAA5] font-mono text-[11px]">
+        {opportunity.registrationFee || "Free Entry"}
+      </span>
+    );
+  };
+
   return (
     <article
-      className={`group relative rounded-2xl bg-charcoal-card border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
+      className={`group relative rounded-[15px] bg-[#111615] border transition-all duration-200 flex flex-col justify-between overflow-hidden ${
         opportunity.featured
-          ? "border-bronze-500/30 bg-gradient-to-b from-charcoal-850 via-charcoal-card to-charcoal-card shadow-editorial"
-          : "border-charcoal-cardBorder hover:border-bronze-500/30 hover:shadow-card-hover"
+          ? "border-white/[0.12] hover:border-[#D8B77A]/40 shadow-card hover:shadow-card-hover"
+          : "border-white/[0.08] hover:border-white/[0.15] hover:bg-[#151A18] shadow-soft"
       }`}
     >
       {/* Featured Badge */}
       {opportunity.featured && (
         <div className="absolute top-0 right-0 z-10">
-          <div className="flex items-center space-x-1 px-3 py-1 bg-bronze-500 text-charcoal-950 text-[10px] font-mono font-bold tracking-wider uppercase rounded-bl-xl shadow-sm">
+          <div className="flex items-center space-x-1 px-2.5 py-0.5 bg-[#D8B77A] text-[#090B0B] text-[9.5px] font-mono font-bold tracking-wider uppercase rounded-bl-[10px]">
             <Sparkles className="w-2.5 h-2.5" />
             <span>Featured</span>
           </div>
@@ -134,50 +179,46 @@ export default function OpportunityCard({
       )}
 
       {/* Main Card Body */}
-      <div className="p-5 sm:p-6">
+      <div className="p-5">
         {/* Organization Header */}
-        <div className="flex items-start justify-between gap-3 mb-4">
+        <div className="flex items-start justify-between gap-3 mb-3.5">
           <div className="flex items-center space-x-3 min-w-0">
             {/* Org Logo / Monogram */}
-            <div className="w-11 h-11 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder flex items-center justify-center p-1.5 shadow-sm overflow-hidden flex-shrink-0">
+            <div className="w-10 h-10 rounded-[10px] bg-[#0E1110] border border-white/[0.08] flex items-center justify-center p-1.5 shadow-sm overflow-hidden flex-shrink-0">
               {opportunity.logo ? (
                 <img
                   src={opportunity.logo}
                   alt={opportunity.organization}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded-[7px]"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = "none";
                   }}
                 />
               ) : (
-                <div className="w-full h-full rounded-lg bg-bronze-500/15 flex items-center justify-center font-bold text-bronze-300 text-xs font-mono">
+                <div className="w-full h-full rounded-[7px] bg-[#151A18] flex items-center justify-center font-bold text-[#D8B77A] text-xs font-mono">
                   {opportunity.organization.slice(0, 2).toUpperCase()}
                 </div>
               )}
             </div>
 
-            {/* Org Name & Verified Status */}
+            {/* Org Name & Type Badge */}
             <div className="min-w-0">
               <div className="flex items-center space-x-1.5">
-                <span className="font-semibold text-xs text-ivory-300 truncate">
+                <span className="font-medium text-[13px] text-[#F5F1E8] truncate">
                   {opportunity.organization}
                 </span>
                 {opportunity.verified && (
-                  <span title="Verified by NIMBLUX">
-                    <ShieldCheck className="w-3.5 h-3.5 text-sage-400 flex-shrink-0" />
+                  <span title="Verified Host">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#8FA58E] flex-shrink-0" />
                   </span>
                 )}
               </div>
-              <div className="flex items-center space-x-1.5 mt-1">
-                <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium border ${categoryMeta.bgGradient}`}
-                >
-                  {categoryMeta.name}
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-[6px] text-[10px] font-mono font-medium bg-white/[0.05] text-[#A9AAA5] border border-white/[0.06]">
+                  {opportunity.category}
                 </span>
-                <span
-                  className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-medium ${modeBadge.className}`}
-                >
-                  {modeBadge.label}
+                <span className="text-[11px] text-[#7E807B]">
+                  • {opportunity.location}
                 </span>
               </div>
             </div>
@@ -187,15 +228,15 @@ export default function OpportunityCard({
           <button
             onClick={handleBookmark}
             disabled={saving}
-            className={`p-2 rounded-xl border transition-colors ${
+            className={`p-1.5 rounded-[8px] border transition-colors ${
               saved
-                ? "bg-bronze-500/15 text-bronze-400 border-bronze-500/30"
-                : "bg-charcoal-900 text-ivory-500 border-charcoal-cardBorder hover:text-ivory-200 hover:border-charcoal-800"
+                ? "bg-[#D8B77A]/15 text-[#D8B77A] border-[#D8B77A]/30"
+                : "bg-[#0E1110] text-[#7E807B] border-white/[0.06] hover:text-[#F5F1E8] hover:border-white/[0.12]"
             }`}
             title={saved ? "Remove from saved" : "Save opportunity"}
             aria-label="Save opportunity"
           >
-            <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-bronze-400" : ""}`} />
+            <Bookmark className={`w-3.5 h-3.5 ${saved ? "fill-[#D8B77A]" : ""}`} />
           </button>
         </div>
 
@@ -204,84 +245,54 @@ export default function OpportunityCard({
           href={`/opportunity/${opportunity.slug}`}
           className="block group/title focus:outline-none"
         >
-          <h3 className="font-sans font-bold text-[15px] sm:text-base text-ivory-100 group-hover/title:text-bronze-300 transition-colors line-clamp-2 leading-snug">
+          <h3 className="font-semibold text-[15px] text-[#F5F1E8] group-hover/title:text-[#D8B77A] transition-colors line-clamp-2 leading-snug">
             {opportunity.title}
           </h3>
         </Link>
 
-        {/* Short Description */}
-        {!compact && (
-          <p className="mt-2 text-xs text-ivory-500 line-clamp-2 leading-relaxed">
+        {/* Description */}
+        {!compact && opportunity.description && (
+          <p className="mt-2 text-xs text-[#A9AAA5] line-clamp-2 leading-relaxed font-normal">
             {opportunity.description}
           </p>
         )}
 
         {/* Skills Tags */}
         {skillsList.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3.5">
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {skillsList.map((skill) => (
               <span
                 key={skill}
-                className="px-2 py-0.5 rounded-md text-[10.5px] bg-charcoal-900 text-ivory-400 border border-charcoal-cardBorder"
+                className="px-2 py-0.5 rounded-[5px] text-[10px] bg-[#0E1110] text-[#A9AAA5] border border-white/[0.06]"
               >
                 {skill}
               </span>
             ))}
-            {opportunity.skills && opportunity.skills.split(",").length > 3 && (
-              <span className="px-1 py-0.5 text-[10px] text-ivory-500 font-mono self-center">
-                +{opportunity.skills.split(",").length - 3}
-              </span>
-            )}
           </div>
         )}
       </div>
 
-      {/* Footer Info & Action Buttons */}
-      <div className="px-5 sm:px-6 py-3.5 bg-charcoal-950/60 border-t border-charcoal-cardBorder flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        {/* Stipend / Prize Pool / Deadline Meta */}
-        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-xs">
-          {/* Prize Pool or Compensation */}
-          {opportunity.hasPrizePool && opportunity.totalPrizePool ? (
-            <div className="flex items-center space-x-1 text-amber-300 font-bold font-mono text-[11.5px]">
-              <span>🏆 {formatCurrency(opportunity.totalPrizePool, opportunity.prizeCurrency || "INR")} Prize Pool</span>
-            </div>
-          ) : (opportunity.stipend || opportunity.salary) ? (
-            <div className="flex items-center space-x-1 text-forest-300 font-semibold font-mono text-[11.5px]">
-              <span className="truncate max-w-[130px]">
-                {opportunity.stipend || opportunity.salary}
-              </span>
-            </div>
-          ) : (
-            <div className="text-ivory-500 font-mono text-[11px]">
-              {opportunity.registrationFee || "Free Entry"}
-            </div>
-          )}
-
-          {/* Deadline */}
-          <div
-            className={`flex items-center space-x-1 font-mono text-[11px] ${
-              daysInfo.isUrgent
-                ? "text-rose-400 font-semibold"
-                : daysInfo.isExpired
-                ? "text-ivory-500 line-through"
-                : "text-ivory-400"
-            }`}
-          >
-            <Clock className="w-3 h-3" />
-            <span>{daysInfo.text}</span>
+      {/* Footer Info & Action Button */}
+      <div className="px-5 py-3 bg-[#0E1110]/80 border-t border-white/[0.06] flex items-center justify-between gap-2">
+        <div className="flex flex-col">
+          {renderCompensation()}
+          <div className="flex items-center space-x-1 font-mono text-[10.5px] text-[#7E807B] mt-0.5">
+            <Clock className="w-3 h-3 text-[#A9AAA5]" />
+            <span className={daysInfo.isUrgent ? "text-rose-400 font-semibold" : ""}>
+              {daysInfo.text}
+            </span>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center space-x-2">
-          <Link
-            href={`/opportunity/${opportunity.slug}`}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center space-x-1 px-4 py-1.5 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
-          >
-            <span>View & Apply</span>
-            <ArrowRight className="w-3 h-3 ml-0.5" />
-          </Link>
-        </div>
+        {/* Primary Action Button */}
+        <Link
+          href={`/opportunity/${opportunity.slug}`}
+          onClick={handleApplyClick}
+          className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-[8px] text-[12px] font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
+        >
+          <span>{getButtonLabel()}</span>
+          <ArrowRight className="w-3 h-3 ml-0.5" />
+        </Link>
       </div>
     </article>
   );

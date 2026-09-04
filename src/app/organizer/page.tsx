@@ -63,14 +63,14 @@ export default function OrganizerDashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-charcoal-cardBorder">
         <div>
-          <div className="inline-flex items-center space-x-2 text-bronze-400 text-xs font-mono font-bold uppercase tracking-wider mb-1">
+          <div className="inline-flex items-center space-x-2 text-[#D8B77A] text-xs font-mono font-semibold uppercase tracking-wider mb-1">
             <Trophy className="w-4 h-4" />
             <span>Organizer Management Console</span>
           </div>
-          <h1 className="font-serif-heading font-medium text-3xl sm:text-4xl text-ivory-100">
+          <h1 className="text-2xl sm:text-3xl font-[700] text-[#F5F1E8] tracking-tight">
             Organizer Hub & Pipelines
           </h1>
-          <p className="text-xs text-ivory-500 mt-1 font-normal">
+          <p className="text-xs text-[#A9AAA5] mt-1 font-normal">
             Manage your opportunities, evaluate applicants in candidate pipelines, monitor attendees, broadcast announcements, and issue verifiable certificates.
           </p>
         </div>
@@ -78,16 +78,16 @@ export default function OrganizerDashboardPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/submit-opportunity"
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
+            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-[9px] font-semibold text-xs text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Post Opportunity</span>
           </Link>
           <Link
             href="/organize-hackathon"
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ivory-200 bg-charcoal-900 hover:bg-charcoal-800 border border-charcoal-cardBorder transition-all"
+            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-[9px] font-medium text-xs text-[#F5F1E8] bg-[#151A18] hover:bg-[#181F1C] border border-white/[0.08] transition-all"
           >
-            <Code className="w-4 h-4 text-forest-400" />
+            <Code className="w-4 h-4 text-[#8FA58E]" />
             <span>Host Hackathon</span>
           </Link>
         </div>

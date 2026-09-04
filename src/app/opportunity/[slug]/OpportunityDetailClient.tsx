@@ -229,7 +229,7 @@ export default function OpportunityDetailClient({
                   </span>
                 </div>
 
-                <h1 className="font-serif-heading font-medium text-2xl sm:text-3xl text-ivory-100 leading-snug">
+                <h1 className="font-semibold text-2xl sm:text-3xl text-[#F5F1E8] leading-snug tracking-tight">
                   {opportunity.title}
                 </h1>
               </div>

@@ -84,14 +84,14 @@ export default function DashboardLayout({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="font-serif-heading font-medium text-xl sm:text-2xl text-ivory-100">
+              <h1 className="font-semibold text-xl sm:text-2xl text-[#F5F1E8] tracking-tight">
                 {user?.name}
               </h1>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-bronze-500/10 text-bronze-300 border border-bronze-500/20 uppercase">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-[#D8B77A]/10 text-[#D8B77A] border border-[#D8B77A]/20 uppercase">
                 STUDENT
               </span>
             </div>
-            <p className="text-xs text-ivory-500 mt-0.5 font-mono">
+            <p className="text-xs text-[#A9AAA5] mt-0.5 font-mono">
               {user?.college || user?.email}
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function DashboardLayout({
         <div className="flex items-center space-x-3">
           <Link
             href="/submit-opportunity"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold text-charcoal-950 bg-bronze-500 hover:bg-bronze-400 shadow-button transition-all"
+            className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-[9px] text-xs font-semibold text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Post Opportunity</span>

@@ -237,17 +237,46 @@ export default function SubmitOpportunityPage() {
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
       {/* Top Banner Header */}
-      <div className="text-center space-y-2">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-bronze-500/10 border border-bronze-500/20 text-bronze-300 text-xs font-mono">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Universal Opportunity Engine</span>
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-[700] text-[#F5F1E8] tracking-tight">
+              Create an Opportunity
+            </h1>
+            <p className="text-xs sm:text-sm text-[#A9AAA5] mt-1">
+              Publish internships, jobs, hackathons, workshops, events and more directly on NIMBLUX.
+            </p>
+          </div>
+          <Link
+            href="/organizer"
+            className="self-start sm:self-center px-3.5 py-1.5 rounded-[8px] text-xs font-medium text-[#F5F1E8] bg-[#151A18] border border-white/[0.08] hover:border-white/[0.15] transition-colors"
+          >
+            Organizer Console →
+          </Link>
         </div>
-        <h1 className="font-serif-heading font-medium text-3xl sm:text-4xl text-ivory-100">
-          Create & Post an Opportunity
-        </h1>
-        <p className="text-xs sm:text-sm text-ivory-400 max-w-xl mx-auto leading-relaxed">
-          Publish internships, jobs, hackathons, workshops, competitions, scholarships, or events. Candidates apply & register directly on NIMBLUX.
-        </p>
+
+        {/* Step Indicator */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2">
+          {[
+            { num: "1", name: "Basic Information" },
+            { num: "2", name: "Details" },
+            { num: "3", name: "Participation" },
+            { num: "4", name: "Review" },
+            { num: "5", name: "Submit" },
+          ].map((step, idx) => (
+            <div
+              key={step.num}
+              className="p-3 rounded-[10px] bg-[#111615] border border-white/[0.08] flex items-center space-x-2.5"
+            >
+              <div className="w-5 h-5 rounded-full bg-[#D8B77A] text-[#090B0B] flex items-center justify-center font-bold text-[11px] font-mono">
+                {step.num}
+              </div>
+              <span className="text-[12px] font-medium text-[#F5F1E8] truncate">
+                {step.name}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Moderation Workflow Notice */}
