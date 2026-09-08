@@ -133,8 +133,12 @@ export default function OrganizeHackathonPage() {
           setUser(data.user);
           setBasicInfo((prev) => ({
             ...prev,
-            organizerName: prev.organizerName || data.user.name,
-            contactEmail: prev.contactEmail || data.user.email,
+            organizerName: prev.organizerName || data.user.organizationName || data.user.name,
+            organizerLogo: prev.organizerLogo || data.user.organizationLogo || "",
+            organizerDescription: prev.organizerDescription || data.user.organizationBio || "",
+            websiteUrl: prev.websiteUrl || data.user.organizationWebsite || "",
+            contactEmail: prev.contactEmail || data.user.organizationEmail || data.user.email,
+            contactPhone: prev.contactPhone || data.user.organizationPhone || data.user.phone || "",
           }));
         }
       })

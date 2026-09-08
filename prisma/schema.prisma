@@ -25,6 +25,22 @@ model User {
   portfolioUrl   String?
   phone          String?
   status         String         @default("ACTIVE") // "ACTIVE" | "SUSPENDED"
+
+  // Organizer Profile & Workspace Activation
+  isOrganizer          Boolean        @default(false)
+  isVerifiedOrganizer  Boolean        @default(false)
+  organizationName     String?
+  organizationLogo     String?
+  organizationBio      String?        @db.Text
+  organizationWebsite  String?
+  organizationEmail    String?
+  organizationPhone    String?
+  organizationLocation String?
+  organizationType     String?        // "COMPANY" | "STARTUP" | "COLLEGE_CLUB" | "COMMUNITY" | "NON_PROFIT"
+  organizationLinkedin String?
+  organizationTwitter  String?
+  organizationGithub   String?
+
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 

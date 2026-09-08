@@ -236,7 +236,7 @@ export default function OpportunityApplyModal({
               Apply to {opportunity.title}
             </h2>
             <div className="text-xs text-[#A9AAA5] mt-0.5">
-              {opportunity.organization} • Direct recruiter pipeline
+              {opportunity.organization} • Direct talent pipeline
             </div>
           </div>
         </div>
@@ -616,7 +616,7 @@ export default function OpportunityApplyModal({
             {/* Section: Short Note / Cover letter */}
             <div className="space-y-1 pt-2">
               <label className="text-[11px] font-mono text-[#A9AAA5] block uppercase tracking-wider">
-                Note to Recruiter / Cover Letter (Optional)
+                Cover Note / Candidate Statement (Optional)
               </label>
               <textarea
                 rows={3}

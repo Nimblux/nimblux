@@ -72,6 +72,24 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleToggleOrganizerVerification = async (userId: string, currentVerified: boolean) => {
+    const nextVerified = !currentVerified;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, isVerifiedOrganizer: nextVerified }),
+      });
+      if (res.ok) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === userId ? { ...u, isVerifiedOrganizer: nextVerified } : u))
+        );
+      }
+    } catch (e) {
+      alert("Failed to update verification");
+    }
+  };
+
   const handleDelete = async (userId: string) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
     try {
@@ -151,8 +169,20 @@ export default function AdminUsersPage() {
                 {filtered.map((u) => (
                   <tr key={u.id} className="hover:bg-charcoal-900/50 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-ivory-100">{u.name}</div>
+                      <div className="flex items-center space-x-1.5">
+                        <span className="font-bold text-ivory-100">{u.name}</span>
+                        {u.isVerifiedOrganizer && (
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold text-forest-300 bg-forest-500/15 border border-forest-500/30">
+                            Verified Org
+                          </span>
+                        )}
+                      </div>
                       <div className="text-[11px] text-ivory-500 font-mono">{u.email}</div>
+                      {u.isOrganizer && (
+                        <div className="text-[10px] text-bronze-300 font-mono mt-0.5">
+                          🏢 {u.organizationName || "Organizer Workspace"}
+                        </div>
+                      )}
                     </td>
                     <td className="py-3.5 px-3">
                       <div className="text-ivory-300 truncate max-w-[150px]">
@@ -202,6 +232,20 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-2">
+                        {u.isOrganizer && (
+                          <button
+                            onClick={() => handleToggleOrganizerVerification(u.id, u.isVerifiedOrganizer)}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
+                              u.isVerifiedOrganizer
+                                ? "bg-forest-500/15 text-forest-300 border-forest-500/30 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30"
+                                : "bg-bronze-500/15 text-bronze-300 border-bronze-500/30 hover:bg-bronze-500/25"
+                            }`}
+                            title={u.isVerifiedOrganizer ? "Revoke organizer verification" : "Grant Verified Organizer badge"}
+                          >
+                            {u.isVerifiedOrganizer ? "Verified ✓" : "Verify Org"}
+                          </button>
+                        )}
+
                         <button
                           onClick={() => handleToggleStatus(u.id, u.status)}
                           className={`px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors ${

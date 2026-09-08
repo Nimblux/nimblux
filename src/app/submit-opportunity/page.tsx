@@ -127,6 +127,14 @@ export default function SubmitOpportunityPage() {
           router.push("/login?redirect=/submit-opportunity");
         } else {
           setUser(data.user);
+          if (data.user.organizationName) {
+            setFormData((prev) => ({
+              ...prev,
+              organization: prev.organization || data.user.organizationName || "",
+              logo: prev.logo || data.user.organizationLogo || "",
+              contactInfo: prev.contactInfo || data.user.organizationEmail || data.user.email || "",
+            }));
+          }
         }
       })
       .catch(() => {

@@ -16,6 +16,9 @@ export async function GET() {
         status: true,
         college: true,
         degree: true,
+        isOrganizer: true,
+        isVerifiedOrganizer: true,
+        organizationName: true,
         createdAt: true,
         _count: {
           select: { opportunities: true, bookmarks: true },
@@ -32,7 +35,7 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   try {
     await requireAdmin();
-    const { userId, role, status } = await req.json();
+    const { userId, role, status, isVerifiedOrganizer, isOrganizer } = await req.json();
 
     if (!userId) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -43,8 +46,19 @@ export async function PATCH(req: NextRequest) {
       data: {
         role: role !== undefined ? role : undefined,
         status: status !== undefined ? status : undefined,
+        isVerifiedOrganizer: isVerifiedOrganizer !== undefined ? isVerifiedOrganizer : undefined,
+        isOrganizer: isOrganizer !== undefined ? isOrganizer : undefined,
       },
-      select: { id: true, name: true, email: true, role: true, status: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        status: true,
+        isOrganizer: true,
+        isVerifiedOrganizer: true,
+        organizationName: true,
+      },
     });
 
     return NextResponse.json({ success: true, user: updated });

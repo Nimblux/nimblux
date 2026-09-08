@@ -850,7 +850,7 @@ export default function OpportunityManagePage() {
               </div>
             )}
 
-            {/* Recruiter Evaluation Notes & Rating */}
+            {/* Evaluation Notes & Rating */}
             <div className="space-y-3 pt-4 border-t border-charcoal-cardBorder text-xs">
               <div className="flex items-center justify-between">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-ivory-400 font-bold">
@@ -872,7 +872,7 @@ export default function OpportunityManagePage() {
 
               <div>
                 <label className="text-[11px] font-mono uppercase tracking-wider text-ivory-400 font-bold block mb-1">
-                  Internal Recruiter Notes
+                  Internal Evaluation Notes
                 </label>
                 <textarea
                   rows={3}

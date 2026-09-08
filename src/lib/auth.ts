@@ -22,6 +22,21 @@ export interface SessionUser {
   portfolioUrl?: string | null;
   phone?: string | null;
   status: string;
+
+  // Organizer Fields
+  isOrganizer: boolean;
+  isVerifiedOrganizer: boolean;
+  organizationName?: string | null;
+  organizationLogo?: string | null;
+  organizationBio?: string | null;
+  organizationWebsite?: string | null;
+  organizationEmail?: string | null;
+  organizationPhone?: string | null;
+  organizationLocation?: string | null;
+  organizationType?: string | null;
+  organizationLinkedin?: string | null;
+  organizationTwitter?: string | null;
+  organizationGithub?: string | null;
 }
 
 export function hashPassword(password: string): Promise<string> {
@@ -72,6 +87,25 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         portfolioUrl: true,
         phone: true,
         status: true,
+        isOrganizer: true,
+        isVerifiedOrganizer: true,
+        organizationName: true,
+        organizationLogo: true,
+        organizationBio: true,
+        organizationWebsite: true,
+        organizationEmail: true,
+        organizationPhone: true,
+        organizationLocation: true,
+        organizationType: true,
+        organizationLinkedin: true,
+        organizationTwitter: true,
+        organizationGithub: true,
+        _count: {
+          select: {
+            opportunities: true,
+            createdHackathons: true,
+          },
+        },
       },
     });
 
@@ -79,7 +113,15 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       return null;
     }
 
-    return user as SessionUser;
+    const hasCreatedContent = (user._count?.opportunities || 0) > 0 || (user._count?.createdHackathons || 0) > 0;
+    const effectiveIsOrganizer = Boolean(user.isOrganizer || hasCreatedContent || user.role === "ADMIN");
+
+    const { _count, ...userData } = user;
+
+    return {
+      ...userData,
+      isOrganizer: effectiveIsOrganizer,
+    } as SessionUser;
   } catch (err) {
     return null;
   }
