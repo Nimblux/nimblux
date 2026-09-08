@@ -219,7 +219,15 @@ export default function OrganizerApplicationsPage() {
                     <span className="font-semibold text-sm text-[#F5F1E8]">
                       {app.name}
                     </span>
-                    {getApplicationStageBadge(app.status)}
+                    {(() => {
+                      const badge = getApplicationStageBadge(app.status);
+                      return (
+                        <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                          <span>{badge.label}</span>
+                        </span>
+                      );
+                    })()}
                     {app.rating > 0 && (
                       <span className="inline-flex items-center text-[#D8B77A] text-xs font-mono">
                         {"★".repeat(app.rating)}
@@ -293,7 +301,15 @@ export default function OrganizerApplicationsPage() {
             {/* Candidate Header */}
             <div>
               <div className="flex items-center space-x-2 mb-1">
-                {getApplicationStageBadge(selectedApp.status)}
+                {(() => {
+                  const badge = getApplicationStageBadge(selectedApp.status);
+                  return (
+                    <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                      <span>{badge.label}</span>
+                    </span>
+                  );
+                })()}
                 <span className="text-xs text-[#A9AAA5] font-mono">
                   Applied {formatDate(selectedApp.createdAt)}
                 </span>

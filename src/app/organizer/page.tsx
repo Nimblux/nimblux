@@ -278,7 +278,15 @@ export default function OrganizerDashboardPage() {
                       <span className="px-2 py-0.5 rounded-[5px] text-[10px] font-mono uppercase bg-white/[0.05] text-[#A9AAA5] border border-white/[0.06]">
                         {opp.opportunityType || opp.category}
                       </span>
-                      {getStatusBadge(opp.status)}
+                      {(() => {
+                        const badge = getStatusBadge(opp.status);
+                        return (
+                          <span className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                            <span>{badge.label}</span>
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div className="flex items-center space-x-3 text-[11px] text-[#A9AAA5] font-mono mt-1">
                       <span>{opp.applicationCount || 0} Applications</span>
@@ -350,7 +358,15 @@ export default function OrganizerDashboardPage() {
                       <span className="font-semibold text-xs text-[#F5F1E8] truncate">
                         {h.title}
                       </span>
-                      {getHackathonStatusBadge(h.status)}
+                      {(() => {
+                        const badge = getHackathonStatusBadge(h.status);
+                        return (
+                          <span className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                            <span>{badge.label}</span>
+                          </span>
+                        );
+                      })()}
                     </div>
                     <div className="flex items-center space-x-3 text-[11px] text-[#A9AAA5] font-mono mt-1">
                       <span>{h.registrationCount || 0} Builders</span>

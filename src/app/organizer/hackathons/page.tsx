@@ -91,7 +91,15 @@ export default function OrganizerHackathonsPage() {
                     >
                       {h.title}
                     </Link>
-                    {getHackathonStatusBadge(h.status)}
+                    {(() => {
+                      const badge = getHackathonStatusBadge(h.status);
+                      return (
+                        <span className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                          <span>{badge.label}</span>
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 text-xs text-[#A9AAA5] font-mono">

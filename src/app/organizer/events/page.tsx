@@ -101,7 +101,15 @@ export default function OrganizerEventsPage() {
                     <span className="px-2 py-0.5 rounded-[5px] text-[10px] font-mono uppercase bg-[#0E1110] text-[#8FA58E] border border-[#8FA58E]/30">
                       {ev.opportunityType || ev.category}
                     </span>
-                    {getStatusBadge(ev.status)}
+                    {(() => {
+                      const badge = getStatusBadge(ev.status);
+                      return (
+                        <span className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-[5px] text-[10px] font-mono font-medium ${badge.className}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${badge.dotColor}`} />
+                          <span>{badge.label}</span>
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4 text-xs text-[#A9AAA5] font-mono">
