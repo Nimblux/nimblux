@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -55,6 +55,7 @@ export default function HackathonCard({ hackathon, compact = false }: HackathonC
   const daysInfo = getDaysRemaining(hackathon.regEndDate);
   const modeBadge = getParticipationModeBadge(hackathon.mode);
   const statusBadge = getHackathonStatusBadge(hackathon.status);
+  const [logoError, setLogoError] = useState(false);
 
   return (
     <article
@@ -115,11 +116,12 @@ export default function HackathonCard({ hackathon, compact = false }: HackathonC
         {/* Floating Organizer Avatar */}
         <div className="absolute bottom-3 left-4 flex items-center space-x-2.5">
           <div className="w-10 h-10 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder/80 p-1 shadow-card flex items-center justify-center overflow-hidden flex-shrink-0">
-            {hackathon.organizerLogo ? (
+            {hackathon.organizerLogo && !logoError ? (
               <img
                 src={hackathon.organizerLogo}
                 alt={hackathon.organizerName}
                 className="w-full h-full object-cover rounded-xl"
+                onError={() => setLogoError(true)}
               />
             ) : (
               <div className="w-full h-full rounded-xl bg-bronze-500/20 text-bronze-300 font-bold text-xs flex items-center justify-center font-mono">

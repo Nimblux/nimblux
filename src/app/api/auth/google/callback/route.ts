@@ -9,10 +9,13 @@ export async function GET(req: NextRequest) {
   const error = searchParams.get("error");
 
   let redirectTarget = "/dashboard";
+  let redirectUriFromState: string | null = null;
+
   if (state) {
     try {
       const decoded = JSON.parse(Buffer.from(state, "base64").toString("utf-8"));
       if (decoded.redirect) redirectTarget = decoded.redirect;
+      if (decoded.redirectUri) redirectUriFromState = decoded.redirectUri;
     } catch {}
   }
 
@@ -34,21 +37,25 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(
       new URL(
         `/login?error=${encodeURIComponent(
-          "Google client credentials not configured on the server."
+          "Google client credentials not configured on the server. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET."
         )}`,
         req.url
       )
     );
   }
 
-  const origin =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    req.nextUrl.origin ||
-    "https://www.nimblux.xyz";
-  const redirectUri = `${origin}/api/auth/google/callback`;
+  // Determine redirect URI: Must match the redirect_uri used in the initial request exactly
+  const host = req.headers.get("x-forwarded-host") || req.nextUrl.host;
+  const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+
+  const fallbackRedirectUri = host.includes("localhost") || host.includes("127.0.0.1")
+    ? `${proto}://${host}/api/auth/google/callback`
+    : `${(process.env.NEXT_PUBLIC_APP_URL || "https://nimblux.xyz").replace(/\/$/, "")}/api/auth/google/callback`;
+
+  const redirectUri = redirectUriFromState || process.env.GOOGLE_REDIRECT_URI || fallbackRedirectUri;
 
   try {
-    // Exchange code for token
+    // Exchange authorization code for token
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -62,11 +69,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      const err = await tokenRes.text();
       return NextResponse.redirect(
         new URL(
           `/login?error=${encodeURIComponent(
-            "Failed to exchange Google authorization code."
+            "Failed to exchange Google authorization code. Please try again."
           )}`,
           req.url
         )
@@ -76,7 +82,7 @@ export async function GET(req: NextRequest) {
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
 
-    // Fetch user info
+    // Fetch user profile from Google UserInfo endpoint
     const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -96,7 +102,17 @@ export async function GET(req: NextRequest) {
     if (!email) {
       return NextResponse.redirect(
         new URL(
-          `/login?error=${encodeURIComponent("Google account did not provide an email.")}`,
+          `/login?error=${encodeURIComponent("Google account did not provide an email address.")}`,
+          req.url
+        )
+      );
+    }
+
+    const isVerified = email_verified === true || email_verified === "true";
+    if (!isVerified) {
+      return NextResponse.redirect(
+        new URL(
+          `/login?error=${encodeURIComponent("Google account email is not verified. Please verify your email with Google.")}`,
           req.url
         )
       );
@@ -104,7 +120,7 @@ export async function GET(req: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Find or create user
+    // Find existing user by verified email or googleId to prevent duplicate accounts
     let user = await prisma.user.findFirst({
       where: {
         OR: [{ email: normalizedEmail }, { googleId }],
@@ -112,6 +128,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (user) {
+      // Existing NIMBLUX account: link Google credentials
       if (user.status === "SUSPENDED") {
         return NextResponse.redirect(
           new URL(
@@ -121,15 +138,24 @@ export async function GET(req: NextRequest) {
         );
       }
 
+      const currentProvider = user.authProvider || "credentials";
+      const newProvider = user.googleId
+        ? currentProvider
+        : currentProvider === "credentials"
+        ? "both"
+        : "google";
+
       user = await prisma.user.update({
         where: { id: user.id },
         data: {
           googleId: user.googleId || googleId,
-          authProvider: user.googleId ? user.authProvider : (user.authProvider === "credentials" ? "both" : "google"),
-          profileImage: user.profileImage || picture || null,
+          authProvider: newProvider,
+          profileImage: user.profileImage || user.profileImageUrl || picture || null,
+          profileImageUrl: user.profileImageUrl || user.profileImage || picture || null,
         },
       });
     } else {
+      // New user: Create NIMBLUX account
       user = await prisma.user.create({
         data: {
           name: name || normalizedEmail.split("@")[0],
@@ -137,6 +163,7 @@ export async function GET(req: NextRequest) {
           googleId,
           authProvider: "google",
           profileImage: picture || null,
+          profileImageUrl: picture || null,
           role: "USER",
           status: "ACTIVE",
         },
@@ -146,14 +173,14 @@ export async function GET(req: NextRequest) {
         data: {
           userId: user.id,
           title: "Welcome to NIMBLUX! 🎉",
-          message: "Your account is active via Google. Start exploring opportunities and credentials.",
+          message: "Your account is active via Google. Start exploring opportunities, hackathons, and credentials.",
           type: "SYSTEM",
           link: "/opportunities",
         },
       });
     }
 
-    // Issue JWT cookie
+    // Issue standard NIMBLUX JWT cookie session
     const token = signJwt({
       id: user.id,
       email: user.email,
@@ -178,7 +205,7 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.redirect(
       new URL(
-        `/login?error=${encodeURIComponent("Unexpected error during Google sign-in.")}`,
+        `/login?error=${encodeURIComponent("Unexpected error during Google sign-in. Please try again.")}`,
         req.url
       )
     );

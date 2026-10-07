@@ -11,6 +11,7 @@ function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
+  const urlError = searchParams.get("error");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,7 +23,11 @@ function RegisterForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(urlError || "");
+
+  React.useEffect(() => {
+    if (urlError) setError(urlError);
+  }, [urlError]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

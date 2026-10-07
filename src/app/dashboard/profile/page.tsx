@@ -79,8 +79,25 @@ export default function ProfilePage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleProfileImageChange = (newUrl: string | null) => {
-    setFormData((prev) => ({ ...prev, profileImage: newUrl || "" }));
+  const handleProfileImageChange = async (newUrl: string | null) => {
+    const targetUrl = newUrl || "";
+    setFormData((prev) => ({ ...prev, profileImage: targetUrl }));
+
+    if (newUrl) {
+      try {
+        const res = await fetch("/api/users/profile-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl: newUrl }),
+        });
+        if (res.ok) {
+          setMessage("Profile photo updated successfully!");
+          setTimeout(() => setMessage(""), 3000);
+        }
+      } catch {
+        // Fallback to submitting full profile form
+      }
+    }
   };
 
   const handleRemovePhoto = async () => {

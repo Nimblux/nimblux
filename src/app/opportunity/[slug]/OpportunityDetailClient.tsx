@@ -99,6 +99,7 @@ export default function OpportunityDetailClient({
   const [saving, setSaving] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   // In-Platform Participation States
   const [applyModalOpen, setApplyModalOpen] = useState(false);
@@ -270,11 +271,12 @@ export default function OpportunityDetailClient({
             {/* Header: Org Logo, Verified, Category, Title */}
             <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
               <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-[12px] bg-[#0E1110] border border-white/[0.08] p-2 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
-                {opportunity.logo ? (
+                {opportunity.logo && !logoError ? (
                   <img
                     src={opportunity.logo}
                     alt={opportunity.organization}
                     className="w-full h-full object-cover rounded-[8px]"
+                    onError={() => setLogoError(true)}
                   />
                 ) : (
                   <div className="w-full h-full rounded-[8px] bg-[#151A18] flex items-center justify-center font-bold text-[#D8B77A] text-lg font-mono">
@@ -747,7 +749,7 @@ export default function OpportunityDetailClient({
         onClose={() => setAuthModalOpen(false)}
         title="Please sign in to continue."
         actionName={isApplicationFlow ? `apply for "${opportunity.title}"` : `register for "${opportunity.title}"`}
-        redirectUrl={`/login?redirect=/opportunity/${opportunity.slug}?action=${isApplicationFlow ? "apply" : "register"}`}
+        redirectUrl={`/opportunity/${opportunity.slug}?action=${isApplicationFlow ? "apply" : "register"}`}
         onAuthenticated={handleAuthenticated}
       />
 

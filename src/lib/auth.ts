@@ -12,6 +12,7 @@ export interface SessionUser {
   email: string;
   role: "USER" | "ADMIN";
   profileImage?: string | null;
+  profileImageUrl?: string | null;
   college?: string | null;
   degree?: string | null;
   skills?: string | null;
@@ -36,6 +37,7 @@ export interface SessionUser {
   organizationType?: string | null;
   organizationLinkedin?: string | null;
   organizationTwitter?: string | null;
+  organizationInstagram?: string | null;
   organizationGithub?: string | null;
 }
 
@@ -77,6 +79,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         email: true,
         role: true,
         profileImage: true,
+        profileImageUrl: true,
         college: true,
         degree: true,
         skills: true,
@@ -99,6 +102,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         organizationType: true,
         organizationLinkedin: true,
         organizationTwitter: true,
+        organizationInstagram: true,
         organizationGithub: true,
         _count: {
           select: {
@@ -117,9 +121,12 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     const effectiveIsOrganizer = Boolean(user.isOrganizer || hasCreatedContent || user.role === "ADMIN");
 
     const { _count, ...userData } = user;
+    const resolvedImage = user.profileImageUrl || user.profileImage || null;
 
     return {
       ...userData,
+      profileImage: resolvedImage,
+      profileImageUrl: resolvedImage,
       isOrganizer: effectiveIsOrganizer,
     } as SessionUser;
   } catch (err) {

@@ -27,6 +27,7 @@ export async function GET() {
         organizationType: true,
         organizationLinkedin: true,
         organizationTwitter: true,
+        organizationInstagram: true,
         organizationGithub: true,
       },
     });
@@ -59,6 +60,7 @@ export async function PUT(req: NextRequest) {
       organizationType,
       organizationLinkedin,
       organizationTwitter,
+      organizationInstagram,
       organizationGithub,
     } = body;
 
@@ -75,6 +77,7 @@ export async function PUT(req: NextRequest) {
         organizationType: organizationType?.trim() || "COMPANY",
         organizationLinkedin: organizationLinkedin?.trim() || null,
         organizationTwitter: organizationTwitter?.trim() || null,
+        organizationInstagram: organizationInstagram?.trim() || null,
         organizationGithub: organizationGithub?.trim() || null,
       },
       select: {
@@ -91,6 +94,7 @@ export async function PUT(req: NextRequest) {
         organizationType: true,
         organizationLinkedin: true,
         organizationTwitter: true,
+        organizationInstagram: true,
         organizationGithub: true,
       },
     });

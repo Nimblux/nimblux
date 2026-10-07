@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
       organizationType,
       organizationLinkedin,
       organizationTwitter,
+      organizationInstagram,
       organizationGithub,
+      requestVerification,
     } = body;
 
     if (!organizationName || !organizationName.trim()) {
@@ -45,10 +47,11 @@ export async function POST(req: NextRequest) {
         organizationWebsite: organizationWebsite?.trim() || null,
         organizationEmail: organizationEmail?.trim() || user.email,
         organizationPhone: organizationPhone?.trim() || null,
-        organizationLocation: organizationLocation?.trim() || null,
+        organizationLocation: organizationLocation?.trim() || "Remote",
         organizationType: organizationType?.trim() || "COMPANY",
         organizationLinkedin: organizationLinkedin?.trim() || null,
         organizationTwitter: organizationTwitter?.trim() || null,
+        organizationInstagram: organizationInstagram?.trim() || null,
         organizationGithub: organizationGithub?.trim() || null,
       },
       select: {
@@ -60,6 +63,7 @@ export async function POST(req: NextRequest) {
         isVerifiedOrganizer: true,
         organizationName: true,
         organizationLogo: true,
+        organizationInstagram: true,
       },
     });
 
@@ -73,6 +77,18 @@ export async function POST(req: NextRequest) {
         link: "/organizer",
       },
     });
+
+    if (requestVerification) {
+      await prisma.notification.create({
+        data: {
+          userId: user.id,
+          title: "Verification Request Received",
+          message: "Your organization verification request has been submitted for review. You can start creating opportunities immediately.",
+          type: "SYSTEM",
+          link: "/organizer/organization",
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,

@@ -261,7 +261,7 @@ export default function TalentNavbar() {
             </Link>
           ) : (
             <Link
-              href="/become-organizer"
+              href="/organizer/onboarding"
               className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-[9px] text-[13px] font-medium text-[#D8B77A] bg-[#D8B77A]/10 border border-[#D8B77A]/25 hover:bg-[#D8B77A]/20 transition-all"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#D8B77A]" />
@@ -362,7 +362,7 @@ export default function TalentNavbar() {
                       </Link>
                     ) : (
                       <Link
-                        href="/become-organizer"
+                        href="/organizer/onboarding"
                         onClick={() => setUserMenuOpen(false)}
                         className="w-full mt-1 flex items-center justify-between px-2.5 py-1.5 rounded-[8px] bg-white/[0.04] hover:bg-white/[0.08] text-[#D8B77A] transition-colors"
                       >
@@ -498,7 +498,7 @@ export default function TalentNavbar() {
             </Link>
           ) : (
             <Link
-              href="/become-organizer"
+              href="/organizer/onboarding"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center justify-between p-3 rounded-[10px] bg-white/[0.04] border border-white/[0.08] text-[#D8B77A] text-xs font-medium"
             >

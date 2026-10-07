@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
   if (!clientId) {
-    // If Google Client ID is not configured in .env, redirect back with error notice
+    // If Google Client ID is not configured in environment variables, redirect back with error notice
     return NextResponse.redirect(
       new URL(
         `/login?error=${encodeURIComponent(
@@ -18,16 +18,26 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Determine origin
-  const origin =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    req.nextUrl.origin ||
-    "https://www.nimblux.xyz";
+  // Determine origin and redirect URI
+  const host = req.headers.get("x-forwarded-host") || req.nextUrl.host;
+  const proto = req.headers.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
 
-  const redirectUri = `${origin}/api/auth/google/callback`;
+  let redirectUri: string;
+  if (process.env.GOOGLE_REDIRECT_URI) {
+    redirectUri = process.env.GOOGLE_REDIRECT_URI;
+  } else if (host.includes("localhost") || host.includes("127.0.0.1")) {
+    redirectUri = `${proto}://${host}/api/auth/google/callback`;
+  } else {
+    const configuredOrigin = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || "https://nimblux.xyz";
+    redirectUri = `${configuredOrigin}/api/auth/google/callback`;
+  }
 
   const state = Buffer.from(
-    JSON.stringify({ redirect: redirectTarget, timestamp: Date.now() })
+    JSON.stringify({
+      redirect: redirectTarget,
+      redirectUri,
+      timestamp: Date.now(),
+    })
   ).toString("base64");
 
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");

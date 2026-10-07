@@ -17,6 +17,7 @@ export async function GET() {
         email: true,
         role: true,
         profileImage: true,
+        profileImageUrl: true,
         college: true,
         degree: true,
         skills: true,
@@ -33,15 +34,23 @@ export async function GET() {
       },
     });
 
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const latestApp = await prisma.opportunityApplication.findFirst({
       where: { userId: sessionUser.id, resumeUrl: { not: null } },
       orderBy: { createdAt: "desc" },
       select: { resumeUrl: true },
     });
 
+    const resolvedImage = user.profileImageUrl || user.profileImage || null;
+
     return NextResponse.json({
       user: {
         ...user,
+        profileImage: resolvedImage,
+        profileImageUrl: resolvedImage,
         resumeUrl: latestApp?.resumeUrl || null,
       },
     });
@@ -61,6 +70,7 @@ export async function PATCH(req: NextRequest) {
     const {
       name,
       profileImage,
+      profileImageUrl,
       college,
       degree,
       skills,
@@ -73,11 +83,14 @@ export async function PATCH(req: NextRequest) {
       phone,
     } = body;
 
+    const newImage = (profileImageUrl || profileImage)?.trim() || null;
+
     const updated = await prisma.user.update({
       where: { id: sessionUser.id },
       data: {
         name: name !== undefined ? name.trim() : undefined,
-        profileImage: profileImage !== undefined ? profileImage?.trim() || null : undefined,
+        profileImage: profileImage !== undefined || profileImageUrl !== undefined ? newImage : undefined,
+        profileImageUrl: profileImage !== undefined || profileImageUrl !== undefined ? newImage : undefined,
         college: college !== undefined ? college?.trim() || null : undefined,
         degree: degree !== undefined ? degree?.trim() || null : undefined,
         skills: skills !== undefined ? skills?.trim() || null : undefined,
@@ -89,9 +102,36 @@ export async function PATCH(req: NextRequest) {
         portfolioUrl: portfolioUrl !== undefined ? portfolioUrl?.trim() || null : undefined,
         phone: phone !== undefined ? phone?.trim() || null : undefined,
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        profileImage: true,
+        profileImageUrl: true,
+        college: true,
+        degree: true,
+        skills: true,
+        graduationYear: true,
+        location: true,
+        bio: true,
+        githubUrl: true,
+        linkedinUrl: true,
+        portfolioUrl: true,
+        phone: true,
+        googleId: true,
+        authProvider: true,
+      },
     });
 
-    return NextResponse.json({ success: true, user: updated });
+    return NextResponse.json({
+      success: true,
+      user: {
+        ...updated,
+        profileImage: updated.profileImageUrl || updated.profileImage || null,
+        profileImageUrl: updated.profileImageUrl || updated.profileImage || null,
+      },
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

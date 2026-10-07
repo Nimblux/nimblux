@@ -25,10 +25,11 @@ export default function OrganizerLayout({
     !pathname.startsWith("/organizer/events") &&
     !pathname.startsWith("/organizer/analytics") &&
     !pathname.startsWith("/organizer/organization") &&
+    !pathname.startsWith("/organizer/onboarding") &&
     pathname !== "/organizer";
 
   useEffect(() => {
-    if (isPublicProfile) {
+    if (isPublicProfile || pathname.startsWith("/organizer/onboarding")) {
       setLoading(false);
       return;
     }
@@ -51,7 +52,7 @@ export default function OrganizerLayout({
       .finally(() => setLoading(false));
   }, [pathname, router, isPublicProfile]);
 
-  if (isPublicProfile) {
+  if (isPublicProfile || pathname.startsWith("/organizer/onboarding")) {
     return <>{children}</>;
   }
 
@@ -87,7 +88,7 @@ export default function OrganizerLayout({
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/become-organizer"
+              href="/organizer/onboarding"
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-[9px] font-semibold text-xs text-[#090B0B] bg-[#D8B77A] hover:bg-[#E7D5B2] shadow-sm transition-all"
             >
               <Sparkles className="w-4 h-4" />

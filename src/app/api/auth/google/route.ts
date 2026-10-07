@@ -70,7 +70,8 @@ export async function POST(req: NextRequest) {
         data: {
           googleId: user.googleId || googleId,
           authProvider: user.googleId ? user.authProvider : (user.authProvider === "credentials" ? "both" : "google"),
-          profileImage: user.profileImage || picture || null,
+          profileImage: user.profileImage || user.profileImageUrl || picture || null,
+          profileImageUrl: user.profileImageUrl || user.profileImage || picture || null,
         },
       });
     } else {
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
           googleId,
           authProvider: "google",
           profileImage: picture || null,
+          profileImageUrl: picture || null,
           role: "USER",
           status: "ACTIVE",
         },

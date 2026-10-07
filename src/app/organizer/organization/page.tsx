@@ -10,6 +10,7 @@ import {
   MapPin,
   Linkedin,
   Twitter,
+  Instagram,
   Github,
   CheckCircle2,
   AlertCircle,
@@ -35,6 +36,7 @@ export default function OrganizationProfilePage() {
     organizationLocation: "Remote",
     organizationLinkedin: "",
     organizationTwitter: "",
+    organizationInstagram: "",
     organizationGithub: "",
     isVerifiedOrganizer: false,
   });
@@ -55,6 +57,7 @@ export default function OrganizationProfilePage() {
             organizationLocation: d.organization.organizationLocation || "Remote",
             organizationLinkedin: d.organization.organizationLinkedin || "",
             organizationTwitter: d.organization.organizationTwitter || "",
+            organizationInstagram: d.organization.organizationInstagram || "",
             organizationGithub: d.organization.organizationGithub || "",
             isVerifiedOrganizer: d.organization.isVerifiedOrganizer || false,
           });
@@ -280,7 +283,7 @@ export default function OrganizationProfilePage() {
         </div>
 
         {/* Social Links */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-mono font-medium text-[#F5F1E8] mb-1.5">
               LinkedIn
@@ -308,6 +311,22 @@ export default function OrganizationProfilePage() {
                 value={formData.organizationTwitter}
                 onChange={(e) => setFormData({ ...formData, organizationTwitter: e.target.value })}
                 placeholder="https://x.com/username"
+                className="w-full pl-9 pr-3.5 py-2.5 rounded-[10px] bg-[#0E1110] border border-white/[0.08] text-xs text-[#F5F1E8] placeholder-[#7E807B] focus:outline-none focus:border-[#D8B77A]/50 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono font-medium text-[#F5F1E8] mb-1.5">
+              Instagram
+            </label>
+            <div className="relative">
+              <Instagram className="absolute left-3 top-3 w-3.5 h-3.5 text-[#7E807B]" />
+              <input
+                type="text"
+                value={formData.organizationInstagram}
+                onChange={(e) => setFormData({ ...formData, organizationInstagram: e.target.value })}
+                placeholder="https://instagram.com/... or @handle"
                 className="w-full pl-9 pr-3.5 py-2.5 rounded-[10px] bg-[#0E1110] border border-white/[0.08] text-xs text-[#F5F1E8] placeholder-[#7E807B] focus:outline-none focus:border-[#D8B77A]/50 transition-colors"
               />
             </div>

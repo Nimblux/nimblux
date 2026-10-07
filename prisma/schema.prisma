@@ -14,6 +14,7 @@ model User {
   passwordHash   String?
   role           String         @default("USER") // "USER" | "ADMIN"
   profileImage   String?
+  profileImageUrl String?
   googleId       String?        @unique
   authProvider   String?        @default("credentials") // "credentials" | "google"
   college        String?
@@ -41,6 +42,7 @@ model User {
   organizationType     String?        // "COMPANY" | "STARTUP" | "COLLEGE_CLUB" | "COMMUNITY" | "NON_PROFIT"
   organizationLinkedin String?
   organizationTwitter  String?
+  organizationInstagram String?
   organizationGithub   String?
 
   createdAt      DateTime       @default(now())

@@ -25,6 +25,7 @@ import {
   Layers,
 } from "lucide-react";
 import { calculateTotalPrizePool, formatCurrency } from "@/lib/hackathon";
+import ImageUpload from "@/components/common/ImageUpload";
 
 export default function OrganizeHackathonPage() {
   const router = useRouter();
@@ -395,17 +396,27 @@ export default function OrganizeHackathonPage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="font-semibold text-ivory-300 block mb-1 font-mono">
-                      Cover Banner Image URL
-                    </label>
-                    <input
-                      type="url"
-                      value={basicInfo.coverImage}
-                      onChange={(e) => setBasicInfo({ ...basicInfo, coverImage: e.target.value })}
-                      placeholder="https://example.com/banner.jpg"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
-                    />
+                  <div className="sm:col-span-2 grid grid-cols-1 md:grid-cols-12 gap-4 p-4 rounded-2xl bg-charcoal-900 border border-charcoal-cardBorder">
+                    <div className="md:col-span-4">
+                      <ImageUpload
+                        folder="organizations"
+                        label="Organizer Logo"
+                        sublabel="Square PNG, JPG, WEBP (5MB)"
+                        aspectRatio="1:1"
+                        value={basicInfo.organizerLogo}
+                        onChange={(url) => setBasicInfo((prev) => ({ ...prev, organizerLogo: url || "" }))}
+                      />
+                    </div>
+                    <div className="md:col-span-8">
+                      <ImageUpload
+                        folder="hackathons"
+                        label="Cover Banner Image"
+                        sublabel="16:9 aspect ratio hero banner image (5MB)"
+                        aspectRatio="16:9"
+                        value={basicInfo.coverImage}
+                        onChange={(url) => setBasicInfo((prev) => ({ ...prev, coverImage: url || "" }))}
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -418,19 +429,6 @@ export default function OrganizeHackathonPage() {
                       value={basicInfo.organizerName}
                       onChange={(e) => setBasicInfo({ ...basicInfo, organizerName: e.target.value })}
                       placeholder="e.g. Stanford AI Club / DevGuild"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-semibold text-ivory-300 block mb-1 font-mono">
-                      Organizer Logo URL
-                    </label>
-                    <input
-                      type="url"
-                      value={basicInfo.organizerLogo}
-                      onChange={(e) => setBasicInfo({ ...basicInfo, organizerLogo: e.target.value })}
-                      placeholder="https://example.com/logo.png"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-charcoal-900 border border-charcoal-cardBorder text-ivory-100 placeholder-ivory-500 focus:outline-none focus:border-bronze-500/50"
                     />
                   </div>

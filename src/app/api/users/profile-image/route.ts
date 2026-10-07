@@ -16,18 +16,23 @@ export async function POST(req: NextRequest) {
 
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { profileImage: imageUrl },
+      data: {
+        profileImage: imageUrl,
+        profileImageUrl: imageUrl,
+      },
       select: {
         id: true,
         name: true,
         email: true,
         profileImage: true,
+        profileImageUrl: true,
       },
     });
 
     return NextResponse.json({
       success: true,
       profileImage: updatedUser.profileImage,
+      profileImageUrl: updatedUser.profileImageUrl,
       user: updatedUser,
     });
   } catch (error: any) {
@@ -47,18 +52,23 @@ export async function DELETE() {
 
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { profileImage: null },
+      data: {
+        profileImage: null,
+        profileImageUrl: null,
+      },
       select: {
         id: true,
         name: true,
         email: true,
         profileImage: true,
+        profileImageUrl: true,
       },
     });
 
     return NextResponse.json({
       success: true,
       profileImage: null,
+      profileImageUrl: null,
       user: updatedUser,
     });
   } catch (error: any) {

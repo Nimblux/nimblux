@@ -1,14 +1,21 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.nimblux.xyz";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || "https://nimblux.xyz";
 
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/dashboard/"],
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/dashboard/",
+          "/organizer/",
+          "/applications/",
+          "/profile/",
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

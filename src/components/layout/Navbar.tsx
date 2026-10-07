@@ -27,7 +27,11 @@ export default function Navbar() {
     pathname !== "/organizer";
 
   // Dedicated Organizer Workspace Navbar
-  if (pathname.startsWith("/organizer") && !isPublicOrganizerProfile) {
+  if (
+    pathname.startsWith("/organizer") &&
+    !isPublicOrganizerProfile &&
+    !pathname.startsWith("/organizer/onboarding")
+  ) {
     return <OrganizerNavbar />;
   }
 

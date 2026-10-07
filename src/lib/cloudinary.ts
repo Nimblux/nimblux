@@ -1,8 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import path from "path";
 
-// Initialize Cloudinary
+// Initialize Cloudinary credentials
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 const apiKey = process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUDINARY_API_SECRET;
@@ -32,7 +30,7 @@ export type UploadFolder =
   | "events"
   | "hackathons";
 
-const FOLDER_MAP: Record<UploadFolder, string> = {
+export const FOLDER_MAP: Record<UploadFolder, string> = {
   users: "nimblux/users",
   organizations: "nimblux/organizations",
   opportunities: "nimblux/opportunities",
@@ -49,66 +47,82 @@ export interface UploadResult {
 }
 
 /**
- * Upload a file buffer to Cloudinary (or local fallback if Cloudinary credentials are not configured).
+ * Upload a file buffer directly to Cloudinary via memory stream.
+ * Absolutely NO local filesystem runtime storage (no fs.mkdir / fs.writeFile)
+ * to comply with Vercel serverless environment.
  */
 export async function uploadImage(
   buffer: Buffer,
   folderType: UploadFolder,
-  fileName?: string
+  _fileName?: string
 ): Promise<UploadResult> {
-  const targetFolder = FOLDER_MAP[folderType] || "nimblux/general";
+  const targetFolder = FOLDER_MAP[folderType] || "nimblux/opportunities";
 
-  if (isCloudinaryConfigured) {
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: targetFolder,
-          resource_type: "image",
-          allowed_formats: ["jpg", "jpeg", "png", "webp", "svg"],
-          transformation:
-            folderType === "users"
-              ? [{ width: 500, height: 500, crop: "fill", gravity: "face", quality: "auto", fetch_format: "auto" }]
-              : folderType === "organizations"
-              ? [{ width: 400, height: 400, crop: "fit", quality: "auto", fetch_format: "auto" }]
-              : [{ quality: "auto", fetch_format: "auto" }],
-        },
-        (error, result) => {
-          if (error || !result) {
-            reject(error || new Error("Failed to upload image to Cloudinary"));
-          } else {
-            resolve({
-              url: result.secure_url || result.url,
-              publicId: result.public_id,
-              width: result.width,
-              height: result.height,
-              format: result.format,
-            });
-          }
+  if (!isCloudinaryConfigured) {
+    throw new Error(
+      "Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in environment variables."
+    );
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: targetFolder,
+        resource_type: "image",
+        allowed_formats: ["jpg", "jpeg", "png", "webp", "svg"],
+        transformation:
+          folderType === "users"
+            ? [{ width: 500, height: 500, crop: "fill", gravity: "face", quality: "auto", fetch_format: "auto" }]
+            : folderType === "organizations"
+            ? [{ width: 400, height: 400, crop: "fit", quality: "auto", fetch_format: "auto" }]
+            : [{ quality: "auto", fetch_format: "auto" }],
+      },
+      (error, result) => {
+        if (error || !result) {
+          reject(error || new Error("Failed to upload image to Cloudinary."));
+        } else {
+          resolve({
+            url: result.secure_url || result.url,
+            publicId: result.public_id,
+            width: result.width,
+            height: result.height,
+            format: result.format,
+          });
         }
-      );
+      }
+    );
 
-      uploadStream.end(buffer);
-    });
+    uploadStream.end(buffer);
+  });
+}
+
+/**
+ * Generate a secure server-side signed upload signature
+ * for direct browser-to-Cloudinary uploads without exposing CLOUDINARY_API_SECRET.
+ */
+export function generateUploadSignature(folderType: UploadFolder) {
+  if (!isCloudinaryConfigured) {
+    throw new Error(
+      "Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET."
+    );
   }
 
-  // Fallback to local public/uploads directory when Cloudinary is not configured
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", folderType);
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  const targetFolder = FOLDER_MAP[folderType] || "nimblux/opportunities";
+  const paramsToSign = {
+    folder: targetFolder,
+    timestamp,
+  };
 
-  const extension = fileName ? path.extname(fileName) || ".png" : ".png";
-  const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${extension}`;
-  const filePath = path.join(uploadsDir, uniqueName);
-
-  fs.writeFileSync(filePath, buffer);
+  const secret = process.env.CLOUDINARY_API_SECRET || "";
+  const signature = cloudinary.utils.api_sign_request(paramsToSign, secret);
 
   return {
-    url: `/uploads/${folderType}/${uniqueName}`,
-    publicId: `local-${folderType}-${uniqueName}`,
-    width: 800,
-    height: 800,
-    format: extension.replace(".", ""),
+    signature,
+    timestamp,
+    folder: targetFolder,
+    apiKey: process.env.CLOUDINARY_API_KEY || "",
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
   };
 }
 
@@ -116,7 +130,7 @@ export async function uploadImage(
  * Delete an asset from Cloudinary
  */
 export async function deleteImage(publicId: string): Promise<boolean> {
-  if (!isCloudinaryConfigured || publicId.startsWith("local-")) {
+  if (!isCloudinaryConfigured || !publicId || publicId.startsWith("local-")) {
     return true;
   }
 

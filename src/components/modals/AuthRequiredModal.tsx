@@ -374,7 +374,11 @@ export default function AuthRequiredModal({
         <div className="mt-5 pt-4 border-t border-white/[0.06] text-center">
           {redirectUrl ? (
             <Link
-              href={redirectUrl}
+              href={
+                redirectUrl.startsWith("/login")
+                  ? redirectUrl
+                  : `/login?redirect=${encodeURIComponent(redirectUrl)}`
+              }
               className="text-[11px] text-[#A9AAA5] hover:text-[#D8B77A] transition-colors inline-flex items-center space-x-1"
             >
               <span>Or open full sign in page</span>

@@ -11,12 +11,17 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
+  const urlError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(urlError || "");
+
+  React.useEffect(() => {
+    if (urlError) setError(urlError);
+  }, [urlError]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

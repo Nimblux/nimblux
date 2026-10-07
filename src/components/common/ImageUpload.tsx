@@ -112,28 +112,57 @@ export default function ImageUpload({
       )}
 
       {value ? (
-        <div className={`relative rounded-[14px] overflow-hidden bg-[#090B0B] border border-white/[0.12] group ${getAspectClass()}`}>
-          <img
-            src={value}
-            alt="Uploaded preview"
-            className="w-full h-full object-cover"
-          />
+        <div className="space-y-2">
+          <div className={`relative rounded-[14px] overflow-hidden bg-[#090B0B] border border-white/[0.12] group ${getAspectClass()}`}>
+            <img
+              src={value}
+              alt="Uploaded preview"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Prevent infinite loop if broken
+                (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/%3E%3C/svg%3E";
+              }}
+            />
 
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+            <div className="absolute inset-0 bg-black/60 opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="px-2.5 py-1 rounded-[6px] text-xs font-medium bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm transition-colors"
+              >
+                Change
+              </button>
+              <button
+                type="button"
+                onClick={handleRemove}
+                disabled={uploading}
+                className="px-2.5 py-1 rounded-[6px] text-xs font-medium bg-rose-500/80 text-white hover:bg-rose-600 transition-colors flex items-center space-x-1"
+              >
+                <X className="w-3 h-3" />
+                <span>Remove</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Visible actions bar for mobile / quick access */}
+          <div className="flex sm:hidden items-center justify-between text-xs pt-1">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="px-2.5 py-1 rounded-[6px] text-xs font-medium bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm transition-colors"
+              disabled={uploading}
+              className="text-[#D8B77A] font-mono hover:underline"
             >
-              Change
+              Change Photo
             </button>
             <button
               type="button"
               onClick={handleRemove}
-              className="px-2.5 py-1 rounded-[6px] text-xs font-medium bg-rose-500/80 text-white hover:bg-rose-600 transition-colors flex items-center space-x-1"
+              disabled={uploading}
+              className="text-rose-400 font-mono hover:underline flex items-center space-x-1"
             >
               <X className="w-3 h-3" />
-              <span>Remove</span>
+              <span>Remove Photo</span>
             </button>
           </div>
         </div>
