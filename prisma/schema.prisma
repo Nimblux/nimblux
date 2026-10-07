@@ -11,9 +11,11 @@ model User {
   id             String         @id @default(cuid())
   name           String
   email          String         @unique
-  passwordHash   String
+  passwordHash   String?
   role           String         @default("USER") // "USER" | "ADMIN"
   profileImage   String?
+  googleId       String?        @unique
+  authProvider   String?        @default("credentials") // "credentials" | "google"
   college        String?
   degree         String?
   skills         String?        // Comma-separated tags

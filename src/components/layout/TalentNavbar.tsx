@@ -28,6 +28,7 @@ import {
   Check,
 } from "lucide-react";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
+import UserAvatar from "@/components/common/UserAvatar";
 
 interface UserSession {
   id: string;
@@ -328,13 +329,7 @@ export default function TalentNavbar() {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center space-x-2 p-1 pl-2 rounded-[9px] hover:bg-white/[0.04] border border-transparent hover:border-white/[0.08] transition-colors"
               >
-                <div className="w-7 h-7 rounded-[7px] bg-[#151A18] border border-white/[0.08] flex items-center justify-center font-bold text-[#D8B77A] text-[11px] overflow-hidden">
-                  {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
-                  ) : (
-                    user.name.charAt(0).toUpperCase()
-                  )}
-                </div>
+                <UserAvatar name={user.name} image={user.profileImage} size="sm" />
                 <ChevronDown className="w-3.5 h-3.5 text-[#A9AAA5]" />
               </button>
 

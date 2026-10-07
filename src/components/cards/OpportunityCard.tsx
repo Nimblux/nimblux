@@ -66,6 +66,7 @@ export default function OpportunityCard({
 }: OpportunityCardProps) {
   const [saved, setSaved] = useState(opportunity.isBookmarked || false);
   const [saving, setSaving] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   const oppType = (opportunity.opportunityType || opportunity.category || "OTHER").toUpperCase();
 
@@ -185,14 +186,12 @@ export default function OpportunityCard({
           <div className="flex items-center space-x-3 min-w-0">
             {/* Org Logo / Monogram */}
             <div className="w-10 h-10 rounded-[10px] bg-[#0E1110] border border-white/[0.08] flex items-center justify-center p-1.5 shadow-sm overflow-hidden flex-shrink-0">
-              {opportunity.logo ? (
+              {opportunity.logo && !logoError ? (
                 <img
                   src={opportunity.logo}
                   alt={opportunity.organization}
                   className="w-full h-full object-cover rounded-[7px]"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
+                  onError={() => setLogoError(true)}
                 />
               ) : (
                 <div className="w-full h-full rounded-[7px] bg-[#151A18] flex items-center justify-center font-bold text-[#D8B77A] text-xs font-mono">

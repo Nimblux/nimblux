@@ -16,6 +16,7 @@ import {
   Clock,
   Sparkles,
 } from "lucide-react";
+import ImageUpload from "@/components/common/ImageUpload";
 
 export default function OrganizationProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -191,15 +192,13 @@ export default function OrganizationProfilePage() {
         {/* Logo & Location */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-mono font-medium text-[#F5F1E8] mb-1.5">
-              Logo URL
-            </label>
-            <input
-              type="url"
+            <ImageUpload
+              folder="organizations"
+              label="Organization Logo"
+              sublabel="Square PNG, JPG, WEBP, or SVG"
+              aspectRatio="1:1"
               value={formData.organizationLogo}
-              onChange={(e) => setFormData({ ...formData, organizationLogo: e.target.value })}
-              placeholder="https://example.com/logo.png"
-              className="w-full px-3.5 py-2.5 rounded-[10px] bg-[#0E1110] border border-white/[0.08] text-xs text-[#F5F1E8] placeholder-[#7E807B] focus:outline-none focus:border-[#D8B77A]/50 transition-colors"
+              onChange={(url) => setFormData({ ...formData, organizationLogo: url || "" })}
             />
           </div>
 

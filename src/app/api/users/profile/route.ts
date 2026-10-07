@@ -27,6 +27,8 @@ export async function GET() {
         linkedinUrl: true,
         portfolioUrl: true,
         phone: true,
+        googleId: true,
+        authProvider: true,
         createdAt: true,
       },
     });

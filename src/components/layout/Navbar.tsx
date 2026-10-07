@@ -13,8 +13,21 @@ export default function Navbar() {
     return null;
   }
 
+  // Check if public organizer profile
+  const isPublicOrganizerProfile =
+    pathname.startsWith("/organizer/") &&
+    !pathname.startsWith("/organizer/opportunities") &&
+    !pathname.startsWith("/organizer/applications") &&
+    !pathname.startsWith("/organizer/registrations") &&
+    !pathname.startsWith("/organizer/participants") &&
+    !pathname.startsWith("/organizer/hackathons") &&
+    !pathname.startsWith("/organizer/events") &&
+    !pathname.startsWith("/organizer/analytics") &&
+    !pathname.startsWith("/organizer/organization") &&
+    pathname !== "/organizer";
+
   // Dedicated Organizer Workspace Navbar
-  if (pathname.startsWith("/organizer")) {
+  if (pathname.startsWith("/organizer") && !isPublicOrganizerProfile) {
     return <OrganizerNavbar />;
   }
 

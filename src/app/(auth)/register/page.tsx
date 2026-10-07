@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 function RegisterForm() {
   const router = useRouter();
@@ -104,6 +105,19 @@ function RegisterForm() {
               {error}
             </div>
           )}
+
+          {/* Google Sign-In */}
+          <div className="mb-5 space-y-4">
+            <GoogleSignInButton redirectUrl={redirect} onError={(msg) => setError(msg)} />
+
+            <div className="relative flex items-center justify-center">
+              <div className="border-t border-white/[0.08] w-full" />
+              <span className="bg-[#111615] px-3 text-[10.5px] font-mono text-[#7E807B] uppercase tracking-wider">
+                OR
+              </span>
+              <div className="border-t border-white/[0.08] w-full" />
+            </div>
+          </div>
 
           <form onSubmit={handleRegister} className="space-y-3.5">
             <div>

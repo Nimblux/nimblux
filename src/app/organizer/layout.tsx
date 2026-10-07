@@ -15,7 +15,24 @@ export default function OrganizerLayout({
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const isPublicProfile =
+    pathname.startsWith("/organizer/") &&
+    !pathname.startsWith("/organizer/opportunities") &&
+    !pathname.startsWith("/organizer/applications") &&
+    !pathname.startsWith("/organizer/registrations") &&
+    !pathname.startsWith("/organizer/participants") &&
+    !pathname.startsWith("/organizer/hackathons") &&
+    !pathname.startsWith("/organizer/events") &&
+    !pathname.startsWith("/organizer/analytics") &&
+    !pathname.startsWith("/organizer/organization") &&
+    pathname !== "/organizer";
+
   useEffect(() => {
+    if (isPublicProfile) {
+      setLoading(false);
+      return;
+    }
+
     fetch("/api/auth/me")
       .then((res) => {
         if (!res.ok) throw new Error("Unauthorized");
@@ -32,7 +49,11 @@ export default function OrganizerLayout({
         router.push(`/login?redirect=${pathname}`);
       })
       .finally(() => setLoading(false));
-  }, [pathname, router]);
+  }, [pathname, router, isPublicProfile]);
+
+  if (isPublicProfile) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

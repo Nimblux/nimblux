@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
       : (applicationUrl?.trim() || "in-platform");
 
     // Generate unique slug
-    let baseSlug = slugify(`${organization}-${title}`);
+    let baseSlug = slugify(body.slug?.trim() || `${organization}-${title}`);
     let uniqueSlug = baseSlug;
     let count = 1;
     while (await prisma.opportunity.findUnique({ where: { slug: uniqueSlug } })) {
@@ -246,8 +246,7 @@ export async function POST(req: NextRequest) {
         prize2nd: prize2nd?.trim() || null,
         prize3rd: prize3rd?.trim() || null,
         prizeSpecial: prizeSpecial?.trim() || null,
-        prizeDetails: prizeDetails?.trim() || null,
-        status: "PENDING", // PENDING APPROVAL - NEVER DIRECTLY PUBLISHED
+        status: body.status === "DRAFT" ? "DRAFT" : "PENDING", // DRAFT or PENDING moderation
         featured: false,
         verified: false,
         createdById: user.id,

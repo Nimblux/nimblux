@@ -28,7 +28,7 @@ import {
   Video,
   Lock,
 } from "lucide-react";
-import { formatDate, getDaysRemaining, getWorkModeBadge, getApplicationStageBadge, getRegistrationStatusBadge } from "@/lib/utils";
+import { formatDate, getDaysRemaining, getWorkModeBadge, getApplicationStageBadge, getRegistrationStatusBadge, slugify } from "@/lib/utils";
 import { formatCurrency } from "@/lib/hackathon";
 import { CATEGORIES, OPPORTUNITY_TYPES } from "@/lib/constants";
 import ShareModal from "@/components/modals/ShareModal";
@@ -285,9 +285,12 @@ export default function OpportunityDetailClient({
 
               <div className="flex-1 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-[#F5F1E8]">
+                  <Link
+                    href={`/organizer/${slugify(opportunity.organization)}`}
+                    className="text-xs font-mono font-bold text-[#F5F1E8] hover:text-[#D8B77A] transition-colors underline-offset-2 hover:underline"
+                  >
                     {opportunity.organization}
-                  </span>
+                  </Link>
                   {opportunity.verified && (
                     <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-[#8FA58E]/10 text-[#8FA58E] border border-[#8FA58E]/20">
                       <CheckCircle2 className="w-3 h-3" />
@@ -683,6 +686,15 @@ export default function OpportunityDetailClient({
                 ? "This listing is verified by NIMBLUX. Applications are submitted on the external host website."
                 : "This listing accepts native in-platform applications directly on NIMBLUX."}
             </p>
+            <div className="pt-1">
+              <Link
+                href={`/organizer/${slugify(opportunity.organization)}`}
+                className="inline-flex items-center space-x-1.5 text-xs font-medium text-[#D8B77A] hover:text-[#E7D5B2] transition-colors"
+              >
+                <span>View {opportunity.organization} Profile</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
             {opportunity.createdBy && (
               <div className="pt-3 border-t border-white/[0.06] flex items-center space-x-2.5 text-xs text-[#A9AAA5]">
                 <div className="w-6 h-6 rounded-full bg-[#D8B77A]/20 text-[#D8B77A] flex items-center justify-center font-bold text-[10px] font-mono">

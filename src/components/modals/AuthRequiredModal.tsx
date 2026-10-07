@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import NimbluxLogo from "@/components/common/NimbluxLogo";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 interface AuthRequiredModalProps {
   isOpen: boolean;
@@ -146,6 +147,22 @@ export default function AuthRequiredModal({
             <p className="text-xs text-[#A9AAA5] mt-1.5 leading-relaxed">
               {subtitle || `Sign in or create your account to ${actionName}. Your progress will not be lost.`}
             </p>
+          </div>
+        </div>
+
+        {/* Google Sign-In */}
+        <div className="mb-5 space-y-3">
+          <GoogleSignInButton
+            redirectUrl={redirectUrl || (typeof window !== "undefined" ? window.location.pathname : "/dashboard")}
+            onError={(msg) => setError(msg)}
+          />
+
+          <div className="relative flex items-center justify-center">
+            <div className="border-t border-white/[0.08] w-full" />
+            <span className="bg-[#111615] px-3 text-[10.5px] font-mono text-[#7E807B] uppercase tracking-wider">
+              OR
+            </span>
+            <div className="border-t border-white/[0.08] w-full" />
           </div>
         </div>
 

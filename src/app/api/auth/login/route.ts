@@ -31,6 +31,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!user.passwordHash) {
+      return NextResponse.json(
+        { error: "This account was signed up using Google. Please click 'Continue with Google' to sign in." },
+        { status: 400 }
+      );
+    }
+
     const isValid = await comparePassword(password, user.passwordHash);
     if (!isValid) {
       return NextResponse.json(
