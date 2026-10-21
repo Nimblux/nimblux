@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import {
   ArrowRight,
   Plus,
@@ -124,6 +125,16 @@ export default async function HomePage() {
     { label: "More", href: "/opportunities", icon: Compass },
   ];
 
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H4WEYZ57EL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-H4WEYZ57EL');
+</script>
+    
   // Testimonials structure
   const testimonials = [
     {
