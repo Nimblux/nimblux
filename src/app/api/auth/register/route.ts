@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, signJwt, AUTH_COOKIE_NAME } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
+import { sendOtpEmail } from "@/lib/email";
+import {
+  normalizeEmail,
+  generateSecureOtp,
+  getClientIp,
+  checkOtpSendRateLimits,
+  issueOtpRecord,
+} from "@/lib/otp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +21,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail) {
+      return NextResponse.json(
+        { error: "Please enter a valid email address." },
+        { status: 400 }
+      );
+    }
+
     if (password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters long." },
@@ -21,81 +37,111 @@ export async function POST(req: NextRequest) {
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalizedEmail },
     });
 
-    if (existingUser) {
+    if (existingUser && existingUser.status === "ACTIVE") {
       return NextResponse.json(
-        { error: "An account with this email already exists." },
+        { error: "An account with this email already exists. Please sign in instead." },
         { status: 400 }
       );
     }
 
+    if (existingUser && existingUser.status === "SUSPENDED") {
+      return NextResponse.json(
+        { error: "This account has been suspended. Please contact support." },
+        { status: 403 }
+      );
+    }
+
+    const clientIp = getClientIp(req.headers);
+    const userAgent = req.headers.get("user-agent") || undefined;
+
+    // Check rate limits & cooldowns
+    const rateLimit = await checkOtpSendRateLimits(normalizedEmail, clientIp);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: rateLimit.reason,
+          retryAfter: rateLimit.retryAfterSeconds,
+        },
+        { status: 429 }
+      );
+    }
+
     const passwordHash = await hashPassword(password);
+    const safeName = name.trim();
 
-    const user = await prisma.user.create({
-      data: {
-        name: name.trim(),
-        email: email.toLowerCase().trim(),
-        passwordHash,
-        role: "USER",
-        college: college?.trim() || null,
-        degree: degree?.trim() || null,
-        graduationYear: graduationYear?.trim() || null,
-        status: "ACTIVE",
-      },
+    // Create or update pending user record
+    if (existingUser && existingUser.status === "PENDING_VERIFICATION") {
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          name: safeName,
+          passwordHash,
+          college: college?.trim() || null,
+          degree: degree?.trim() || null,
+          graduationYear: graduationYear?.trim() || null,
+        },
+      });
+    } else if (!existingUser) {
+      await prisma.user.create({
+        data: {
+          name: safeName,
+          email: normalizedEmail,
+          passwordHash,
+          role: "USER",
+          college: college?.trim() || null,
+          degree: degree?.trim() || null,
+          graduationYear: graduationYear?.trim() || null,
+          status: "PENDING_VERIFICATION",
+          emailVerified: false,
+        },
+      });
+    }
+
+    // Generate cryptographically secure 6-digit OTP
+    const otp = generateSecureOtp();
+
+    // Store hashed OTP in database
+    const otpRecord = await issueOtpRecord({
+      normalizedEmail,
+      otp,
+      clientIp,
+      userAgent,
     });
 
-    // Create welcome notification
-    await prisma.notification.create({
-      data: {
-        userId: user.id,
-        title: "Welcome to NIMBLUX! 🎉",
-        message: "Your student account is active. Discover verified internships, hackathons, and scholarships curated for you.",
-        type: "SYSTEM",
-        link: "/opportunities",
-      },
+    // Send verification email via Hostinger SMTP
+    const emailResult = await sendOtpEmail({
+      to: normalizedEmail,
+      otp,
+      name: safeName,
     });
 
-    const token = signJwt({
-      id: user.id,
-      email: user.email,
-      role: user.role,
-    });
+    if (!emailResult.success) {
+      // Clean up OTP record so user is not blocked from retrying
+      await prisma.emailVerification.delete({
+        where: { id: otpRecord.id },
+      }).catch(() => {});
 
-    const response = NextResponse.json({
+      return NextResponse.json(
+        {
+          error: emailResult.error || "Failed to deliver verification code. Please check your email or try again.",
+        },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({
       success: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profileImage: user.profileImage,
-        status: user.status,
-        phone: user.phone,
-        college: user.college,
-        degree: user.degree,
-        graduationYear: user.graduationYear,
-        skills: user.skills,
-        githubUrl: user.githubUrl,
-        linkedinUrl: user.linkedinUrl,
-        portfolioUrl: user.portfolioUrl,
-        location: user.location,
-      },
+      requiresVerification: true,
+      email: normalizedEmail,
+      message: `Verification code sent to ${normalizedEmail}.`,
+      cooldownSeconds: 60,
     });
-
-    response.cookies.set(AUTH_COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-      path: "/",
-    });
-
-    return response;
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "An unexpected error occurred." },
+      { error: "An unexpected error occurred during registration." },
       { status: 500 }
     );
   }

@@ -23,6 +23,7 @@ export interface SessionUser {
   portfolioUrl?: string | null;
   phone?: string | null;
   status: string;
+  emailVerified?: boolean;
 
   // Organizer Fields
   isOrganizer: boolean;
@@ -90,6 +91,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         portfolioUrl: true,
         phone: true,
         status: true,
+        emailVerified: true,
         isOrganizer: true,
         isVerifiedOrganizer: true,
         organizationName: true,
@@ -113,7 +115,7 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       },
     });
 
-    if (!user || user.status === "SUSPENDED") {
+    if (!user || user.status === "SUSPENDED" || user.status === "PENDING_VERIFICATION") {
       return null;
     }
 

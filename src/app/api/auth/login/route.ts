@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { comparePassword, signJwt, AUTH_COOKIE_NAME } from "@/lib/auth";
+import { sendOtpEmail } from "@/lib/email";
+import {
+  generateSecureOtp,
+  getClientIp,
+  checkOtpSendRateLimits,
+  issueOtpRecord,
+} from "@/lib/otp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,8 +20,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
@@ -26,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     if (user.status === "SUSPENDED") {
       return NextResponse.json(
-        { error: "Your account has been suspended. Contact support@nimblux.com." },
+        { error: "Your account has been suspended. Contact support@nimblux.xyz." },
         { status: 403 }
       );
     }
@@ -46,6 +55,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Check if account email is verified
+    const isUnverified = user.status === "PENDING_VERIFICATION" || (!user.emailVerified && user.status !== "ACTIVE");
+
+    if (isUnverified) {
+      const clientIp = getClientIp(req.headers);
+      const userAgent = req.headers.get("user-agent") || undefined;
+
+      // Check rate limits before sending code
+      const rateLimit = await checkOtpSendRateLimits(normalizedEmail, clientIp);
+
+      if (rateLimit.allowed) {
+        const otp = generateSecureOtp();
+        await issueOtpRecord({
+          normalizedEmail,
+          otp,
+          clientIp,
+          userAgent,
+        });
+
+        await sendOtpEmail({
+          to: normalizedEmail,
+          otp,
+          name: user.name,
+        });
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          requiresVerification: true,
+          email: normalizedEmail,
+          message: "Your email address is not verified yet. A 6-digit verification code has been sent to your email.",
+        },
+        { status: 200 }
+      );
+    }
+
+    // If active user was created prior to emailVerified field addition, auto-heal status
+    if (user.status === "ACTIVE" && !user.emailVerified) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: true, emailVerifiedAt: new Date() },
+      }).catch(() => {});
+    }
+
     const token = signJwt({
       id: user.id,
       email: user.email,
@@ -61,6 +115,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
         profileImage: user.profileImage,
         status: user.status,
+        emailVerified: true,
         phone: user.phone,
         college: user.college,
         degree: user.degree,
@@ -84,7 +139,7 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || "An unexpected error occurred." },
+      { error: "An unexpected error occurred." },
       { status: 500 }
     );
   }

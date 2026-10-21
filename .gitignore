@@ -17,3 +17,4 @@ student_cookie.txt
 .DS_Store
 Thumbs.db
 node_modules
+tsconfig.tsbuildinfo

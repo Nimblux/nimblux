@@ -27,7 +27,9 @@ model User {
   linkedinUrl    String?
   portfolioUrl   String?
   phone          String?
-  status         String         @default("ACTIVE") // "ACTIVE" | "SUSPENDED"
+  status         String         @default("ACTIVE") // "ACTIVE" | "SUSPENDED" | "PENDING_VERIFICATION"
+  emailVerified  Boolean        @default(false)
+  emailVerifiedAt DateTime?
 
   // Organizer Profile & Workspace Activation
   isOrganizer          Boolean        @default(false)
@@ -621,4 +623,38 @@ model Certificate {
   metadata         String?       @db.Text // Additional verification metadata (JSON)
   createdAt        DateTime      @default(now())
 }
+
+// =======================================================
+// EMAIL OTP VERIFICATION & ABUSE PROTECTION MODELS
+// =======================================================
+
+model EmailVerification {
+  id          String    @id @default(cuid())
+  email       String
+  otpHash     String
+  attempts    Int       @default(0)
+  maxAttempts Int       @default(5)
+  expiresAt   DateTime
+  resendAfter DateTime
+  verifiedAt  DateTime?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([email])
+  @@index([expiresAt])
+}
+
+model VerificationAttempt {
+  id        String   @id @default(cuid())
+  ipAddress String
+  email     String
+  success   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([ipAddress, createdAt])
+  @@index([email, createdAt])
+}
+
 
