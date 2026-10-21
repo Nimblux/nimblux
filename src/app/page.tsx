@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import {
   ArrowRight,
   Plus,
